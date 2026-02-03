@@ -4,7 +4,7 @@ class Test {
     private static Test test;
     private Test() {}
     public synchronized static Test getInstance() {
-        return test == null? test = new Test() : test;
+        return test == null ? test = new Test() : test;
     }
 }
 

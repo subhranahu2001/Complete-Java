@@ -26,12 +26,7 @@ public class ArraylistDemo {
     static List<String> format(List<String> list) {
 
 //        Collections.reverse(list);
-        Collections.sort(list,new Comparator<String>() {
-            @Override
-            public int compare(String o1, String o2) {
-                return o2.compareTo(o1);
-            }
-        });
+        list.sort(Comparator.reverseOrder());
         return list;
 
     }

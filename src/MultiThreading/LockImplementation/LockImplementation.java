@@ -5,7 +5,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 class Display {
 
-    private static Lock lock = new ReentrantLock();
+    private final Lock lock = new ReentrantLock();
 
     public void wish(String name) {
 

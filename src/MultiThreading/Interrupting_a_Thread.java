@@ -16,5 +16,11 @@ class MyThread extends Thread {
 }
 
 public class Interrupting_a_Thread {
+
+    public static void main(String[] args) {
+        MyThread thread = new MyThread();
+        thread.start();
+        thread.interrupt();
+    }
 }
 
