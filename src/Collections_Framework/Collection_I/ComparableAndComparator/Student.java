@@ -17,7 +17,8 @@ public class Student implements Comparable<Student>{
     @Override
     public int compareTo(Student o) {
         if (this.id == o.id) {
-            return this.getName().compareTo(o.getName());
+            return 0;
+
         }else if (id > o.id) {
             return 1;
         }else
@@ -53,9 +54,9 @@ public class Student implements Comparable<Student>{
         List<Student> students = new ArrayList<>();
         students.add(new Student(10, "Thor"));
         students.add(new Student(2, "Bob"));
-        students.add(new Student(2, "Aarl"));
+        students.add(new Student(8, "Carl"));
         students.add(new Student(10, "Dan"));
-        Collections.sort(students);
+        students.sort(new IdComparator());
 
         System.out.println(students);
     }
