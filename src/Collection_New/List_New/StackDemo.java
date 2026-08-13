@@ -22,9 +22,6 @@ public class StackDemo {
         System.out.println(peek);
 
 
-
-        // Linked list as stack
-
         LinkedList<Integer> stack2 = new LinkedList<>();
         stack2.addLast(1);
         stack2.addLast(2);
