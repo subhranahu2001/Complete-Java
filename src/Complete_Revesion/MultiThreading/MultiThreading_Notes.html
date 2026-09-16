@@ -1,0 +1,2655 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Java Multithreading Revision</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<style>
+/* ============================== TOKENS ============================== */
+:root{
+  --paper:#EBEEF2;  --card:#FFFFFF;  --sunk:#F3F5F8;
+  --ink:#141A22;    --ink-2:#39424F; --muted:#5C6673;
+  --rule:#D3D9E1;   --rule-soft:#E3E8EE;
+
+  --accent:#C9531A;            /* signal orange - running / emphasis      */
+  --concept:#2C5C8F;           /* slate blue    - definitions & concepts  */
+  --safe:#15765A;              /* green         - correct practice        */
+  --danger:#B8332A;            /* red           - bug / gotcha            */
+  --tip:#96660A;               /* amber         - interview tip           */
+  --deep:#5E3E96;              /* violet        - internals / JVM detail  */
+
+  --concept-bg:#E7EEF6; --safe-bg:#E2F1EB; --danger-bg:#FBE8E6;
+  --tip-bg:#FAF0DC;     --deep-bg:#EEE9F7; --accent-bg:#FBEADF;
+
+  --code-bg:#161B23; --code-ink:#DDE3EC; --code-key:#F0A15E;
+  --code-str:#8FD19E; --code-com:#7C8898; --code-num:#9BB8F2;
+
+  --shadow:0 1px 0 rgba(20,26,34,.05), 0 6px 20px -12px rgba(20,26,34,.30);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0E1116; --card:#161B23; --sunk:#1B212B;
+    --ink:#E4E9F0;   --ink-2:#B6C0CD; --muted:#8C97A6;
+    --rule:#2A323E;  --rule-soft:#222933;
+
+    --accent:#FF9257; --concept:#7FB2E8; --safe:#4FC79C;
+    --danger:#F4796C; --tip:#E3B45A;     --deep:#B197EC;
+
+    --concept-bg:#16283C; --safe-bg:#10302A; --danger-bg:#361E1E;
+    --tip-bg:#33280F;     --deep-bg:#251E3B; --accent-bg:#35220F;
+
+    --code-bg:#0B0E13; --code-ink:#D6DDE8;
+    --shadow:0 1px 0 rgba(0,0,0,.4), 0 8px 24px -14px rgba(0,0,0,.8);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0E1116; --card:#161B23; --sunk:#1B212B;
+  --ink:#E4E9F0;   --ink-2:#B6C0CD; --muted:#8C97A6;
+  --rule:#2A323E;  --rule-soft:#222933;
+
+  --accent:#FF9257; --concept:#7FB2E8; --safe:#4FC79C;
+  --danger:#F4796C; --tip:#E3B45A;     --deep:#B197EC;
+
+  --concept-bg:#16283C; --safe-bg:#10302A; --danger-bg:#361E1E;
+  --tip-bg:#33280F;     --deep-bg:#251E3B; --accent-bg:#35220F;
+
+  --code-bg:#0B0E13; --code-ink:#D6DDE8;
+  --shadow:0 1px 0 rgba(0,0,0,.4), 0 8px 24px -14px rgba(0,0,0,.8);
+}
+
+/* ============================== BASE ============================== */
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:1.5rem}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:"Source Serif 4", Georgia, "Times New Roman", serif;
+  font-size:17px; line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4,.disp{font-family:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif; text-wrap:balance}
+code,kbd,.mono{font-family:"IBM Plex Mono",ui-monospace,Consolas,monospace}
+
+/* ============================== SHELL ============================== */
+.shell{display:grid; grid-template-columns:250px minmax(0,1fr); gap:44px; max-width:1240px; margin:0 auto; padding:0 26px}
+
+/* --- TOC rail --- */
+.rail{position:sticky; top:0; align-self:start; height:100vh; overflow-y:auto; padding:26px 0 40px; border-right:1px solid var(--rule)}
+.rail .brand{font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--accent); margin-bottom:14px}
+.rail a{display:block; text-decoration:none; color:var(--ink-2); font-family:"IBM Plex Sans Condensed",sans-serif; font-size:13.5px; line-height:1.35; padding:5px 10px 5px 0; border-left:2px solid transparent; padding-left:10px}
+.rail a:hover{color:var(--accent); border-left-color:var(--accent); background:var(--sunk)}
+.rail a:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.rail a .n{font-family:"IBM Plex Mono",monospace; font-size:10.5px; color:var(--muted); margin-right:7px}
+.rail .grp{font-family:"IBM Plex Mono",monospace; font-size:9.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); margin:18px 0 6px; padding-left:10px}
+
+/* --- main column --- */
+main{max-width:790px; padding:34px 0 120px}
+
+/* ============================== HEADER ============================== */
+.masthead{border-bottom:3px solid var(--ink); padding-bottom:18px; margin-bottom:8px}
+.eyebrow{font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--accent); margin:0 0 8px}
+h1{font-size:clamp(34px,5.4vw,50px); line-height:1.02; font-weight:700; margin:0 0 10px; letter-spacing:-.015em}
+.sub{color:var(--muted); font-size:16px; margin:0}
+
+/* ============================== TOOLBAR ============================== */
+.toolbar{position:fixed; right:16px; top:14px; z-index:30; display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end}
+.tbtn{background:var(--card); color:var(--ink-2); border:1px solid var(--rule); font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.11em; text-transform:uppercase; padding:7px 11px; cursor:pointer}
+.tbtn:hover{border-color:var(--accent); color:var(--accent)}
+.tbtn:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.tbtn.primary{border-color:var(--accent); color:var(--accent); font-weight:600}
+
+/* ============================== NOTE EDITOR ============================== */
+.addrow{margin-top:20px; padding-top:12px; border-top:1px dashed var(--rule)}
+.addbtn{background:none; border:1px dashed var(--rule); color:var(--muted); font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.11em; text-transform:uppercase; padding:7px 12px; cursor:pointer}
+.addbtn:hover{border-color:var(--accent); color:var(--accent); border-style:solid}
+.addbtn:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+
+.editor{border:1px solid var(--accent); background:var(--card); padding:15px 16px 16px; margin:16px 0; box-shadow:var(--shadow)}
+.editor .row{margin-bottom:11px}
+.editor .row:last-child{margin-bottom:0}
+.editor label{display:block; font-family:"IBM Plex Mono",monospace; font-size:9.5px; letter-spacing:.15em; text-transform:uppercase; color:var(--muted); margin-bottom:5px}
+.editor input[type=text],.editor textarea,.editor select{width:100%; background:var(--sunk); color:var(--ink); border:1px solid var(--rule); padding:8px 10px; font-family:"IBM Plex Mono",monospace; font-size:13px; line-height:1.55}
+.editor textarea{resize:vertical; min-height:86px}
+.editor textarea.code{min-height:64px}
+.editor input:focus,.editor textarea:focus,.editor select:focus{outline:2px solid var(--accent); outline-offset:-1px; border-color:var(--accent)}
+.editor .hint{font-family:"IBM Plex Sans Condensed",sans-serif; font-size:12px; color:var(--muted); margin-top:5px}
+.editor .btns{display:flex; gap:8px; margin-top:14px}
+
+.chips{display:flex; flex-wrap:wrap; gap:6px}
+.chip{cursor:pointer; position:relative}
+.chip input{position:absolute; opacity:0; width:1px; height:1px}
+.chip span{display:inline-block; font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacing:.11em; text-transform:uppercase; padding:6px 10px; border:1px solid currentColor; opacity:.5}
+.chip input:checked + span{opacity:1; font-weight:600; box-shadow:inset 0 0 0 2px currentColor}
+.chip input:focus-visible + span{outline:2px solid var(--accent); outline-offset:2px}
+.chip.c-def span{color:var(--concept)} .chip.c-win span{color:var(--safe)} .chip.c-trap span{color:var(--danger)}
+.chip.c-ask span{color:var(--tip)}     .chip.c-under span{color:var(--deep)}
+
+.noteops{display:flex; gap:12px; margin-bottom:9px}
+.opbtn{background:none; border:0; padding:0; cursor:pointer; font-family:"IBM Plex Mono",monospace; font-size:9.5px; letter-spacing:.13em; text-transform:uppercase; color:var(--muted); text-decoration:underline; text-underline-offset:2px}
+.opbtn:hover{color:var(--accent)}
+.opbtn:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.box .lbl .tag{font-weight:400; opacity:.7; letter-spacing:.1em}
+.byline{font-family:"IBM Plex Mono",monospace; font-size:9.5px; letter-spacing:.13em; text-transform:uppercase; color:var(--accent); align-self:center}
+
+/* ============================== IMAGES ============================== */
+.dropzone{position:relative; border:1px dashed var(--rule); background:var(--sunk); padding:16px 14px; text-align:center; cursor:pointer}
+.dropzone:hover,.dropzone.over{border-color:var(--accent); border-style:solid; background:var(--accent-bg)}
+.dropzone input[type=file]{position:absolute; opacity:0; width:1px; height:1px}
+.zonetext{font-family:"IBM Plex Mono",monospace; font-size:11px; line-height:1.7; color:var(--muted); letter-spacing:.02em}
+.dropzone:hover .zonetext,.dropzone.over .zonetext{color:var(--accent)}
+.thumbs{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px}
+.thumb{position:relative; width:94px; height:70px; border:1px solid var(--rule); background:var(--sunk); overflow:hidden}
+.thumb img{width:100%; height:100%; object-fit:cover; display:block}
+.thumbx{position:absolute; top:0; right:0; width:20px; height:20px; line-height:18px; background:var(--danger); color:#fff; border:0; cursor:pointer; font-family:"IBM Plex Mono",monospace; font-size:13px; padding:0}
+.thumbx:hover{filter:brightness(1.15)}
+.notefig{margin:12px 0; padding:0; border:1px solid var(--rule); background:var(--card); box-shadow:none}
+.notefig img{display:block; width:100%; height:auto}
+
+.toast{position:fixed; left:50%; bottom:26px; transform:translateX(-50%); z-index:50; background:var(--ink); color:var(--paper); font-family:"IBM Plex Mono",monospace; font-size:12px; letter-spacing:.03em; padding:11px 18px; box-shadow:var(--shadow); max-width:90vw; text-align:center}
+.unsaved .tbtn.primary{background:var(--accent); color:var(--card)}
+
+/* ============================== SECTIONS ============================== */
+section{margin-top:52px; scroll-margin-top:20px}
+h2{font-size:27px; font-weight:700; margin:0 0 4px; letter-spacing:-.01em; display:flex; align-items:baseline; gap:12px}
+h2 .num{font-family:"IBM Plex Mono",monospace; font-size:13px; font-weight:500; color:var(--accent); flex:none}
+.h2rule{height:2px; background:var(--ink); margin:0 0 20px}
+h3{font-size:19px; font-weight:600; margin:28px 0 8px; color:var(--ink)}
+h4{font-size:15.5px; font-weight:600; margin:20px 0 6px; color:var(--ink-2); font-family:"IBM Plex Mono",monospace; letter-spacing:-.01em}
+p{margin:0 0 13px; max-width:68ch}
+ul,ol{margin:0 0 14px; padding-left:22px; max-width:66ch}
+li{margin:0 0 6px}
+li::marker{color:var(--accent)}
+hr{border:0; border-top:1px solid var(--rule-soft); margin:26px 0}
+a{color:var(--concept)}
+
+/* ============================== HIGHLIGHT SPANS ============================== */
+.k   {background:var(--concept-bg); color:var(--concept); padding:1px 5px; font-weight:600; font-family:"IBM Plex Mono",monospace; font-size:.86em}
+.good{background:var(--safe-bg);    color:var(--safe);    padding:1px 5px; font-weight:600}
+.bad {background:var(--danger-bg);  color:var(--danger);  padding:1px 5px; font-weight:600}
+.hot {background:var(--tip-bg);     color:var(--tip);     padding:1px 5px; font-weight:600}
+.jvm {background:var(--deep-bg);    color:var(--deep);    padding:1px 5px; font-weight:600}
+b,strong{font-weight:600; color:var(--ink)}
+p code,li code,td code{background:var(--sunk); border:1px solid var(--rule-soft); padding:.5px 5px; font-size:.84em; color:var(--ink)}
+
+/* ============================== CALLOUTS ============================== */
+.box{border:1px solid var(--rule); background:var(--card); padding:14px 16px 4px; margin:16px 0; box-shadow:var(--shadow)}
+.box > .lbl{font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacing:.17em; text-transform:uppercase; font-weight:600; display:block; margin-bottom:7px}
+.box p:last-child,.box ul:last-child,.box ol:last-child{margin-bottom:12px}
+.box.def   {background:var(--concept-bg); border-color:var(--concept)} .box.def   >.lbl{color:var(--concept)}
+.box.win   {background:var(--safe-bg);    border-color:var(--safe)}    .box.win   >.lbl{color:var(--safe)}
+.box.trap  {background:var(--danger-bg);  border-color:var(--danger)}  .box.trap  >.lbl{color:var(--danger)}
+.box.ask   {background:var(--tip-bg);     border-color:var(--tip)}     .box.ask   >.lbl{color:var(--tip)}
+.box.under {background:var(--deep-bg);    border-color:var(--deep)}    .box.under >.lbl{color:var(--deep)}
+
+/* ============================== CODE ============================== */
+pre{background:var(--code-bg); color:var(--code-ink); padding:14px 16px; margin:14px 0; overflow-x:auto; border:1px solid var(--rule); font-size:13px; line-height:1.55; box-shadow:var(--shadow)}
+pre code{font-family:"IBM Plex Mono",monospace; background:none; border:0; padding:0; color:inherit; white-space:pre}
+.cm{color:var(--code-com); font-style:italic}
+.kw{color:var(--code-key)} .st{color:var(--code-str)} .nu{color:var(--code-num)}
+
+/* ============================== TABLES ============================== */
+.tw{overflow-x:auto; margin:16px 0; border:1px solid var(--rule); box-shadow:var(--shadow)}
+table{border-collapse:collapse; width:100%; background:var(--card); font-size:14.5px; min-width:520px}
+th{background:var(--sunk); text-align:left; font-family:"IBM Plex Sans Condensed",sans-serif; font-weight:600; font-size:13px; letter-spacing:.02em; padding:9px 12px; border-bottom:2px solid var(--rule); color:var(--ink)}
+td{padding:9px 12px; border-bottom:1px solid var(--rule-soft); vertical-align:top; font-variant-numeric:tabular-nums}
+tr:last-child td{border-bottom:0}
+td.mono,th.mono{font-family:"IBM Plex Mono",monospace; font-size:12.5px}
+
+/* ============================== FIGURES ============================== */
+figure{margin:20px 0; background:var(--card); border:1px solid var(--rule); padding:16px; box-shadow:var(--shadow)}
+figure svg{display:block; width:100%; max-width:100%; height:auto; color:var(--ink-2)}
+figcaption{font-family:"IBM Plex Sans Condensed",sans-serif; font-size:13px; color:var(--muted); margin-top:11px; padding-top:9px; border-top:1px solid var(--rule-soft)}
+
+/* ============================== LEGEND ============================== */
+.legend{display:grid; grid-template-columns:repeat(auto-fit,minmax(215px,1fr)); gap:1px; background:var(--rule); border:1px solid var(--rule); margin:22px 0 4px}
+.legend div{background:var(--card); padding:10px 12px; font-size:13.5px; color:var(--ink-2)}
+.legend .sw{font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacing:.14em; text-transform:uppercase; font-weight:600; display:block; margin-bottom:3px}
+
+/* ============================== Q&A ============================== */
+.qa{border-top:1px solid var(--rule); margin-top:14px}
+.qa details{border-bottom:1px solid var(--rule)}
+.qa summary{cursor:pointer; padding:11px 4px 11px 0; font-family:"IBM Plex Sans Condensed",sans-serif; font-weight:600; font-size:16px; list-style:none; display:flex; gap:11px; align-items:baseline}
+.qa summary::-webkit-details-marker{display:none}
+.qa summary::before{content:"Q" attr(data-q); font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--accent); flex:none; min-width:30px}
+.qa summary:hover{color:var(--accent)}
+.qa details[open] summary{color:var(--accent)}
+.qa .ans{padding:0 4px 14px 41px; font-size:15.5px}
+.qa .ans p{margin-bottom:9px}
+.qa .ans ul{margin-bottom:9px}
+
+/* ============================== MISC ============================== */
+.pill{display:inline-block; font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacing:.13em; text-transform:uppercase; border:1px solid currentColor; padding:2px 7px; margin:0 5px 5px 0; color:var(--muted)}
+.pill.p1{color:var(--danger)} .pill.p2{color:var(--tip)} .pill.p3{color:var(--concept)}
+.lead{font-size:18.5px; color:var(--ink-2)}
+footer{margin-top:64px; padding-top:18px; border-top:3px solid var(--ink); font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--muted); letter-spacing:.04em}
+
+@media (max-width:900px){
+  .shell{grid-template-columns:1fr; gap:0}
+  .rail{position:static; height:auto; border-right:0; border-bottom:1px solid var(--rule); padding:20px 0; max-height:270px}
+  main{padding-top:24px}
+  body{font-size:16px}
+}
+@media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto} *{transition:none!important} }
+</style>
+</head>
+<body>
+
+<!--
+=====================================================================
+  YOU DO NOT NEED TO EDIT THIS FILE BY HAND.
+
+  Open the page in a browser and use the buttons:
+
+      + Add my note   at the bottom of every section
+                      -> pick a colour, type a heading and your note,
+                         paste code if you want. No tags, no escaping.
+
+      + Topic         top-right
+                      -> creates a whole new topic ANYWHERE in the
+                         middle, with its own index entry.
+
+      Save to file    top-right
+                      -> downloads this page with your notes baked in.
+                         Replace the file in the MultiThreading folder
+                         and your notes are permanent + in git.
+
+  Notes are kept in the browser as you type, but a browser can be
+  cleared — press "Save to file" when you finish a revision session.
+
+  Everything below is the manual fallback, only if you ever want to
+  hand-write a section.
+=====================================================================
+
+  RULE OF THUMB
+  Every section needs TWO things:
+      A) one <a> line in the left TOC  (<nav class="rail">)
+      B) one <section> block in <main>
+  Put both in the same relative position and the order stays in sync.
+
+---------------------------------------------------------------------
+  1. ADD A BRAND NEW SECTION AT THE END
+---------------------------------------------------------------------
+  In the TOC add:
+      <a href="#s24"><span class="n">24</span>My new topic</a>
+
+  In <main>, before the closing </main>, add:
+
+  <section id="s24">
+  <h2><span class="num">24</span>My new topic</h2><div class="h2rule"></div>
+
+  <p>Normal paragraph text goes here.</p>
+
+  </section>
+
+---------------------------------------------------------------------
+  2. INSERT A TOPIC *IN BETWEEN* TWO EXISTING ONES
+---------------------------------------------------------------------
+  Do NOT renumber everything. Use a letter suffix instead.
+  Example: a new topic between 09 (volatile) and 10 (wait/notify):
+
+  TOC  -> paste this line between the s09 and s10 links:
+      <a href="#s09b"><span class="n">09b</span>Memory barriers</a>
+
+  MAIN -> paste this block between </section> of s09
+          and <section id="s10">:
+
+  <section id="s09b">
+  <h2><span class="num">09b</span>Memory barriers</h2><div class="h2rule"></div>
+  <p>...</p>
+  </section>
+
+  The id in the TOC (#s09b) must match the id on the <section>.
+  That is the ONLY thing that has to match — nothing else is hardcoded.
+
+---------------------------------------------------------------------
+  3. THE 5 COLOURED CALLOUT BOXES
+---------------------------------------------------------------------
+  <div class="box def">   <span class="lbl">Definition</span>       ... </div>  BLUE
+  <div class="box win">   <span class="lbl">Do this</span>          ... </div>  GREEN
+  <div class="box trap">  <span class="lbl">Trap</span>             ... </div>  RED
+  <div class="box ask">   <span class="lbl">Asked</span>            ... </div>  AMBER
+  <div class="box under"> <span class="lbl">Under the hood</span>   ... </div>  VIOLET
+
+  The text inside <span class="lbl"> is just a label — write anything
+  you like there ("My doubt", "Revise again", "Company: TCS").
+
+  Full example:
+
+  <div class="box trap">
+  <span class="lbl">Trap</span>
+  <p>Something that breaks in production.</p>
+  </div>
+
+---------------------------------------------------------------------
+  4. INLINE HIGHLIGHT COLOURS (use inside any paragraph or list)
+---------------------------------------------------------------------
+  <span class="k">term</span>       blue mono   — a concept / keyword
+  <span class="good">text</span>    green       — correct
+  <span class="bad">text</span>     red         — wrong / dangerous
+  <span class="hot">text</span>     amber       — interview point
+  <span class="jvm">text</span>     violet      — JVM internal
+  <code>Thread.sleep()</code>       grey chip   — any code word
+
+---------------------------------------------------------------------
+  5. A CODE BLOCK
+---------------------------------------------------------------------
+  <pre><code>ExecutorService pool = Executors.newFixedThreadPool(4);
+pool.shutdown();</code></pre>
+
+  Optional syntax colours inside the code block:
+      <span class="kw">public</span>     orange  — keywords
+      <span class="st">"text"</span>     green   — strings
+      <span class="nu">42</span>         blue    — numbers
+      <span class="cm">// note</span>    grey    — comments
+
+  IMPORTANT: inside <pre> you must escape these three characters
+      <   becomes  &lt;        (e.g. List&lt;String&gt;)
+      >   becomes  &gt;
+      &   becomes  &amp;
+  Everything else can be typed normally. Indentation is preserved
+  exactly as you type it, so do not indent the <pre> block itself.
+
+---------------------------------------------------------------------
+  6. A TABLE
+---------------------------------------------------------------------
+  <div class="tw"><table>
+  <tr><th>Column A</th><th>Column B</th></tr>
+  <tr><td>row 1</td><td>value</td></tr>
+  <tr><td>row 2</td><td>value</td></tr>
+  </table></div>
+
+  Keep the <div class="tw"> wrapper — it makes wide tables scroll
+  sideways instead of breaking the page on a phone.
+
+---------------------------------------------------------------------
+  7. A NEW QUESTION IN THE QUESTION BANK (section 21)
+---------------------------------------------------------------------
+  Paste inside <div class="qa"> ... </div>, anywhere between the
+  existing <details> blocks:
+
+  <details><summary data-q="46">My new question?</summary>
+  <div class="ans"><p>The answer.</p></div></details>
+
+  data-q="46" is only the number printed in front of the question.
+  Duplicates are harmless — it is a label, not an id.
+
+---------------------------------------------------------------------
+  8. HEADINGS INSIDE A SECTION
+---------------------------------------------------------------------
+  <h3>Sub topic</h3>          bigger, serif-sans heading
+  <h4>Small mono heading</h4> smaller, monospace — good for code topics
+  <hr>                        thin divider line
+
+---------------------------------------------------------------------
+  9. SMALL TAGS / PILLS
+---------------------------------------------------------------------
+  <span class="pill">default</span>       grey
+  <span class="pill p1">important</span>  red
+  <span class="pill p2">Java 21</span>    amber
+  <span class="pill p3">preferred</span>  blue
+
+---------------------------------------------------------------------
+  10. AFTER EDITING
+---------------------------------------------------------------------
+  Just save the file and press F5 / Ctrl+R in the browser.
+  If a section disappears, you almost certainly missed a closing tag
+  ( </div>, </section>, </p> ) — check the block you just pasted.
+  All colours work automatically in both light and dark theme.
+=====================================================================
+-->
+
+<div class="toolbar">
+  <button class="tbtn" id="btn-theme" type="button">Theme</button>
+  <button class="tbtn" id="btn-topic" type="button">+ Topic</button>
+  <button class="tbtn primary" id="btn-export" type="button">Save to file</button>
+</div>
+
+<div class="shell">
+
+<!-- =================== TOC =================== -->
+<nav class="rail">
+  <div class="brand">Revision Index</div>
+  <div class="grp">Foundations</div>
+  <a href="#s00"><span class="n">00</span>Why threads exist</a>
+  <a href="#s01"><span class="n">01</span>Memory given to a thread</a>
+  <a href="#s02"><span class="n">02</span>Birth of a thread</a>
+  <a href="#s03"><span class="n">03</span>The thread scheduler</a>
+  <a href="#s04"><span class="n">04</span>All ways to create a thread</a>
+  <a href="#s05"><span class="n">05</span>Lifecycle &amp; 6 states</a>
+  <a href="#s06"><span class="n">06</span>Thread class API</a>
+  <div class="grp">Correctness</div>
+  <a href="#s07"><span class="n">07</span>Race condition: 3 problems</a>
+  <a href="#s08"><span class="n">08</span>synchronized &amp; monitor</a>
+  <a href="#s09"><span class="n">09</span>volatile &amp; happens-before</a>
+  <a href="#s10"><span class="n">10</span>wait / notify</a>
+  <a href="#s11"><span class="n">11</span>Lock API</a>
+  <a href="#s12"><span class="n">12</span>Atomics &amp; CAS</a>
+  <a href="#s13"><span class="n">13</span>Deadlock family</a>
+  <div class="grp">Frameworks</div>
+  <a href="#s14"><span class="n">14</span>Executor framework</a>
+  <a href="#s15"><span class="n">15</span>Future &amp; CompletableFuture</a>
+  <a href="#s16"><span class="n">16</span>Synchronizers</a>
+  <a href="#s17"><span class="n">17</span>Concurrent collections</a>
+  <a href="#s18"><span class="n">18</span>ThreadLocal</a>
+  <a href="#s19"><span class="n">19</span>ForkJoin &amp; parallel stream</a>
+  <a href="#s20"><span class="n">20</span>Virtual threads</a>
+  <div class="grp">Interview</div>
+  <a href="#s21"><span class="n">21</span>Question bank</a>
+  <a href="#s22"><span class="n">22</span>Must-do programs</a>
+  <a href="#s23"><span class="n">23</span>Last-night cheat sheet</a>
+</nav>
+
+<!-- =================== MAIN =================== -->
+<main>
+
+<header class="masthead">
+  <p class="eyebrow">Complete Revision &middot; Java Concurrency</p>
+  <h1>Java Multithreading</h1>
+  <p class="sub">Basics to advanced, in the order concepts actually build on each other &mdash; with the interview angle marked on every topic.</p>
+</header>
+
+<div class="legend">
+  <div><span class="sw" style="color:var(--concept)">Blue &mdash; Concept</span>Definition / how it works</div>
+  <div><span class="sw" style="color:var(--safe)">Green &mdash; Do this</span>Correct practice, safe code</div>
+  <div><span class="sw" style="color:var(--danger)">Red &mdash; Trap</span>Bug, gotcha, wrong answer</div>
+  <div><span class="sw" style="color:var(--tip)">Amber &mdash; Asked</span>Actual interview question / tip</div>
+  <div><span class="sw" style="color:var(--deep)">Violet &mdash; Under the hood</span>JVM / OS level detail</div>
+</div>
+
+<!-- ============================================================ 00 -->
+<section id="s00">
+<h2><span class="num">00</span>Why threads exist</h2><div class="h2rule"></div>
+
+<p class="lead">A program that does one thing at a time wastes the CPU every time it waits &mdash; for a disk read, a database, an HTTP call. Threads let the CPU do something else during that wait.</p>
+
+<div class="box def">
+<span class="lbl">Definition</span>
+<p><span class="k">Process</span> &mdash; an independent program in execution. It owns its <b>own memory space</b> (heap, code, data). Two processes cannot touch each other's memory directly; they talk through IPC (sockets, pipes, files).</p>
+<p><span class="k">Thread</span> &mdash; the smallest unit the CPU schedules. A thread lives <b>inside</b> a process and <b>shares</b> the process's heap, static area and open files with all sibling threads, but has its <b>own stack</b>.</p>
+</div>
+
+<div class="tw"><table>
+<tr><th>Point</th><th>Process</th><th>Thread</th></tr>
+<tr><td>Memory</td><td>Separate address space</td><td>Shares heap, own stack</td></tr>
+<tr><td>Creation cost</td><td>Heavy (MBs, OS fork)</td><td>Light (~1&nbsp;MB stack)</td></tr>
+<tr><td>Context switch</td><td>Expensive (TLB / page table flush)</td><td>Cheap (same address space)</td></tr>
+<tr><td>Communication</td><td>IPC &mdash; slow, explicit</td><td>Shared variables &mdash; fast</td></tr>
+<tr><td>Crash blast radius</td><td>One process dies, others live</td><td>Uncaught error can kill the JVM</td></tr>
+<tr><td>In Java</td><td>One JVM = one process</td><td>Many threads per JVM</td></tr>
+</table></div>
+
+<h3>Concurrency vs Parallelism</h3>
+<p><span class="k">Concurrency</span> = <b>dealing with</b> many tasks at once (they make progress by interleaving &mdash; possible on 1 core). <span class="k">Parallelism</span> = <b>doing</b> many tasks at the same instant (needs &ge; 2 cores).</p>
+<p>Concurrency is a <i>structure</i>, parallelism is an <i>execution</i>. Every parallel program is concurrent; not every concurrent program is parallel.</p>
+
+<div class="box ask">
+<span class="lbl">Asked</span>
+<p><b>"Does multithreading always make the program faster?"</b> &mdash; No. For <b>I/O-bound</b> work yes, hugely (threads wait, not the CPU). For <b>CPU-bound</b> work, more threads than cores only adds <b>context-switch overhead</b>. A single-core CPU-bound task gets <i>slower</i> with 10 threads.</p>
+<p>Rule of thumb for pool size: CPU-bound &rarr; <code>N&nbsp;cores + 1</code>. I/O-bound &rarr; <code>N&nbsp;&times;&nbsp;(1 + waitTime/serviceTime)</code>.</p>
+</div>
+</section>
+
+<!-- ============================================================ 01 -->
+<section id="s01">
+<h2><span class="num">01</span>What memory a thread gets</h2><div class="h2rule"></div>
+
+<p>This is the question people fumble. The JVM runtime data areas split into two groups: <b>shared by all threads</b> and <b>private per thread</b>.</p>
+
+<figure>
+<svg viewBox="0 0 700 330" role="img" aria-label="JVM memory: heap, metaspace and code cache are shared by all threads, while each thread privately owns a JVM stack, a PC register and a native method stack">
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+
+  <!-- shared region -->
+  <rect x="18" y="26" width="300" height="240" fill="none" stroke="currentColor" stroke-width="1.5"/>
+  <text x="28" y="18" font-size="11.5" font-family="monospace" fill="currentColor" letter-spacing="1">SHARED BY ALL THREADS</text>
+
+  <rect x="36" y="48" width="264" height="104" fill="none" stroke="currentColor" stroke-width="1"/>
+  <text x="48" y="70" font-size="13" font-family="sans-serif" fill="currentColor" font-weight="600">Heap</text>
+  <text x="48" y="90" font-size="11" font-family="monospace" fill="currentColor">every object, every array</text>
+  <text x="48" y="108" font-size="11" font-family="monospace" fill="currentColor">the Thread object itself</text>
+  <text x="48" y="126" font-size="11" font-family="monospace" fill="currentColor">Young gen + Old gen, GC'd</text>
+  <text x="48" y="144" font-size="11" font-family="monospace" fill="#C9531A">← races happen HERE</text>
+
+  <rect x="36" y="164" width="264" height="42" fill="none" stroke="currentColor" stroke-width="1"/>
+  <text x="48" y="182" font-size="13" font-family="sans-serif" fill="currentColor" font-weight="600">Metaspace</text>
+  <text x="48" y="198" font-size="11" font-family="monospace" fill="currentColor">class metadata, static fields</text>
+
+  <rect x="36" y="216" width="264" height="36" fill="none" stroke="currentColor" stroke-width="1"/>
+  <text x="48" y="234" font-size="13" font-family="sans-serif" fill="currentColor" font-weight="600">Code cache</text>
+  <text x="48" y="248" font-size="11" font-family="monospace" fill="currentColor">JIT-compiled native code</text>
+
+  <!-- per-thread region -->
+  <rect x="382" y="26" width="300" height="240" fill="none" stroke="currentColor" stroke-width="1.5"/>
+  <text x="392" y="18" font-size="11.5" font-family="monospace" fill="currentColor" letter-spacing="1">PRIVATE TO EACH THREAD</text>
+
+  <g>
+    <rect x="400" y="48" width="264" height="66" fill="none" stroke="currentColor" stroke-width="1"/>
+    <text x="412" y="68" font-size="13" font-family="sans-serif" fill="currentColor" font-weight="600">JVM Stack</text>
+    <text x="412" y="85" font-size="11" font-family="monospace" fill="currentColor">one frame per method call:</text>
+    <text x="412" y="101" font-size="11" font-family="monospace" fill="currentColor">locals, operand stack, return addr</text>
+
+    <rect x="400" y="126" width="264" height="52" fill="none" stroke="currentColor" stroke-width="1"/>
+    <text x="412" y="146" font-size="13" font-family="sans-serif" fill="currentColor" font-weight="600">PC Register</text>
+    <text x="412" y="163" font-size="11" font-family="monospace" fill="currentColor">address of the current instruction</text>
+
+    <rect x="400" y="190" width="264" height="52" fill="none" stroke="currentColor" stroke-width="1"/>
+    <text x="412" y="210" font-size="13" font-family="sans-serif" fill="currentColor" font-weight="600">Native Method Stack</text>
+    <text x="412" y="227" font-size="11" font-family="monospace" fill="currentColor">for JNI / native frames</text>
+  </g>
+
+  <line x1="320" y1="146" x2="396" y2="146" stroke="currentColor" stroke-width="1.2" marker-end="url(#ar)" marker-start="url(#ar)"/>
+  <text x="358" y="139" font-size="10.5" font-family="monospace" fill="currentColor" text-anchor="middle">refs point in</text>
+
+  <text x="18" y="292" font-size="11.5" font-family="monospace" fill="currentColor">Each new thread costs one stack (-Xss, default ~512 KB–1 MB) + PC + native stack.</text>
+  <text x="18" y="312" font-size="11.5" font-family="monospace" fill="#C9531A">10,000 platform threads ≈ 10 GB of reserved stack → OutOfMemoryError.</text>
+</svg>
+<figcaption>Only the stack, PC register and native stack are duplicated per thread; the heap that holds your objects is shared &mdash; which is exactly why shared mutable state needs synchronization.</figcaption>
+</figure>
+
+<div class="box under">
+<span class="lbl">Under the hood</span>
+<ul>
+<li>The <code>Thread</code> object is just an ordinary object on the <b>heap</b>. The actual OS thread and its stack are created only when you call <code>start()</code>.</li>
+<li>Stack size is fixed at thread creation: <code>-Xss512k</code>. Deep recursion &rarr; <span class="bad">StackOverflowError</span> (per thread). Too many threads &rarr; <span class="bad">OutOfMemoryError: unable to create new native thread</span>.</li>
+<li>Local <b>primitives</b> live on the stack. Local <b>reference variables</b> live on the stack, but the object they point to lives on the shared heap.</li>
+<li><span class="jvm">Escape analysis</span>: if the JIT proves an object never escapes a method, it can scalar-replace it and keep it on the stack. That is an optimisation, not a rule you can rely on.</li>
+</ul>
+</div>
+
+<div class="box ask">
+<span class="lbl">Asked</span>
+<p><b>"Are local variables thread-safe?"</b> &mdash; <span class="good">Yes</span>, each thread has its own stack, so each gets its own copy. <b>But</b> if a local reference points to a shared object, the <i>object</i> is still unsafe. Thread-safety belongs to the object, not the variable.</p>
+</div>
+</section>
+
+<!-- ============================================================ 02 -->
+<section id="s02">
+<h2><span class="num">02</span>Birth of a thread: new &rarr; start() &rarr; scheduler &rarr; run()</h2><div class="h2rule"></div>
+
+<p>Trace exactly what happens when you write two lines of code. This sequence is the answer to "how is a thread registered with the thread scheduler?"</p>
+
+<figure>
+<svg viewBox="0 0 700 300" role="img" aria-label="Pipeline from new Thread on the heap, through start() which calls native start0 to create an OS thread and register it in the run queue, to the scheduler dispatching a time slice that executes run() on the new stack, ending at terminated">
+  <defs>
+    <marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+
+  <!-- 1 -->
+  <rect x="14" y="40" width="150" height="62" fill="none" stroke="currentColor" stroke-width="1.2"/>
+  <text x="24" y="32" font-size="10.5" font-family="monospace" fill="#C9531A">STEP 1 · JAVA</text>
+  <text x="24" y="62" font-size="12.5" font-family="monospace" fill="currentColor">new Thread(r)</text>
+  <text x="24" y="80" font-size="10.5" font-family="monospace" fill="currentColor">object on heap</text>
+  <text x="24" y="95" font-size="10.5" font-family="monospace" fill="currentColor">state = NEW</text>
+
+  <line x1="168" y1="71" x2="202" y2="71" stroke="currentColor" stroke-width="1.2" marker-end="url(#ar2)"/>
+
+  <!-- 2 -->
+  <rect x="206" y="40" width="150" height="62" fill="none" stroke="currentColor" stroke-width="1.2"/>
+  <text x="216" y="32" font-size="10.5" font-family="monospace" fill="#C9531A">STEP 2 · JVM</text>
+  <text x="216" y="62" font-size="12.5" font-family="monospace" fill="currentColor">t.start()</text>
+  <text x="216" y="80" font-size="10.5" font-family="monospace" fill="currentColor">→ native start0()</text>
+  <text x="216" y="95" font-size="10.5" font-family="monospace" fill="currentColor">allocate stack + PC</text>
+
+  <line x1="360" y1="71" x2="394" y2="71" stroke="currentColor" stroke-width="1.2" marker-end="url(#ar2)"/>
+
+  <!-- 3 -->
+  <rect x="398" y="40" width="150" height="62" fill="none" stroke="currentColor" stroke-width="1.2"/>
+  <text x="408" y="32" font-size="10.5" font-family="monospace" fill="#C9531A">STEP 3 · OS</text>
+  <text x="408" y="62" font-size="12.5" font-family="monospace" fill="currentColor">kernel thread</text>
+  <text x="408" y="80" font-size="10.5" font-family="monospace" fill="currentColor">pushed to RUN QUEUE</text>
+  <text x="408" y="95" font-size="10.5" font-family="monospace" fill="currentColor">state = RUNNABLE</text>
+
+  <!-- down -->
+  <line x1="473" y1="106" x2="473" y2="138" stroke="currentColor" stroke-width="1.2" marker-end="url(#ar2)"/>
+  <text x="484" y="127" font-size="10.5" font-family="monospace" fill="currentColor">registered</text>
+
+  <!-- 4 scheduler -->
+  <rect x="398" y="142" width="150" height="62" fill="none" stroke="#C9531A" stroke-width="1.6"/>
+  <text x="408" y="164" font-size="12.5" font-family="monospace" fill="#C9531A">SCHEDULER</text>
+  <text x="408" y="182" font-size="10.5" font-family="monospace" fill="currentColor">picks a thread,</text>
+  <text x="408" y="197" font-size="10.5" font-family="monospace" fill="currentColor">grants a time slice</text>
+
+  <line x1="394" y1="173" x2="360" y2="173" stroke="currentColor" stroke-width="1.2" marker-end="url(#ar2)"/>
+
+  <!-- 5 -->
+  <rect x="206" y="142" width="150" height="62" fill="none" stroke="currentColor" stroke-width="1.2"/>
+  <text x="216" y="164" font-size="12.5" font-family="monospace" fill="currentColor">run()</text>
+  <text x="216" y="182" font-size="10.5" font-family="monospace" fill="currentColor">executes on the NEW</text>
+  <text x="216" y="197" font-size="10.5" font-family="monospace" fill="currentColor">stack, not caller's</text>
+
+  <line x1="202" y1="173" x2="168" y2="173" stroke="currentColor" stroke-width="1.2" marker-end="url(#ar2)"/>
+
+  <!-- 6 -->
+  <rect x="14" y="142" width="150" height="62" fill="none" stroke="currentColor" stroke-width="1.2"/>
+  <text x="24" y="164" font-size="12.5" font-family="monospace" fill="currentColor">TERMINATED</text>
+  <text x="24" y="182" font-size="10.5" font-family="monospace" fill="currentColor">stack freed,</text>
+  <text x="24" y="197" font-size="10.5" font-family="monospace" fill="currentColor">OS thread released</text>
+
+  <text x="14" y="240" font-size="11" font-family="monospace" fill="currentColor">Slice expires or the thread blocks → it goes back to the run queue (preemption).</text>
+  <text x="14" y="260" font-size="11" font-family="monospace" fill="#C9531A">t.run() skips steps 2–4 entirely: it is a plain method call on the CALLER's stack.</text>
+  <text x="14" y="280" font-size="11" font-family="monospace" fill="currentColor">A TERMINATED thread can never be restarted → IllegalThreadStateException.</text>
+</svg>
+<figcaption>The thread is "registered with the scheduler" inside <code>start()</code> &mdash; not when the object is constructed, and never when you call <code>run()</code> yourself.</figcaption>
+</figure>
+
+<h3>The same thing in code terms</h3>
+<pre><code><span class="cm">// 1. object created on the heap. No OS thread yet. state = NEW</span>
+Thread t = <span class="kw">new</span> Thread(() -&gt; System.out.println(<span class="st">"hi"</span>), <span class="st">"worker-1"</span>);
+
+System.out.println(t.getState());   <span class="cm">// NEW</span>
+
+<span class="cm">// 2. start() does three things and returns IMMEDIATELY:</span>
+<span class="cm">//      a) checks threadStatus != 0 -&gt; else IllegalThreadStateException</span>
+<span class="cm">//      b) adds the thread to its ThreadGroup</span>
+<span class="cm">//      c) calls the native start0() -&gt; OS creates the thread + stack</span>
+<span class="cm">//         and puts it in the scheduler's ready queue</span>
+t.start();
+System.out.println(t.getState());   <span class="cm">// RUNNABLE (ready OR running - Java cannot tell)</span>
+
+t.join();                           <span class="cm">// caller waits for t to die</span>
+System.out.println(t.getState());   <span class="cm">// TERMINATED</span>
+</code></pre>
+
+<div class="box under">
+<span class="lbl">Under the hood &mdash; Thread.start() source, simplified</span>
+<pre style="margin:0 0 12px"><code><span class="kw">public synchronized void</span> start() {
+    <span class="kw">if</span> (threadStatus != <span class="nu">0</span>)
+        <span class="kw">throw new</span> IllegalThreadStateException();  <span class="cm">// already started</span>
+    group.add(<span class="kw">this</span>);
+    start0();                                    <span class="cm">// NATIVE: real thread is born here</span>
+}
+
+<span class="kw">public void</span> run() {
+    <span class="kw">if</span> (target != <span class="kw">null</span>) target.run();            <span class="cm">// target = the Runnable you passed</span>
+}</code></pre>
+<p>That <code>target</code> field is the whole reason both "extend Thread" and "implement Runnable" work: overriding <code>run()</code> replaces the method, passing a <code>Runnable</code> fills the field.</p>
+</div>
+
+<div class="box trap">
+<span class="lbl">Trap</span>
+<p><span class="bad">start() vs run()</span> is the single most common trick question. <code>t.run()</code> compiles, runs, prints &mdash; and creates <b>zero</b> threads. The output appears on <code>main</code>. Only <code>start()</code> reaches the native code that creates an OS thread.</p>
+<p><span class="bad">start() twice</span> &rarr; <code>IllegalThreadStateException</code>, even after the thread finished. A <code>Thread</code> object is single-use. A <code>Runnable</code> object is reusable.</p>
+</div>
+</section>
+
+<!-- ============================================================ 03 -->
+<section id="s03">
+<h2><span class="num">03</span>The thread scheduler</h2><div class="h2rule"></div>
+
+<div class="box def">
+<span class="lbl">Definition</span>
+<p>The <span class="k">thread scheduler</span> is part of the <b>OS</b>, not the JVM. Java threads are mapped 1:1 onto native OS threads (on HotSpot). The JVM hands your thread to the OS; the OS decides who runs, when, and for how long.</p>
+</div>
+
+<ul>
+<li><b>Preemptive</b> &mdash; a higher-priority ready thread can take the CPU from a lower-priority running one.</li>
+<li><b>Time slicing</b> (round robin) &mdash; each thread gets a quantum; when it expires the thread goes back to the ready queue.</li>
+<li>A thread also leaves the CPU voluntarily by <code>sleep()</code>, <code>wait()</code>, blocking I/O, or lock contention.</li>
+</ul>
+
+<div class="box trap">
+<span class="lbl">Trap &mdash; scheduling is not guaranteed</span>
+<p>Thread scheduling is <span class="bad">platform dependent</span>. Never write logic that depends on the order threads run in, or on a <code>sleep()</code> being long enough. That is the root cause of "works on my machine" concurrency bugs.</p>
+<ul>
+<li><code>setPriority(1..10)</code> is only a <b>hint</b>; many OSes largely ignore it. Never build correctness on priority.</li>
+<li><code>Thread.yield()</code> is a hint to give up the current slice. The scheduler may ignore it and reschedule the same thread.</li>
+<li>Output interleaving differs on every run. That is normal, not a bug in your code.</li>
+</ul>
+</div>
+
+<div class="box ask">
+<span class="lbl">Asked</span>
+<p><b>"Is RUNNABLE the same as running?"</b> &mdash; No. Java's <code>RUNNABLE</code> merges two OS states: <i>ready in the queue</i> and <i>actually executing on a core</i>. The JVM cannot distinguish them, so there is no <code>RUNNING</code> enum constant. A thread blocked in native I/O also shows as <code>RUNNABLE</code>.</p>
+</div>
+</section>
+
+<!-- ============================================================ 04 -->
+<section id="s04">
+<h2><span class="num">04</span>Every way to create a thread</h2><div class="h2rule"></div>
+
+<div class="box ask">
+<span class="lbl">Asked &mdash; answer it this way</span>
+<p>"There are only <b>two real mechanisms</b>: <span class="hot">extend Thread and override run()</span>, or <span class="hot">pass a Runnable target to a Thread</span>. Everything else &mdash; lambda, Callable, executor, CompletableFuture, ForkJoin, virtual threads &mdash; is a convenience layer built on those two." That answer scores far higher than reciting five items.</p>
+</div>
+
+<h3>1 &mdash; extend Thread</h3>
+<pre><code><span class="kw">class</span> Worker <span class="kw">extends</span> Thread {
+    Worker(String name) { <span class="kw">super</span>(name); }
+    <span class="kw">@Override public void</span> run() {
+        System.out.println(getName() + <span class="st">" running"</span>);
+    }
+}
+<span class="kw">new</span> Worker(<span class="st">"w-1"</span>).start();</code></pre>
+<p><span class="bad">Downside:</span> Java has single inheritance &mdash; your class can now never extend anything else, and you have fused "what to do" with "who runs it".</p>
+
+<h3>2 &mdash; implement Runnable <span class="pill p3">preferred</span></h3>
+<pre><code><span class="kw">class</span> Task <span class="kw">implements</span> Runnable {
+    <span class="kw">@Override public void</span> run() {
+        System.out.println(Thread.currentThread().getName() + <span class="st">" running"</span>);
+    }
+}
+Runnable task = <span class="kw">new</span> Task();
+<span class="kw">new</span> Thread(task, <span class="st">"w-1"</span>).start();
+<span class="kw">new</span> Thread(task, <span class="st">"w-2"</span>).start();   <span class="cm">// same task, two workers</span></code></pre>
+<p><span class="good">Why better:</span> class stays free to extend something; task is separated from worker; the same object can go to a <code>Thread</code>, an executor, or <code>CompletableFuture</code>.</p>
+<p><span class="bad">Limit:</span> <code>run()</code> returns <code>void</code> and cannot throw a checked exception &rarr; no result, no error propagation. That is exactly why <code>Callable</code> exists.</p>
+
+<h3>3 &mdash; anonymous class / lambda</h3>
+<pre><code><span class="cm">// anonymous Thread subclass (mechanism 1)</span>
+<span class="kw">new</span> Thread() { <span class="kw">public void</span> run() { System.out.println(<span class="st">"a"</span>); } }.start();
+
+<span class="cm">// anonymous Runnable (mechanism 2)</span>
+<span class="kw">new</span> Thread(<span class="kw">new</span> Runnable() { <span class="kw">public void</span> run() { System.out.println(<span class="st">"b"</span>); } }).start();
+
+<span class="cm">// lambda - Runnable is a @FunctionalInterface</span>
+<span class="kw">new</span> Thread(() -&gt; System.out.println(<span class="st">"c"</span>), <span class="st">"lambda-thread"</span>).start();
+
+<span class="cm">// method reference</span>
+<span class="kw">new</span> Thread(MyClass::work).start();</code></pre>
+
+<h3>4 &mdash; Callable + FutureTask <span class="pill p3">returns a value</span></h3>
+<pre><code>Callable&lt;Integer&gt; job = () -&gt; {          <span class="cm">// V call() throws Exception</span>
+    <span class="kw">int</span> s = <span class="nu">0</span>;
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nu">1</span>; i &lt;= <span class="nu">100</span>; i++) s += i;
+    <span class="kw">return</span> s;
+};
+
+FutureTask&lt;Integer&gt; ft = <span class="kw">new</span> FutureTask&lt;&gt;(job);
+<span class="kw">new</span> Thread(ft).start();                 <span class="cm">// FutureTask IS-A Runnable</span>
+System.out.println(ft.get());           <span class="cm">// BLOCKS until the result is ready</span></code></pre>
+<div class="box under"><span class="lbl">Why FutureTask works</span>
+<p><code>FutureTask&lt;V&gt; implements RunnableFuture&lt;V&gt;</code> and <code>RunnableFuture&lt;V&gt; extends Runnable, Future&lt;V&gt;</code>. So one object is both the thing a <code>Thread</code> can run <b>and</b> the handle you call <code>get()</code> on. It is the bridge between the <code>Runnable</code>-only <code>Thread</code> constructor and the result-bearing <code>Callable</code>.</p></div>
+
+<h3>5 &mdash; ExecutorService <span class="pill p1">use this in production</span></h3>
+<pre><code>ExecutorService pool = Executors.newFixedThreadPool(<span class="nu">4</span>);
+
+pool.execute(() -&gt; work());                    <span class="cm">// fire and forget</span>
+Future&lt;String&gt; f = pool.submit(() -&gt; <span class="st">"done"</span>);  <span class="cm">// with a result</span>
+System.out.println(f.get());
+
+pool.shutdown();                               <span class="cm">// MANDATORY</span>
+<span class="kw">if</span> (!pool.awaitTermination(<span class="nu">5</span>, TimeUnit.SECONDS)) pool.shutdownNow();</code></pre>
+<p><span class="good">Why:</span> threads are <b>reused</b>, work is <b>queued</b>, concurrency is <b>bounded</b>, and you get naming, monitoring and lifecycle for free. <code>new Thread()</code> per request is how you get <code>OutOfMemoryError: unable to create new native thread</code>.</p>
+
+<h3>6 &mdash; ThreadFactory (controls how pool threads are built)</h3>
+<pre><code>ThreadFactory factory = r -&gt; {
+    Thread t = <span class="kw">new</span> Thread(r, <span class="st">"payment-"</span> + counter.getAndIncrement());
+    t.setDaemon(<span class="kw">false</span>);
+    t.setUncaughtExceptionHandler((th, ex) -&gt; log.error(th.getName(), ex));
+    <span class="kw">return</span> t;
+};
+ExecutorService pool = Executors.newFixedThreadPool(<span class="nu">4</span>, factory);</code></pre>
+<p>Named threads make thread dumps and production logs readable. Always do this in real code.</p>
+
+<h3>7 &mdash; CompletableFuture, ForkJoinPool, Timer</h3>
+<pre><code>CompletableFuture.supplyAsync(() -&gt; fetch())   <span class="cm">// runs on ForkJoinPool.commonPool()</span>
+        .thenApply(String::toUpperCase)
+        .thenAccept(System.out::println);
+
+ForkJoinPool.commonPool().invoke(<span class="kw">new</span> MyRecursiveTask(arr, <span class="nu">0</span>, arr.length));
+
+<span class="kw">new</span> Timer(<span class="kw">true</span>).schedule(<span class="kw">new</span> TimerTask(){ <span class="kw">public void</span> run(){ ping(); } }, <span class="nu">1000</span>);
+<span class="cm">// Timer is legacy: single thread, one thrown exception kills all future tasks.</span>
+<span class="cm">// Use ScheduledExecutorService instead.</span></code></pre>
+
+<h3>8 &mdash; Virtual threads <span class="pill p2">Java 21</span></h3>
+<pre><code>Thread v = Thread.ofVirtual().name(<span class="st">"v-1"</span>).start(() -&gt; work());
+v.join();
+
+<span class="kw">try</span> (var es = Executors.newVirtualThreadPerTaskExecutor()) {
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nu">0</span>; i &lt; <span class="nu">1_000_000</span>; i++) es.submit(() -&gt; handle());
+}</code></pre>
+<p>Details in <a href="#s20">section 20</a>.</p>
+
+<div class="tw"><table>
+<tr><th>Way</th><th class="mono">Returns value</th><th class="mono">Checked exception</th><th>Reuses threads</th><th>Use when</th></tr>
+<tr><td>extend Thread</td><td>No</td><td>No</td><td>No</td><td>Learning only</td></tr>
+<tr><td>Runnable</td><td>No</td><td>No</td><td>No</td><td>Simple one-off task</td></tr>
+<tr><td>Callable + FutureTask</td><td>Yes</td><td>Yes</td><td>No</td><td>Need a result from a raw thread</td></tr>
+<tr><td>ExecutorService</td><td>Yes</td><td>Yes</td><td><span class="good">Yes</span></td><td>Almost always</td></tr>
+<tr><td>CompletableFuture</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Chained async pipeline</td></tr>
+<tr><td>ForkJoinPool</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Divide &amp; conquer CPU work</td></tr>
+<tr><td>Virtual threads</td><td>Yes</td><td>Yes</td><td>n/a &mdash; one per task</td><td>Massive blocking I/O</td></tr>
+</table></div>
+</section>
+
+<!-- ============================================================ 05 -->
+<section id="s05">
+<h2><span class="num">05</span>Lifecycle &mdash; the 6 states</h2><div class="h2rule"></div>
+
+<p>These are the constants of <code>Thread.State</code>, returned by <code>t.getState()</code>. Note there is <b>no RUNNING</b> state.</p>
+
+<figure>
+<svg viewBox="0 0 700 380" role="img" aria-label="Thread state machine: NEW moves to RUNNABLE on start, RUNNABLE moves to BLOCKED when waiting for a monitor lock, to WAITING on wait or join, to TIMED_WAITING on sleep or timed wait, each returning to RUNNABLE, and finally to TERMINATED when run completes">
+  <defs>
+    <marker id="ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+    <marker id="ar3h" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#C9531A"/>
+    </marker>
+  </defs>
+
+  <!-- NEW -->
+  <rect x="270" y="14" width="160" height="42" fill="none" stroke="currentColor" stroke-width="1.2"/>
+  <text x="350" y="40" font-size="14" font-family="monospace" fill="currentColor" text-anchor="middle">NEW</text>
+
+  <line x1="350" y1="58" x2="350" y2="110" stroke="#C9531A" stroke-width="1.6" marker-end="url(#ar3h)"/>
+  <text x="360" y="88" font-size="11" font-family="monospace" fill="#C9531A">start()</text>
+
+  <!-- RUNNABLE -->
+  <rect x="250" y="114" width="200" height="56" fill="none" stroke="#C9531A" stroke-width="1.8"/>
+  <text x="350" y="139" font-size="14" font-family="monospace" fill="#C9531A" text-anchor="middle">RUNNABLE</text>
+  <text x="350" y="158" font-size="10.5" font-family="monospace" fill="currentColor" text-anchor="middle">ready in queue OR on CPU</text>
+
+  <!-- BLOCKED -->
+  <rect x="20" y="224" width="185" height="56" fill="none" stroke="currentColor" stroke-width="1.2"/>
+  <text x="112" y="248" font-size="13.5" font-family="monospace" fill="currentColor" text-anchor="middle">BLOCKED</text>
+  <text x="112" y="266" font-size="10" font-family="monospace" fill="currentColor" text-anchor="middle">waiting for a monitor lock</text>
+
+  <path d="M262 168 L150 220" fill="none" stroke="currentColor" stroke-width="1.2" marker-end="url(#ar3)"/>
+  <text x="150" y="196" font-size="10" font-family="monospace" fill="currentColor" text-anchor="middle">enter synchronized</text>
+  <path d="M182 220 L292 170" fill="none" stroke="currentColor" stroke-width="1.2" marker-end="url(#ar3)"/>
+  <text x="258" y="212" font-size="10" font-family="monospace" fill="currentColor" text-anchor="middle">lock acquired</text>
+
+  <!-- WAITING -->
+  <rect x="258" y="224" width="185" height="56" fill="none" stroke="currentColor" stroke-width="1.2"/>
+  <text x="350" y="248" font-size="13.5" font-family="monospace" fill="currentColor" text-anchor="middle">WAITING</text>
+  <text x="350" y="266" font-size="10" font-family="monospace" fill="currentColor" text-anchor="middle">wait() · join() · park()</text>
+  <line x1="338" y1="174" x2="338" y2="220" stroke="currentColor" stroke-width="1.2" marker-end="url(#ar3)"/>
+  <line x1="366" y1="220" x2="366" y2="174" stroke="currentColor" stroke-width="1.2" marker-end="url(#ar3)"/>
+  <text x="452" y="204" font-size="10" font-family="monospace" fill="currentColor" text-anchor="end">notify() / notifyAll()</text>
+
+  <!-- TIMED_WAITING -->
+  <rect x="496" y="224" width="188" height="56" fill="none" stroke="currentColor" stroke-width="1.2"/>
+  <text x="590" y="248" font-size="13.5" font-family="monospace" fill="currentColor" text-anchor="middle">TIMED_WAITING</text>
+  <text x="590" y="266" font-size="10" font-family="monospace" fill="currentColor" text-anchor="middle">sleep(n) · wait(n) · join(n)</text>
+  <path d="M438 168 L552 220" fill="none" stroke="currentColor" stroke-width="1.2" marker-end="url(#ar3)"/>
+  <path d="M520 220 L410 170" fill="none" stroke="currentColor" stroke-width="1.2" marker-end="url(#ar3)"/>
+  <text x="560" y="200" font-size="10" font-family="monospace" fill="currentColor" text-anchor="middle">timeout ends</text>
+
+  <!-- TERMINATED -->
+  <rect x="270" y="316" width="160" height="42" fill="none" stroke="currentColor" stroke-width="1.2"/>
+  <text x="350" y="342" font-size="14" font-family="monospace" fill="currentColor" text-anchor="middle">TERMINATED</text>
+  <path d="M460 152 C560 160 470 330 434 337" fill="none" stroke="currentColor" stroke-width="1.2" marker-end="url(#ar3)"/>
+  <text x="600" y="150" font-size="10" font-family="monospace" fill="currentColor" text-anchor="middle">run() returns</text>
+  <text x="600" y="164" font-size="10" font-family="monospace" fill="currentColor" text-anchor="middle">or throws</text>
+
+  <text x="20" y="376" font-size="10.5" font-family="monospace" fill="#C9531A">No arrow returns from TERMINATED — start() on a dead thread throws IllegalThreadStateException.</text>
+</svg>
+<figcaption>Every blocked state returns only to RUNNABLE, never straight to the CPU &mdash; the thread must be re-scheduled after it is unblocked.</figcaption>
+</figure>
+
+<div class="tw"><table>
+<tr><th>State</th><th>Entered by</th><th class="mono">Holds the lock?</th><th>Left by</th></tr>
+<tr><td class="mono">NEW</td><td><code>new Thread()</code></td><td>&mdash;</td><td><code>start()</code></td></tr>
+<tr><td class="mono">RUNNABLE</td><td><code>start()</code>, or unblocking</td><td>&mdash;</td><td>scheduler / blocking call</td></tr>
+<tr><td class="mono">BLOCKED</td><td>waiting to <b>enter</b> a <code>synchronized</code> block</td><td>No (never had it)</td><td>lock becomes free</td></tr>
+<tr><td class="mono">WAITING</td><td><code>wait()</code>, <code>join()</code>, <code>LockSupport.park()</code></td><td><span class="bad">No &mdash; wait() releases it</span></td><td><code>notify()</code>/<code>notifyAll()</code>/thread dies</td></tr>
+<tr><td class="mono">TIMED_WAITING</td><td><code>sleep(n)</code>, <code>wait(n)</code>, <code>join(n)</code>, <code>tryLock(n)</code></td><td><span class="bad">sleep KEEPS it</span>, wait releases</td><td>timeout, or notify</td></tr>
+<tr><td class="mono">TERMINATED</td><td><code>run()</code> ends or throws</td><td>&mdash;</td><td>nothing &mdash; final</td></tr>
+</table></div>
+
+<div class="box ask">
+<span class="lbl">Asked &mdash; sleep() vs wait()</span>
+<ul>
+<li><code>sleep()</code> is <b>static, on Thread</b>; <code>wait()</code> is an <b>instance method on Object</b>.</li>
+<li><span class="bad"><code>sleep()</code> does NOT release the lock.</span> <span class="good"><code>wait()</code> releases the monitor</span> so another thread can enter and eventually notify.</li>
+<li><code>sleep()</code> can be called anywhere; <code>wait()</code> <b>must</b> be called inside <code>synchronized</code> on the same object, else <code>IllegalMonitorStateException</code>.</li>
+<li><code>sleep()</code> wakes on time; <code>wait()</code> wakes on <code>notify()</code> (or timeout, or a spurious wakeup).</li>
+</ul>
+</div>
+</section>
+
+<!-- ============================================================ 06 -->
+<section id="s06">
+<h2><span class="num">06</span>Thread class API worth knowing</h2><div class="h2rule"></div>
+
+<h3>join() &mdash; wait for another thread to die</h3>
+<pre><code>Thread t = <span class="kw">new</span> Thread(job);
+t.start();
+t.join();            <span class="cm">// CALLER blocks until t is TERMINATED</span>
+t.join(<span class="nu">500</span>);        <span class="cm">// or until 500 ms pass, whichever is first</span>
+<span class="cm">// internally: while (isAlive()) wait(0);  -- that is why it needs no notify</span></code></pre>
+<p><span class="hot">Use it for:</span> "start N threads, then continue only after all finish" &mdash; loop <code>start()</code> over all of them <b>first</b>, then loop <code>join()</code>. <span class="bad">Starting and joining in the same loop makes the program fully sequential</span> &mdash; a classic interview trap.</p>
+
+<h3>Daemon threads</h3>
+<pre><code>Thread t = <span class="kw">new</span> Thread(job);
+t.setDaemon(<span class="kw">true</span>);    <span class="cm">// MUST be called before start(), else IllegalThreadStateException</span>
+t.start();</code></pre>
+<ul>
+<li>The JVM exits when the last <b>non-daemon (user)</b> thread finishes. Daemon threads are then <b>killed abruptly</b> &mdash; <span class="bad"><code>finally</code> blocks may not run</span>.</li>
+<li>Good for background housekeeping: GC, JIT compiler, monitoring, heartbeat. Never for work that must complete (writing a file, flushing a DB).</li>
+<li>Daemon status is <b>inherited</b> from the creating thread. <code>main</code> is a user thread; executor threads are user threads by default.</li>
+</ul>
+
+<h3>Stopping a thread &mdash; interruption</h3>
+<p><code>stop()</code>, <code>suspend()</code>, <code>resume()</code> are <span class="bad">deprecated and unsafe</span>: <code>stop()</code> kills a thread mid-update leaving objects in a broken state and releases all its locks; <code>suspend()</code> holds the lock while suspended &rarr; deadlock. The only safe way is <b>cooperative interruption</b>.</p>
+<pre><code><span class="cm">// interruption is a FLAG, not a kill switch. The task must cooperate.</span>
+<span class="kw">while</span> (!Thread.currentThread().isInterrupted()) {
+    <span class="kw">try</span> {
+        doChunkOfWork();
+        Thread.sleep(<span class="nu">100</span>);
+    } <span class="kw">catch</span> (InterruptedException e) {
+        Thread.currentThread().interrupt();   <span class="cm">// RESTORE the flag</span>
+        <span class="kw">break</span>;                               <span class="cm">// then exit cleanly</span>
+    }
+}</code></pre>
+<div class="box trap">
+<span class="lbl">Trap &mdash; why "restore the flag"?</span>
+<p>When <code>sleep()</code>/<code>wait()</code>/<code>join()</code> throw <code>InterruptedException</code>, the JVM <b>clears</b> the interrupt flag. If you catch it and do nothing, the interruption is silently swallowed and outer code (an executor's <code>shutdownNow()</code>, for example) never learns it should stop. Either rethrow, or call <code>Thread.currentThread().interrupt()</code>.</p>
+<p><code>isInterrupted()</code> &mdash; instance method, <b>does not</b> clear the flag. <code>Thread.interrupted()</code> &mdash; static, <b>clears</b> the flag. Knowing that difference is a standard question.</p>
+</div>
+
+<h3>Quick reference</h3>
+<div class="tw"><table>
+<tr><th class="mono">Method</th><th>Static?</th><th>Effect</th></tr>
+<tr><td class="mono">start()</td><td>No</td><td>Creates the OS thread and calls <code>run()</code> on it</td></tr>
+<tr><td class="mono">run()</td><td>No</td><td>Plain method call &mdash; no new thread</td></tr>
+<tr><td class="mono">sleep(ms)</td><td><span class="good">Yes</span></td><td>Pause current thread, <b>keeps all locks</b></td></tr>
+<tr><td class="mono">yield()</td><td><span class="good">Yes</span></td><td>Hint: give up my slice. Scheduler may ignore it</td></tr>
+<tr><td class="mono">join()</td><td>No</td><td>Caller waits for this thread to terminate</td></tr>
+<tr><td class="mono">interrupt()</td><td>No</td><td>Sets flag; throws IE if target is sleeping/waiting</td></tr>
+<tr><td class="mono">isAlive()</td><td>No</td><td>true if started and not yet terminated</td></tr>
+<tr><td class="mono">setPriority(1-10)</td><td>No</td><td>Hint only. MIN=1, NORM=5, MAX=10</td></tr>
+<tr><td class="mono">setDaemon(true)</td><td>No</td><td>Before start() only. JVM won't wait for it</td></tr>
+<tr><td class="mono">currentThread()</td><td><span class="good">Yes</span></td><td>Reference to the executing thread</td></tr>
+</table></div>
+</section>
+
+<!-- ============================================================ 07 -->
+<section id="s07">
+<h2><span class="num">07</span>Race conditions &mdash; the three real problems</h2><div class="h2rule"></div>
+
+
+<p>Every concurrency bug is one of three things. Naming all three is what separates a memorised answer from an understood one.</p>
+
+<div class="box def">
+<span class="lbl">The three problems</span>
+<ol>
+<li><b>Atomicity</b> &mdash; an operation that looks like one step is many. <code>count++</code> is <span class="bad">read &rarr; add &rarr; write</span>; two threads can both read <code>5</code> and both write <code>6</code>. One increment is lost.</li>
+<li><b>Visibility</b> &mdash; a thread caches a field in a CPU register / core cache. Another thread's write may <b>never become visible</b>. Loops on a non-volatile <code>boolean running</code> can spin forever.</li>
+<li><b>Ordering</b> &mdash; the compiler, JIT and CPU are allowed to <b>reorder</b> instructions as long as the result is unchanged <i>for a single thread</i>. Another thread can observe the reordering.</li>
+</ol>
+</div>
+
+<pre><code><span class="kw">class</span> Counter {
+    <span class="kw">private int</span> count = <span class="nu">0</span>;
+    <span class="kw">public void</span> increment() { count++; }   <span class="cm">// NOT atomic: 3 bytecodes</span>
+}
+<span class="cm">// 1000 threads x 1000 increments  →  expected 1_000_000</span>
+<span class="cm">//                                    actual   997_431 (varies every run)</span></code></pre>
+
+<div class="box under">
+<span class="lbl">Under the hood &mdash; why count++ loses updates</span>
+<pre style="margin:0 0 12px"><code>getfield  count     <span class="cm">// T1 reads 5        T2 reads 5</span>
+iconst_1
+iadd                <span class="cm">// T1 computes 6     T2 computes 6</span>
+putfield  count     <span class="cm">// T1 writes 6       T2 writes 6  ← one increment vanished</span></code></pre>
+<p>A <span class="k">critical section</span> is any code that touches shared mutable state. It must be executed by one thread at a time, and its effects must be made visible to the next thread. <code>synchronized</code> and <code>Lock</code> give you both; <code>volatile</code> gives only visibility + ordering.</p>
+</div>
+
+<div class="box win">
+<span class="lbl">Do this</span>
+<p>The cheapest fix is to have no shared mutable state at all:</p>
+<ul>
+<li>Make it <b>immutable</b> &mdash; <code>final</code> fields, no setters. Immutable objects are automatically thread-safe.</li>
+<li>Make it <b>local</b> &mdash; stack-confined data needs no synchronization.</li>
+<li>Give each thread its own copy &mdash; <code>ThreadLocal</code>.</li>
+<li>Only if none of those work: synchronize, or use an atomic / concurrent class.</li>
+</ul>
+</div>
+</section>
+
+<!-- ============================================================ 08 -->
+<section id="s08">
+<h2><span class="num">08</span>synchronized &amp; the monitor lock</h2><div class="h2rule"></div>
+
+<div class="box def">
+<span class="lbl">Definition</span>
+<p>Every Java object has an invisible <span class="k">monitor</span> (intrinsic lock) in its header. <code>synchronized</code> acquires that monitor on entry and releases it on exit &mdash; <b>including when an exception is thrown</b>. It provides <b>mutual exclusion</b> (atomicity) <b>and</b> a happens-before edge (visibility).</p>
+</div>
+
+<h3>The four forms</h3>
+<pre><code><span class="cm">// 1. synchronized instance method  → locks on 'this'</span>
+<span class="kw">public synchronized void</span> inc() { count++; }
+
+<span class="cm">// 2. synchronized block on this    → same lock, smaller critical section</span>
+<span class="kw">public void</span> inc() {
+    doExpensiveUnsharedWork();          <span class="cm">// not locked - good</span>
+    <span class="kw">synchronized</span> (<span class="kw">this</span>) { count++; }
+}
+
+<span class="cm">// 3. synchronized static method    → locks on Counter.class (ONE per class)</span>
+<span class="kw">public static synchronized void</span> incStatic() { staticCount++; }
+
+<span class="cm">// 4. block on a private lock object → BEST: nobody outside can grab your lock</span>
+<span class="kw">private final</span> Object lock = <span class="kw">new</span> Object();
+<span class="kw">public void</span> inc() { <span class="kw">synchronized</span> (lock) { count++; } }</code></pre>
+
+<div class="box trap">
+<span class="lbl">Trap &mdash; instance lock vs class lock</span>
+<p>A <code>synchronized</code> <b>instance</b> method and a <code>synchronized</code> <b>static</b> method of the same class use <span class="bad">two different locks</span> (<code>this</code> vs <code>Counter.class</code>), so two threads <b>can</b> run them at the same time. If both touch the same static field, you still have a race.</p>
+<p>Similarly, two different <i>instances</i> each have their own monitor &mdash; <code>synchronized</code> instance methods do <b>not</b> protect static state.</p>
+</div>
+
+<h3>Reentrancy</h3>
+<pre><code><span class="kw">public synchronized void</span> outer() { inner(); }   <span class="cm">// acquires lock, hold count = 1</span>
+<span class="kw">public synchronized void</span> inner() { ... }        <span class="cm">// same thread re-enters, count = 2</span>
+<span class="cm">// released only when the count drops back to 0</span></code></pre>
+<p>Java locks are <span class="k">reentrant</span> &mdash; a thread that already holds a lock can acquire it again. Without this, any call from one synchronized method to another would self-deadlock.</p>
+
+<div class="box trap">
+<span class="lbl">Trap &mdash; never lock on these</span>
+<ul>
+<li><span class="bad">String literals</span> &mdash; interned and shared across the whole JVM; unrelated code can lock the same object.</li>
+<li><span class="bad">Boxed primitives</span> (<code>Integer</code>, <code>Long</code>) &mdash; the cache from &minus;128 to 127 makes them shared too.</li>
+<li><span class="bad">A non-final field</span> &mdash; reassigning it mid-flight means two threads lock different objects.</li>
+<li><span class="bad">The object you expose publicly</span> &mdash; any caller can lock it and stall you.</li>
+</ul>
+<p><span class="good">Always: <code>private final Object lock = new Object();</code></span></p>
+</div>
+
+<div class="box ask">
+<span class="lbl">Asked</span>
+<p><b>"Can two threads run two different synchronized methods of the same object simultaneously?"</b> &mdash; <span class="bad">No</span>. Both need the same monitor (<code>this</code>). One instance method + one static method &rarr; <span class="good">yes</span>, different locks.</p>
+<p><b>"Is the lock released if the method throws?"</b> &mdash; <span class="good">Yes</span>, <code>monitorexit</code> runs on the exception path too. With a manual <code>Lock</code>, you must write <code>finally { lock.unlock(); }</code> yourself.</p>
+<p><b>"Can a constructor be synchronized?"</b> &mdash; No. Only one thread can construct an object anyway.</p>
+</div>
+</section>
+
+<!-- ============================================================ 09 -->
+<section id="s09">
+<h2><span class="num">09</span>volatile &amp; the Java Memory Model</h2><div class="h2rule"></div>
+
+<div class="box def">
+<span class="lbl">Definition</span>
+<p><code>volatile</code> guarantees <b>visibility</b> and <b>ordering</b>, not atomicity.</p>
+<ul>
+<li>Every read comes from <b>main memory</b>; every write goes straight to main memory. No caching in registers / core cache.</li>
+<li>A <b>memory barrier</b> is inserted: the compiler and CPU may not reorder across it.</li>
+<li>It creates a <span class="k">happens-before</span> edge: everything a thread did <i>before</i> writing a volatile is visible to any thread that later <i>reads</i> it.</li>
+</ul>
+</div>
+
+<pre><code><span class="kw">class</span> Worker <span class="kw">implements</span> Runnable {
+    <span class="kw">private volatile boolean</span> running = <span class="kw">true</span>;   <span class="cm">// remove 'volatile' → may loop forever</span>
+
+    <span class="kw">public void</span> run() { <span class="kw">while</span> (running) { work(); } }
+    <span class="kw">public void</span> stop()  { running = <span class="kw">false</span>; }         <span class="cm">// seen immediately by the worker</span>
+}</code></pre>
+
+<div class="box trap">
+<span class="lbl">Trap &mdash; volatile does NOT make count++ safe</span>
+<pre style="margin:0 0 12px"><code><span class="kw">volatile int</span> count;
+count++;    <span class="cm">// still read-modify-write → still loses updates</span></code></pre>
+<p>Use <code>volatile</code> only for a <b>flag</b> or a reference that is <b>written by one thread and read by many</b>. For counters use <code>AtomicInteger</code>; for compound state use a lock.</p>
+</div>
+
+<div class="tw"><table>
+<tr><th></th><th class="mono">volatile</th><th class="mono">synchronized</th><th class="mono">AtomicInteger</th></tr>
+<tr><td>Atomicity</td><td><span class="bad">No</span></td><td><span class="good">Yes</span></td><td><span class="good">Yes (single op)</span></td></tr>
+<tr><td>Visibility</td><td><span class="good">Yes</span></td><td><span class="good">Yes</span></td><td><span class="good">Yes</span></td></tr>
+<tr><td>Ordering</td><td><span class="good">Yes</span></td><td><span class="good">Yes</span></td><td><span class="good">Yes</span></td></tr>
+<tr><td>Blocks threads</td><td>No</td><td>Yes</td><td>No (CAS spin)</td></tr>
+<tr><td>Applies to</td><td>Field</td><td>Block / method</td><td>Single variable</td></tr>
+<tr><td>Cost</td><td>Cheap</td><td>Expensive under contention</td><td>Cheap, low contention</td></tr>
+</table></div>
+
+<h3>happens-before &mdash; the rules to name</h3>
+<ol>
+<li><b>Program order</b> &mdash; within one thread, statements happen in order.</li>
+<li><b>Monitor</b> &mdash; unlock happens-before every later lock of the <b>same</b> monitor.</li>
+<li><b>Volatile</b> &mdash; a write happens-before every later read of that field.</li>
+<li><b>Thread start</b> &mdash; everything before <code>t.start()</code> is visible inside <code>t</code>.</li>
+<li><b>Thread join</b> &mdash; everything <code>t</code> did is visible after <code>t.join()</code> returns.</li>
+<li><b>Final fields</b> &mdash; correctly constructed <code>final</code> fields are visible without synchronization.</li>
+<li><b>Transitivity</b> &mdash; if A hb B and B hb C, then A hb C.</li>
+</ol>
+
+<div class="box ask">
+<span class="lbl">Asked &mdash; double-checked locking</span>
+<pre style="margin:0 0 12px"><code><span class="kw">class</span> Singleton {
+    <span class="kw">private static volatile</span> Singleton instance;   <span class="cm">// volatile is MANDATORY</span>
+
+    <span class="kw">static</span> Singleton get() {
+        <span class="kw">if</span> (instance == <span class="kw">null</span>) {                    <span class="cm">// 1st check, no lock</span>
+            <span class="kw">synchronized</span> (Singleton.class) {
+                <span class="kw">if</span> (instance == <span class="kw">null</span>)              <span class="cm">// 2nd check, with lock</span>
+                    instance = <span class="kw">new</span> Singleton();
+            }
+        }
+        <span class="kw">return</span> instance;
+    }
+}</code></pre>
+<p><b>Why <code>volatile</code>?</b> <code>new Singleton()</code> is three steps: allocate, run the constructor, assign the reference. The JIT may <b>reorder</b> 2 and 3. Another thread could then see a non-null reference to a <span class="bad">half-constructed object</span>. <code>volatile</code> forbids that reordering.</p>
+<p><b>Better answer:</b> use a <code>static final</code> holder class (lazy + safe by classloading) or an <code>enum</code> singleton (also serialization- and reflection-safe).</p>
+</div>
+</section>
+
+<!-- ============================================================ 10 -->
+<section id="s10">
+<h2><span class="num">10</span>Inter-thread communication: wait / notify</h2><div class="h2rule"></div>
+
+<p>These three methods live on <code>Object</code>, not <code>Thread</code> &mdash; because the lock they coordinate on belongs to an object.</p>
+
+<div class="tw"><table>
+<tr><th class="mono">Method</th><th>Effect</th></tr>
+<tr><td class="mono">wait()</td><td>Release the monitor, go to WAITING, join this object's wait set</td></tr>
+<tr><td class="mono">notify()</td><td>Wake <b>one arbitrary</b> waiting thread (you cannot choose which)</td></tr>
+<tr><td class="mono">notifyAll()</td><td>Wake <b>all</b> waiting threads; they then compete for the lock</td></tr>
+</table></div>
+
+<div class="box win">
+<span class="lbl">Do this &mdash; the canonical pattern</span>
+<pre style="margin:0 0 12px"><code><span class="kw">synchronized</span> (lock) {
+    <span class="kw">while</span> (!conditionHolds()) {    <span class="cm">// WHILE, never IF</span>
+        lock.wait();
+    }
+    consumeTheState();
+    lock.notifyAll();
+}</code></pre>
+<p><b>Why <code>while</code> and not <code>if</code>?</b> Two reasons: <b>spurious wakeups</b> are permitted by the JVM spec, and with <code>notifyAll()</code> several threads wake but only one wins the lock &mdash; by the time the others get in, the condition may be false again. <span class="bad">Using <code>if</code> is a guaranteed follow-up question.</span></p>
+</div>
+
+<h3>Producer &ndash; Consumer (bounded buffer)</h3>
+<pre><code><span class="kw">class</span> Buffer {
+    <span class="kw">private final</span> Queue&lt;Integer&gt; q = <span class="kw">new</span> LinkedList&lt;&gt;();
+    <span class="kw">private final int</span> CAPACITY = <span class="nu">5</span>;
+
+    <span class="kw">public synchronized void</span> produce(<span class="kw">int</span> item) <span class="kw">throws</span> InterruptedException {
+        <span class="kw">while</span> (q.size() == CAPACITY) wait();      <span class="cm">// buffer full → wait</span>
+        q.add(item);
+        System.out.println(<span class="st">"produced "</span> + item);
+        notifyAll();                              <span class="cm">// wake consumers</span>
+    }
+
+    <span class="kw">public synchronized int</span> consume() <span class="kw">throws</span> InterruptedException {
+        <span class="kw">while</span> (q.isEmpty()) wait();               <span class="cm">// buffer empty → wait</span>
+        <span class="kw">int</span> item = q.poll();
+        System.out.println(<span class="st">"consumed "</span> + item);
+        notifyAll();                              <span class="cm">// wake producers</span>
+        <span class="kw">return</span> item;
+    }
+}</code></pre>
+
+<div class="box trap">
+<span class="lbl">Trap</span>
+<ul>
+<li>Calling <code>wait()</code>/<code>notify()</code> outside <code>synchronized</code> &rarr; <span class="bad">IllegalMonitorStateException</span> at runtime (compiles fine).</li>
+<li><code>notify()</code> with mixed producers and consumers can wake the <b>wrong kind</b> of thread &rarr; everyone waits forever. Use <code>notifyAll()</code>, or use two <code>Condition</code> objects (see next section).</li>
+<li><code>wait()</code> releases only the monitor of <b>that object</b>. Any other lock the thread holds is still held &mdash; a deadlock source.</li>
+</ul>
+</div>
+
+<div class="box win">
+<span class="lbl">In real code, don't write this at all</span>
+<pre style="margin:0 0 12px"><code>BlockingQueue&lt;Integer&gt; q = <span class="kw">new</span> ArrayBlockingQueue&lt;&gt;(<span class="nu">5</span>);
+q.put(item);      <span class="cm">// blocks when full</span>
+<span class="kw">int</span> item = q.take();   <span class="cm">// blocks when empty</span></code></pre>
+<p><code>BlockingQueue</code> is the wait/notify pattern already written and tested. Know the manual version for the interview; ship the library version.</p>
+</div>
+</section>
+
+<!-- ============================================================ 11 -->
+<section id="s11">
+<h2><span class="num">11</span>The Lock API &mdash; java.util.concurrent.locks</h2><div class="h2rule"></div>
+
+<p><code>synchronized</code> is rigid: you cannot try, time out, interrupt, or unlock in a different scope. <code>ReentrantLock</code> gives all of that back.</p>
+
+<pre><code>Lock lock = <span class="kw">new</span> ReentrantLock();
+
+lock.lock();
+<span class="kw">try</span> {
+    criticalSection();
+} <span class="kw">finally</span> {
+    lock.unlock();      <span class="cm">// MANDATORY - a missed unlock deadlocks the whole app</span>
+}</code></pre>
+
+<div class="box trap">
+<span class="lbl">Trap</span>
+<p><span class="bad">Never put <code>lock()</code> inside the <code>try</code>.</span> If <code>lock()</code> itself throws, the <code>finally</code> would call <code>unlock()</code> on a lock you never acquired &rarr; <code>IllegalMonitorStateException</code>, masking the real error. Lock first, then <code>try</code>.</p>
+</div>
+
+<h3>What ReentrantLock adds</h3>
+<pre><code><span class="cm">// 1. tryLock - never block; take the alternative path instead</span>
+<span class="kw">if</span> (lock.tryLock()) {
+    <span class="kw">try</span> { work(); } <span class="kw">finally</span> { lock.unlock(); }
+} <span class="kw">else</span> {
+    System.out.println(<span class="st">"busy, skipping"</span>);
+}
+
+<span class="cm">// 2. tryLock with timeout - the standard deadlock-avoidance tool</span>
+<span class="kw">if</span> (lock.tryLock(<span class="nu">500</span>, TimeUnit.MILLISECONDS)) { ... }
+
+<span class="cm">// 3. interruptible - a waiting thread can be cancelled</span>
+lock.lockInterruptibly();
+
+<span class="cm">// 4. fairness - longest waiter goes first (slower, but no starvation)</span>
+Lock fair = <span class="kw">new</span> ReentrantLock(<span class="kw">true</span>);</code></pre>
+
+<h3>ReadWriteLock &mdash; many readers, one writer</h3>
+<pre><code>ReadWriteLock rw = <span class="kw">new</span> ReentrantReadWriteLock();
+
+rw.readLock().lock();     <span class="cm">// MANY threads may hold this at once</span>
+<span class="kw">try</span> { <span class="kw">return</span> map.get(k); } <span class="kw">finally</span> { rw.readLock().unlock(); }
+
+rw.writeLock().lock();    <span class="cm">// EXCLUSIVE - blocks all readers and writers</span>
+<span class="kw">try</span> { map.put(k, v); } <span class="kw">finally</span> { rw.writeLock().unlock(); }</code></pre>
+<p><span class="hot">Use when reads vastly outnumber writes</span> (caches, config, lookup tables). If writes are frequent, the extra bookkeeping makes it <i>slower</i> than a plain lock.</p>
+<p><span class="k">StampedLock</span> (Java 8) goes further with <b>optimistic reads</b> &mdash; read without locking, then <code>validate(stamp)</code> to confirm no writer interfered. Fastest for read-heavy code, but it is <b>not reentrant</b>.</p>
+
+<h3>Condition &mdash; typed wait sets</h3>
+<pre><code>Lock lock = <span class="kw">new</span> ReentrantLock();
+Condition notFull  = lock.newCondition();
+Condition notEmpty = lock.newCondition();
+
+<span class="cm">// producer</span>
+lock.lock();
+<span class="kw">try</span> {
+    <span class="kw">while</span> (q.size() == CAP) notFull.await();   <span class="cm">// == wait()</span>
+    q.add(item);
+    notEmpty.signal();                          <span class="cm">// == notify(), but ONLY consumers</span>
+} <span class="kw">finally</span> { lock.unlock(); }</code></pre>
+<p><span class="good">Advantage over wait/notify:</span> one lock can have <b>many</b> condition queues, so you signal exactly the right group instead of waking everyone.</p>
+
+<div class="tw"><table>
+<tr><th></th><th class="mono">synchronized</th><th class="mono">ReentrantLock</th></tr>
+<tr><td>Unlock</td><td>Automatic (even on exception)</td><td>Manual &mdash; <code>finally</code> required</td></tr>
+<tr><td>Try without blocking</td><td><span class="bad">No</span></td><td><span class="good">tryLock()</span></td></tr>
+<tr><td>Timeout</td><td><span class="bad">No</span></td><td><span class="good">tryLock(t, unit)</span></td></tr>
+<tr><td>Interruptible wait</td><td><span class="bad">No</span></td><td><span class="good">lockInterruptibly()</span></td></tr>
+<tr><td>Fairness option</td><td><span class="bad">No</span></td><td><span class="good">new ReentrantLock(true)</span></td></tr>
+<tr><td>Multiple wait sets</td><td>One per object</td><td><span class="good">Many Conditions</span></td></tr>
+<tr><td>Lock across methods</td><td>No (block-scoped)</td><td>Yes</td></tr>
+<tr><td>Shows in thread dump as</td><td>BLOCKED</td><td>WAITING (park)</td></tr>
+<tr><td>Use when</td><td>Simple, short critical section</td><td>Need try / timeout / fairness / conditions</td></tr>
+</table></div>
+</section>
+
+<!-- ============================================================ 12 -->
+<section id="s12">
+<h2><span class="num">12</span>Atomics &amp; CAS &mdash; lock-free</h2><div class="h2rule"></div>
+
+<div class="box def">
+<span class="lbl">Definition &mdash; Compare-And-Swap</span>
+<p><code>CAS(memoryLocation, expectedValue, newValue)</code> is a <b>single CPU instruction</b> (<code>lock cmpxchg</code> on x86). It writes <code>newValue</code> only if the current value still equals <code>expectedValue</code>; otherwise it fails and the caller retries. No lock, no blocking, no context switch.</p>
+</div>
+
+<pre><code>AtomicInteger count = <span class="kw">new</span> AtomicInteger(<span class="nu">0</span>);
+
+count.incrementAndGet();          <span class="cm">// atomic ++count</span>
+count.getAndIncrement();          <span class="cm">// atomic count++</span>
+count.addAndGet(<span class="nu">5</span>);
+count.compareAndSet(<span class="nu">10</span>, <span class="nu">20</span>);     <span class="cm">// only if it is exactly 10 right now</span>
+count.updateAndGet(x -&gt; x * <span class="nu">2</span>);   <span class="cm">// retries the lambda until CAS succeeds</span>
+
+<span class="cm">// the retry loop inside incrementAndGet, conceptually:</span>
+<span class="cm">// do { old = get(); next = old + 1; } while (!compareAndSet(old, next));</span></code></pre>
+
+<h3>The family</h3>
+<ul>
+<li><code>AtomicInteger</code>, <code>AtomicLong</code>, <code>AtomicBoolean</code>, <code>AtomicReference&lt;T&gt;</code></li>
+<li><code>AtomicIntegerArray</code> &mdash; per-element atomicity</li>
+<li><span class="k">LongAdder</span> / <span class="k">LongAccumulator</span> (Java 8) &mdash; under <b>heavy</b> contention, far faster than <code>AtomicLong</code>: each thread bumps its own cell, <code>sum()</code> adds them up. Use for counters/metrics where you read rarely.</li>
+<li><code>AtomicStampedReference</code> &mdash; value + version stamp, to defeat the ABA problem.</li>
+</ul>
+
+<div class="box ask">
+<span class="lbl">Asked &mdash; the ABA problem</span>
+<p>Thread&nbsp;1 reads <code>A</code>. Thread&nbsp;2 changes it to <code>B</code> and back to <code>A</code>. Thread&nbsp;1's CAS <b>succeeds</b> because the value still looks like <code>A</code> &mdash; but the world changed in between (a node was recycled, a stack was popped and pushed). Fix: attach a <b>version counter</b> that only ever increases &rarr; <code>AtomicStampedReference</code>.</p>
+</div>
+
+<div class="box trap">
+<span class="lbl">Trap</span>
+<p>CAS is not free. Under very high contention the retry loop spins and <span class="bad">burns CPU</span>. Lock-free beats locking for short operations with low-to-moderate contention; for long critical sections a real lock is better because the thread sleeps instead of spinning.</p>
+</div>
+</section>
+
+<!-- ============================================================ 13 -->
+<section id="s13">
+<h2><span class="num">13</span>Deadlock, livelock, starvation</h2><div class="h2rule"></div>
+
+<h3>Deadlock</h3>
+<pre><code><span class="cm">// Thread 1                          Thread 2</span>
+<span class="kw">synchronized</span> (lockA) {              <span class="kw">synchronized</span> (lockB) {
+    <span class="kw">synchronized</span> (lockB) { ... }        <span class="kw">synchronized</span> (lockA) { ... }
+}                                    }
+<span class="cm">// T1 holds A waits for B; T2 holds B waits for A. Both wait forever.</span></code></pre>
+
+<div class="box def">
+<span class="lbl">Coffman conditions &mdash; all four must hold</span>
+<ol>
+<li><b>Mutual exclusion</b> &mdash; a resource is held exclusively.</li>
+<li><b>Hold and wait</b> &mdash; a thread holds one lock while requesting another.</li>
+<li><b>No preemption</b> &mdash; a lock cannot be forcibly taken away.</li>
+<li><b>Circular wait</b> &mdash; a cycle of threads each waiting on the next.</li>
+</ol>
+<p>Break <b>any one</b> of them and deadlock is impossible.</p>
+</div>
+
+<div class="box win">
+<span class="lbl">Prevention &mdash; in priority order</span>
+<ol>
+<li><b>Global lock ordering</b> &mdash; every thread acquires locks in the same fixed order (e.g. by <code>System.identityHashCode</code> or account id). Kills <i>circular wait</i>. This is the answer interviewers want first.</li>
+<li><b><code>tryLock(timeout)</code></b> &mdash; back off and retry, releasing what you hold. Kills <i>hold and wait</i>.</li>
+<li><b>Shrink the critical section</b> &mdash; never call unknown / external code while holding a lock.</li>
+<li><b>Use one lock</b>, or a higher-level construct (<code>ConcurrentHashMap</code>, <code>BlockingQueue</code>) instead of hand-rolled locking.</li>
+</ol>
+</div>
+
+<pre><code><span class="cm">// Global ordering applied to a bank transfer</span>
+<span class="kw">void</span> transfer(Account from, Account to, <span class="kw">long</span> amt) {
+    Account first  = from.id &lt; to.id ? from : to;
+    Account second = from.id &lt; to.id ? to   : from;
+    <span class="kw">synchronized</span> (first) {
+        <span class="kw">synchronized</span> (second) { from.debit(amt); to.credit(amt); }
+    }
+}</code></pre>
+
+<h3>The other two</h3>
+<ul>
+<li><span class="k">Livelock</span> &mdash; threads are <b>not blocked</b>, they keep responding to each other and making no progress (two people stepping aside in a corridor). Typical cause: naive retry-on-conflict with no randomised backoff.</li>
+<li><span class="k">Starvation</span> &mdash; a thread never gets the resource because others keep winning it. Causes: unfair locks, thread priority abuse, one thread holding a lock for too long. Fix with a <b>fair</b> lock.</li>
+</ul>
+
+<div class="box ask">
+<span class="lbl">Asked &mdash; how do you detect a deadlock in production?</span>
+<ul>
+<li><code>jstack &lt;pid&gt;</code> or <code>jcmd &lt;pid&gt; Thread.print</code> &mdash; the JVM prints "Found one Java-level deadlock" with both stacks.</li>
+<li><b>VisualVM / JMC / JConsole</b> &mdash; detect-deadlock button.</li>
+<li>Programmatically: <code>ThreadMXBean.findDeadlockedThreads()</code>.</li>
+<li>In a thread dump, look for many threads in <code>BLOCKED</code> on <code>- waiting to lock &lt;0x...&gt;</code>.</li>
+</ul>
+</div>
+</section>
+
+<!-- ============================================================ 14 -->
+<section id="s14">
+<h2><span class="num">14</span>Executor framework</h2><div class="h2rule"></div>
+
+<p>The single most important practical topic in a Java concurrency interview.</p>
+
+<figure>
+<svg viewBox="0 0 700 250" role="img" aria-label="Thread pool flow: submitted tasks go to core threads first, then overflow into the work queue, then create threads up to the maximum, and only when both queue and maximum are exhausted is the rejection handler invoked">
+  <defs>
+    <marker id="ar4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+
+  <rect x="12" y="92" width="112" height="52" fill="none" stroke="currentColor" stroke-width="1.2"/>
+  <text x="68" y="114" font-size="12.5" font-family="monospace" fill="currentColor" text-anchor="middle">submit(task)</text>
+  <text x="68" y="132" font-size="10" font-family="monospace" fill="currentColor" text-anchor="middle">new work arrives</text>
+
+  <line x1="128" y1="118" x2="160" y2="118" stroke="currentColor" stroke-width="1.2" marker-end="url(#ar4)"/>
+
+  <rect x="164" y="80" width="130" height="76" fill="none" stroke="currentColor" stroke-width="1.2"/>
+  <text x="229" y="104" font-size="12" font-family="monospace" fill="currentColor" text-anchor="middle">1. core threads</text>
+  <text x="229" y="122" font-size="10" font-family="monospace" fill="currentColor" text-anchor="middle">busy &lt; corePoolSize ?</text>
+  <text x="229" y="140" font-size="10" font-family="monospace" fill="#C9531A" text-anchor="middle">create &amp; run now</text>
+
+  <line x1="298" y1="118" x2="330" y2="118" stroke="currentColor" stroke-width="1.2" marker-end="url(#ar4)"/>
+  <text x="314" y="110" font-size="9.5" font-family="monospace" fill="currentColor" text-anchor="middle">full</text>
+
+  <rect x="334" y="80" width="130" height="76" fill="none" stroke="currentColor" stroke-width="1.2"/>
+  <text x="399" y="104" font-size="12" font-family="monospace" fill="currentColor" text-anchor="middle">2. work queue</text>
+  <text x="399" y="122" font-size="10" font-family="monospace" fill="currentColor" text-anchor="middle">BlockingQueue</text>
+  <text x="399" y="140" font-size="10" font-family="monospace" fill="#C9531A" text-anchor="middle">task waits its turn</text>
+
+  <line x1="468" y1="118" x2="500" y2="118" stroke="currentColor" stroke-width="1.2" marker-end="url(#ar4)"/>
+  <text x="484" y="110" font-size="9.5" font-family="monospace" fill="currentColor" text-anchor="middle">full</text>
+
+  <rect x="504" y="80" width="130" height="76" fill="none" stroke="currentColor" stroke-width="1.2"/>
+  <text x="569" y="104" font-size="12" font-family="monospace" fill="currentColor" text-anchor="middle">3. extra threads</text>
+  <text x="569" y="122" font-size="10" font-family="monospace" fill="currentColor" text-anchor="middle">up to maximumPoolSize</text>
+  <text x="569" y="140" font-size="10" font-family="monospace" fill="#C9531A" text-anchor="middle">idle ones die after</text>
+  <text x="569" y="152" font-size="10" font-family="monospace" fill="#C9531A" text-anchor="middle">keepAliveTime</text>
+
+  <line x1="569" y1="160" x2="569" y2="192" stroke="currentColor" stroke-width="1.2" marker-end="url(#ar4)"/>
+  <text x="580" y="180" font-size="9.5" font-family="monospace" fill="currentColor">full</text>
+
+  <rect x="474" y="196" width="190" height="40" fill="none" stroke="#C9531A" stroke-width="1.6"/>
+  <text x="569" y="213" font-size="12" font-family="monospace" fill="#C9531A" text-anchor="middle">4. RejectedExecutionHandler</text>
+  <text x="569" y="229" font-size="10" font-family="monospace" fill="currentColor" text-anchor="middle">Abort · CallerRuns · Discard</text>
+
+  <text x="12" y="184" font-size="10.5" font-family="monospace" fill="currentColor">Order matters: the QUEUE fills</text>
+  <text x="12" y="199" font-size="10.5" font-family="monospace" fill="currentColor">BEFORE extra threads are made.</text>
+  <text x="12" y="220" font-size="10.5" font-family="monospace" fill="#C9531A">Unbounded queue ⇒ step 3 never</text>
+  <text x="12" y="235" font-size="10.5" font-family="monospace" fill="#C9531A">happens; maximumPoolSize is dead.</text>
+</svg>
+<figcaption>ThreadPoolExecutor's admission order &mdash; core threads, then queue, then extra threads, then rejection. Getting this order the wrong way round is the most common wrong answer.</figcaption>
+</figure>
+
+<h3>The 7 constructor parameters</h3>
+<pre><code><span class="kw">new</span> ThreadPoolExecutor(
+    <span class="nu">4</span>,                              <span class="cm">// corePoolSize     - kept alive even when idle</span>
+    <span class="nu">10</span>,                             <span class="cm">// maximumPoolSize  - hard ceiling</span>
+    <span class="nu">60</span>, TimeUnit.SECONDS,          <span class="cm">// keepAliveTime    - for threads above core</span>
+    <span class="kw">new</span> ArrayBlockingQueue&lt;&gt;(<span class="nu">100</span>),  <span class="cm">// workQueue        - BOUNDED, please</span>
+    namedThreadFactory,             <span class="cm">// threadFactory    - naming, daemon, handler</span>
+    <span class="kw">new</span> ThreadPoolExecutor.CallerRunsPolicy());  <span class="cm">// rejection handler</span></code></pre>
+
+<h3>Factory methods &mdash; and why they are dangerous</h3>
+<div class="tw"><table>
+<tr><th class="mono">Executors.…</th><th>Queue</th><th>Risk</th></tr>
+<tr><td class="mono">newFixedThreadPool(n)</td><td>Unbounded <code>LinkedBlockingQueue</code></td><td><span class="bad">Queue grows without limit &rarr; OOM</span></td></tr>
+<tr><td class="mono">newCachedThreadPool()</td><td><code>SynchronousQueue</code>, max = <code>Integer.MAX_VALUE</code></td><td><span class="bad">Unbounded thread creation &rarr; OOM</span></td></tr>
+<tr><td class="mono">newSingleThreadExecutor()</td><td>Unbounded</td><td>Serial execution; same OOM risk</td></tr>
+<tr><td class="mono">newScheduledThreadPool(n)</td><td><code>DelayedWorkQueue</code></td><td>Task exception cancels future runs</td></tr>
+<tr><td class="mono">newWorkStealingPool()</td><td>ForkJoin deques</td><td>No order guarantee</td></tr>
+</table></div>
+<p><span class="good">In production, construct <code>ThreadPoolExecutor</code> yourself with a bounded queue and a named factory.</span> This is exactly what Alibaba's Java guidelines mandate, and interviewers love it.</p>
+
+<h3>Rejection policies</h3>
+<ul>
+<li><code>AbortPolicy</code> <span class="pill">default</span> &mdash; throws <code>RejectedExecutionException</code>.</li>
+<li><code>CallerRunsPolicy</code> &mdash; the <b>submitting</b> thread runs the task. Natural back-pressure: the producer slows down. Usually the best choice.</li>
+<li><code>DiscardPolicy</code> &mdash; drops it silently.</li>
+<li><code>DiscardOldestPolicy</code> &mdash; drops the oldest queued task, retries.</li>
+</ul>
+
+<h3>Shutdown</h3>
+<div class="tw"><table>
+<tr><th class="mono">Method</th><th>Behaviour</th></tr>
+<tr><td class="mono">shutdown()</td><td>Stop accepting new tasks; finish queued + running ones. Does not block.</td></tr>
+<tr><td class="mono">shutdownNow()</td><td>Try to <b>interrupt</b> running tasks, return the un-run queued tasks.</td></tr>
+<tr><td class="mono">awaitTermination(t,u)</td><td>Block until terminated / timeout. Returns boolean.</td></tr>
+<tr><td class="mono">isShutdown()</td><td>true once shutdown was called</td></tr>
+<tr><td class="mono">isTerminated()</td><td>true only when every task has actually finished</td></tr>
+</table></div>
+<pre><code>pool.shutdown();
+<span class="kw">try</span> {
+    <span class="kw">if</span> (!pool.awaitTermination(<span class="nu">30</span>, TimeUnit.SECONDS)) {
+        pool.shutdownNow();
+        pool.awaitTermination(<span class="nu">10</span>, TimeUnit.SECONDS);
+    }
+} <span class="kw">catch</span> (InterruptedException e) {
+    pool.shutdownNow();
+    Thread.currentThread().interrupt();
+}</code></pre>
+
+<div class="box trap">
+<span class="lbl">Trap</span>
+<ul>
+<li>Pool threads are <b>non-daemon</b>: forget <code>shutdown()</code> and <span class="bad">your JVM never exits</span>.</li>
+<li><code>submit()</code> <b>swallows</b> exceptions into the <code>Future</code>. If you never call <code>get()</code>, the error disappears silently. <code>execute()</code> lets it reach the uncaught-exception handler. <span class="hot">This is a favourite question.</span></li>
+<li><code>shutdownNow()</code> only <i>interrupts</i>. A task that ignores the interrupt flag keeps running.</li>
+</ul>
+</div>
+</section>
+
+<!-- ============================================================ 15 -->
+<section id="s15">
+<h2><span class="num">15</span>Future &amp; CompletableFuture</h2><div class="h2rule"></div>
+
+<h3>Future &mdash; and its limits</h3>
+<pre><code>Future&lt;Integer&gt; f = pool.submit(() -&gt; compute());
+
+f.isDone();  f.isCancelled();
+f.cancel(<span class="kw">true</span>);                     <span class="cm">// true = interrupt if already running</span>
+<span class="kw">int</span> v = f.get();                     <span class="cm">// BLOCKS forever if the task hangs</span>
+<span class="kw">int</span> v2 = f.get(<span class="nu">2</span>, TimeUnit.SECONDS);  <span class="cm">// always prefer this</span></code></pre>
+<p><span class="bad">Limits of <code>Future</code>:</span> <code>get()</code> blocks, you cannot chain steps, cannot combine two futures, and cannot register a callback. Every one of those is fixed by <code>CompletableFuture</code>.</p>
+<p><span class="hot">Note:</span> a checked exception from the task comes back wrapped &mdash; <code>ExecutionException</code>, with the real error in <code>e.getCause()</code>.</p>
+
+<h3>CompletableFuture &mdash; async pipelines</h3>
+<pre><code>CompletableFuture.supplyAsync(() -&gt; fetchUser(id))       <span class="cm">// produces a value</span>
+    .thenApply(User::getEmail)                           <span class="cm">// transform (sync)</span>
+    .thenCompose(mail -&gt; lookupPrefsAsync(mail))         <span class="cm">// flatMap - avoids CF&lt;CF&lt;T&gt;&gt;</span>
+    .thenCombine(loadSettingsAsync(), Prefs::merge)      <span class="cm">// join TWO futures</span>
+    .thenAccept(System.out::println)                     <span class="cm">// consume, returns CF&lt;Void&gt;</span>
+    .exceptionally(ex -&gt; { log.error(ex); <span class="kw">return null</span>; })
+    .join();                                             <span class="cm">// like get() but unchecked</span></code></pre>
+
+<div class="tw"><table>
+<tr><th class="mono">Method</th><th>Purpose</th></tr>
+<tr><td class="mono">supplyAsync / runAsync</td><td>Start async work (with / without a result)</td></tr>
+<tr><td class="mono">thenApply</td><td>Map the value &rarr; <code>CF&lt;R&gt;</code></td></tr>
+<tr><td class="mono">thenCompose</td><td>Map to another future and flatten (avoids nesting)</td></tr>
+<tr><td class="mono">thenCombine</td><td>Combine two independent futures' results</td></tr>
+<tr><td class="mono">thenAccept / thenRun</td><td>Consume the value / just run after</td></tr>
+<tr><td class="mono">allOf / anyOf</td><td>Wait for all / first of many</td></tr>
+<tr><td class="mono">exceptionally</td><td>Recover from a failure with a fallback value</td></tr>
+<tr><td class="mono">handle / whenComplete</td><td>See both result and exception</td></tr>
+<tr><td class="mono">orTimeout(t,u)</td><td>Java 9+ &mdash; fail if it takes too long</td></tr>
+</table></div>
+
+<div class="box ask">
+<span class="lbl">Asked</span>
+<p><b>thenApply vs thenCompose?</b> <code>thenApply</code> with a function returning a future gives you <code>CompletableFuture&lt;CompletableFuture&lt;T&gt;&gt;</code>. <code>thenCompose</code> flattens it &mdash; it is <code>flatMap</code>. Same distinction as <code>map</code> vs <code>flatMap</code> in Streams.</p>
+<p><b>Which pool runs it?</b> The <code>…Async</code> variants without an executor use <code>ForkJoinPool.commonPool()</code>, which is sized <code>cores − 1</code> and shared with parallel streams. <span class="bad">Never do blocking I/O there</span> &mdash; you will starve the whole JVM. Pass your own executor: <code>supplyAsync(task, myPool)</code>.</p>
+<p><b>Non-Async variants</b> (<code>thenApply</code> vs <code>thenApplyAsync</code>) may run on the thread that completed the previous stage &mdash; or on the caller thread if it is already done.</p>
+</div>
+</section>
+
+<!-- ============================================================ 16 -->
+<section id="s16">
+<h2><span class="num">16</span>Synchronizers</h2><div class="h2rule"></div>
+
+<div class="tw"><table>
+<tr><th class="mono">Class</th><th>One-line meaning</th><th>Reusable?</th></tr>
+<tr><td class="mono">CountDownLatch</td><td>Wait until N events have happened</td><td><span class="bad">No &mdash; one shot</span></td></tr>
+<tr><td class="mono">CyclicBarrier</td><td>N threads wait for each other at a rendezvous</td><td><span class="good">Yes</span></td></tr>
+<tr><td class="mono">Semaphore</td><td>Allow at most N threads into a section</td><td><span class="good">Yes</span></td></tr>
+<tr><td class="mono">Phaser</td><td>Barrier with a dynamic number of parties</td><td><span class="good">Yes</span></td></tr>
+<tr><td class="mono">Exchanger</td><td>Two threads swap objects at a meeting point</td><td><span class="good">Yes</span></td></tr>
+</table></div>
+
+<pre><code><span class="cm">// CountDownLatch: main waits for 3 services to boot</span>
+CountDownLatch latch = <span class="kw">new</span> CountDownLatch(<span class="nu">3</span>);
+<span class="kw">for</span> (Service s : services)
+    pool.submit(() -&gt; { <span class="kw">try</span> { s.start(); } <span class="kw">finally</span> { latch.countDown(); } });
+latch.await();                      <span class="cm">// blocks until the count reaches 0</span>
+System.out.println(<span class="st">"all services up"</span>);
+
+<span class="cm">// CyclicBarrier: 3 workers finish a phase together, then the barrier action runs</span>
+CyclicBarrier barrier = <span class="kw">new</span> CyclicBarrier(<span class="nu">3</span>, () -&gt; System.out.println(<span class="st">"phase done"</span>));
+<span class="cm">// inside each worker:  barrier.await();</span>
+
+<span class="cm">// Semaphore: only 2 threads may hit the database at once</span>
+Semaphore sem = <span class="kw">new</span> Semaphore(<span class="nu">2</span>);
+sem.acquire();
+<span class="kw">try</span> { queryDb(); } <span class="kw">finally</span> { sem.release(); }   <span class="cm">// release in finally!</span></code></pre>
+
+<div class="box ask">
+<span class="lbl">Asked &mdash; CountDownLatch vs CyclicBarrier</span>
+<ul>
+<li><b>Latch</b>: a <i>waiter</i> thread waits; <i>other</i> threads count down. Count only goes down, <span class="bad">cannot be reset</span>.</li>
+<li><b>Barrier</b>: the <i>same</i> threads that wait are the ones that arrive. <span class="good">Auto-resets</span> for the next round, and can run a barrier action.</li>
+<li>If one thread at a barrier is interrupted, all the others get <code>BrokenBarrierException</code>.</li>
+</ul>
+<p><b>Semaphore vs Lock:</b> a binary semaphore (<code>new Semaphore(1)</code>) looks like a lock but is <span class="bad">not reentrant</span> and has <b>no owner</b> &mdash; any thread can <code>release()</code> a permit it never acquired. Use it for <b>rate limiting / resource pools</b>, not for mutual exclusion.</p>
+</div>
+</section>
+
+<!-- ============================================================ 17 -->
+<section id="s17">
+<h2><span class="num">17</span>Concurrent collections</h2><div class="h2rule"></div>
+
+<div class="tw"><table>
+<tr><th>Instead of</th><th>Use</th><th>Why</th></tr>
+<tr><td class="mono">HashMap</td><td class="mono">ConcurrentHashMap</td><td>Lock-free reads, per-bin locking on write</td></tr>
+<tr><td class="mono">Hashtable / synchronizedMap</td><td class="mono">ConcurrentHashMap</td><td>One global lock vs fine-grained</td></tr>
+<tr><td class="mono">ArrayList</td><td class="mono">CopyOnWriteArrayList</td><td>Read-mostly: iteration never throws CME</td></tr>
+<tr><td class="mono">TreeMap</td><td class="mono">ConcurrentSkipListMap</td><td>Sorted + concurrent</td></tr>
+<tr><td class="mono">LinkedList as a queue</td><td class="mono">ArrayBlockingQueue</td><td>Bounded, blocking put/take</td></tr>
+</table></div>
+
+<h3>ConcurrentHashMap</h3>
+<ul>
+<li><b>Java 7</b>: segment locking (16 segments by default) &mdash; <code>concurrencyLevel</code>.</li>
+<li><b>Java 8+</b>: <span class="jvm">no segments</span>. CAS for an empty bin, <code>synchronized</code> on the <b>first node</b> of a bin when it is occupied. A long bin becomes a red-black tree at 8 entries.</li>
+<li><b>Reads never lock</b> (<code>Node.val</code> and <code>next</code> are <code>volatile</code>).</li>
+<li>Iterators are <span class="k">weakly consistent</span> &mdash; they reflect some state at or after creation, never throw <code>ConcurrentModificationException</code>.</li>
+<li><span class="bad">Does not allow null keys or values</span> &mdash; because <code>get()</code> returning null would be ambiguous ("absent" vs "mapped to null") and you could not fix it with <code>containsKey</code> race-free.</li>
+<li>Atomic compound ops: <code>putIfAbsent</code>, <code>computeIfAbsent</code>, <code>compute</code>, <code>merge</code>. <span class="bad">Never do <code>if (!map.containsKey(k)) map.put(k,v)</code></span> &mdash; that is two operations, not one.</li>
+</ul>
+
+<h3>CopyOnWriteArrayList</h3>
+<p>Every write copies the whole backing array. <span class="good">Reads are free and lock-free</span>; writes are O(n). Perfect for listener lists read constantly and mutated rarely. <span class="bad">Terrible</span> for write-heavy data.</p>
+
+<h3>BlockingQueue family</h3>
+<div class="tw"><table>
+<tr><th class="mono">Type</th><th>Character</th></tr>
+<tr><td class="mono">ArrayBlockingQueue</td><td>Bounded, array-backed, one lock, optional fairness</td></tr>
+<tr><td class="mono">LinkedBlockingQueue</td><td>Optionally bounded, separate put/take locks &rarr; higher throughput</td></tr>
+<tr><td class="mono">SynchronousQueue</td><td>Zero capacity &mdash; a handoff; <code>put</code> waits for a <code>take</code></td></tr>
+<tr><td class="mono">PriorityBlockingQueue</td><td>Unbounded, ordered by comparator</td></tr>
+<tr><td class="mono">DelayQueue</td><td>Elements only become available after their delay expires</td></tr>
+</table></div>
+<div class="tw"><table>
+<tr><th>Operation</th><th class="mono">Throws</th><th class="mono">Returns special</th><th class="mono">Blocks</th><th class="mono">Times out</th></tr>
+<tr><td>Insert</td><td>add(e)</td><td>offer(e)</td><td><span class="good">put(e)</span></td><td>offer(e,t,u)</td></tr>
+<tr><td>Remove</td><td>remove()</td><td>poll()</td><td><span class="good">take()</span></td><td>poll(t,u)</td></tr>
+<tr><td>Examine</td><td>element()</td><td>peek()</td><td>&mdash;</td><td>&mdash;</td></tr>
+</table></div>
+</section>
+
+<!-- ============================================================ 18 -->
+<section id="s18">
+<h2><span class="num">18</span>ThreadLocal</h2><div class="h2rule"></div>
+
+<p>A variable where <b>every thread gets its own independent copy</b>. No sharing &rarr; no synchronization needed.</p>
+
+<pre><code><span class="kw">private static final</span> ThreadLocal&lt;SimpleDateFormat&gt; FMT =
+        ThreadLocal.withInitial(() -&gt; <span class="kw">new</span> SimpleDateFormat(<span class="st">"yyyy-MM-dd"</span>));
+
+String today = FMT.get().format(<span class="kw">new</span> Date());   <span class="cm">// SDF is not thread-safe; this is</span></code></pre>
+
+<ul>
+<li>Storage lives in the <b>Thread object itself</b> (<code>Thread.threadLocals</code>, a <code>ThreadLocalMap</code>), keyed by the ThreadLocal instance.</li>
+<li>Classic uses: per-request user / trace id (MDC logging), the current DB transaction or connection, non-thread-safe formatters.</li>
+<li><code>InheritableThreadLocal</code> passes the value to <b>child</b> threads at creation time.</li>
+</ul>
+
+<div class="box trap">
+<span class="lbl">Trap &mdash; the memory leak</span>
+<p>In a <b>thread pool</b> the thread is reused forever, so a value you set is <span class="bad">never garbage collected and leaks into the next unrelated task</span>. The <code>ThreadLocalMap</code> key is a weak reference but the <b>value is strong</b>.</p>
+<p><span class="good">Always <code>remove()</code> in a <code>finally</code> block:</span></p>
+<pre style="margin:0 0 12px"><code><span class="kw">try</span> { CONTEXT.set(userId); handle(request); }
+<span class="kw">finally</span> { CONTEXT.remove(); }</code></pre>
+<p>Also note: with <b>virtual threads</b>, per-thread caching loses its point (there may be millions of threads). Java 21 offers <code>ScopedValue</code> as the modern replacement.</p>
+</div>
+</section>
+
+<!-- ============================================================ 19 -->
+<section id="s19">
+<h2><span class="num">19</span>ForkJoin &amp; parallel streams</h2><div class="h2rule"></div>
+
+<p>For <b>divide-and-conquer CPU-bound</b> work. The pool uses <span class="k">work stealing</span>: each worker has its own double-ended queue; an idle worker <b>steals</b> a task from the <i>tail</i> of a busy worker's deque, so load balances itself.</p>
+
+<pre><code><span class="kw">class</span> SumTask <span class="kw">extends</span> RecursiveTask&lt;Long&gt; {
+    <span class="kw">private static final int</span> THRESHOLD = <span class="nu">1000</span>;
+    <span class="kw">private final int</span>[] arr; <span class="kw">private final int</span> lo, hi;
+
+    <span class="kw">protected</span> Long compute() {
+        <span class="kw">if</span> (hi - lo &lt;= THRESHOLD) {              <span class="cm">// small enough → do it directly</span>
+            <span class="kw">long</span> s = <span class="nu">0</span>;
+            <span class="kw">for</span> (<span class="kw">int</span> i = lo; i &lt; hi; i++) s += arr[i];
+            <span class="kw">return</span> s;
+        }
+        <span class="kw">int</span> mid = (lo + hi) &gt;&gt;&gt; <span class="nu">1</span>;
+        SumTask left  = <span class="kw">new</span> SumTask(arr, lo, mid);
+        SumTask right = <span class="kw">new</span> SumTask(arr, mid, hi);
+        left.fork();                              <span class="cm">// run async in the pool</span>
+        <span class="kw">return</span> right.compute() + left.join();      <span class="cm">// compute one here, join the other</span>
+    }
+}
+<span class="kw">long</span> total = ForkJoinPool.commonPool().invoke(<span class="kw">new</span> SumTask(arr, <span class="nu">0</span>, arr.length));</code></pre>
+<ul>
+<li><code>RecursiveTask&lt;V&gt;</code> returns a value; <code>RecursiveAction</code> returns void.</li>
+<li><span class="good">Idiom: <code>left.fork(); right.compute(); left.join();</code></span> &mdash; forking both and joining both wastes a thread.</li>
+<li>A <b>threshold</b> is essential: splitting down to single elements costs more than the work itself.</li>
+</ul>
+
+<div class="box trap">
+<span class="lbl">Trap &mdash; parallel streams</span>
+<p><code>list.parallelStream()</code> runs on the <b>shared</b> <code>ForkJoinPool.commonPool()</code> &mdash; sized <code>cores − 1</code> and used by the entire JVM. One blocking I/O call inside a parallel stream can stall every other parallel stream and <code>CompletableFuture</code> in the application.</p>
+<p>Use parallel streams only when: the data set is <b>large</b>, the operation is <b>CPU-bound and stateless</b>, the source <b>splits well</b> (array, <code>ArrayList</code> &mdash; not <code>LinkedList</code>), and you have <b>measured</b> a gain.</p>
+</div>
+</section>
+
+<!-- ============================================================ 20 -->
+<section id="s20">
+<h2><span class="num">20</span>Virtual threads <span class="pill p2">Java 21</span></h2><div class="h2rule"></div>
+
+<div class="box def">
+<span class="lbl">Definition</span>
+<p>A <span class="k">virtual thread</span> is scheduled by the <b>JVM</b>, not the OS. Many virtual threads are multiplexed onto a small pool of <b>carrier</b> (platform) threads. Its stack lives on the <b>heap</b> and grows on demand &mdash; roughly a kilobyte instead of a megabyte.</p>
+</div>
+
+<pre><code>Thread v = Thread.ofVirtual().name(<span class="st">"v-1"</span>).start(() -&gt; handle());
+v.join();
+
+<span class="kw">try</span> (var es = Executors.newVirtualThreadPerTaskExecutor()) {
+    <span class="kw">for</span> (Request r : requests) es.submit(() -&gt; handle(r));   <span class="cm">// a million is fine</span>
+}</code></pre>
+
+<div class="tw"><table>
+<tr><th></th><th>Platform thread</th><th>Virtual thread</th></tr>
+<tr><td>Scheduled by</td><td>OS kernel</td><td>JVM (ForkJoinPool)</td></tr>
+<tr><td>Stack</td><td>Fixed, ~1 MB, off-heap</td><td>Growable, ~KB, on heap</td></tr>
+<tr><td>Practical count</td><td>Thousands</td><td>Millions</td></tr>
+<tr><td>Blocking I/O</td><td>Parks an OS thread</td><td><span class="good">Unmounts from the carrier</span></td></tr>
+<tr><td>Should you pool them?</td><td>Yes</td><td><span class="bad">No &mdash; create one per task</span></td></tr>
+<tr><td>Best for</td><td>CPU-bound work</td><td>I/O-bound, high concurrency</td></tr>
+</table></div>
+
+<div class="box trap">
+<span class="lbl">Trap &mdash; pinning</span>
+<p>A virtual thread that blocks inside a <code>synchronized</code> block (or a native/JNI frame) <span class="bad">cannot unmount</span> &mdash; it <b>pins</b> its carrier thread and you lose the whole benefit. Replace <code>synchronized</code> with <code>ReentrantLock</code> around blocking calls. Virtual threads also do <b>not</b> make CPU-bound code faster &mdash; you still only have N cores.</p>
+</div>
+</section>
+
+<!-- ============================================================ 21 -->
+<section id="s21">
+<h2><span class="num">21</span>Interview question bank</h2><div class="h2rule"></div>
+<p class="lead">Click a question to reveal the answer. Cover the answer and say it out loud first &mdash; recall beats recognition.</p>
+
+<div class="qa">
+
+<details><summary data-q="1">Difference between start() and run()?</summary>
+<div class="ans"><p><code>start()</code> creates a new OS thread, registers it with the scheduler, and the JVM calls <code>run()</code> on that new stack. <code>run()</code> called directly is an ordinary method call on the current thread &mdash; no new thread is created, and nothing runs concurrently.</p></div></details>
+
+<details><summary data-q="2">Can we call start() twice on the same thread?</summary>
+<div class="ans"><p>No &mdash; <code>IllegalThreadStateException</code>, because <code>threadStatus</code> is no longer 0. This holds even after the thread has terminated. A <code>Thread</code> object is single-use; a <code>Runnable</code> is reusable.</p></div></details>
+
+<details><summary data-q="3">Runnable vs Callable?</summary>
+<div class="ans"><ul>
+<li><code>run()</code> returns void; <code>call()</code> returns <code>V</code>.</li>
+<li><code>run()</code> cannot throw checked exceptions; <code>call()</code> can.</li>
+<li><code>Runnable</code> works with <code>Thread</code> and executors; <code>Callable</code> only with executors (or wrapped in <code>FutureTask</code>).</li>
+<li><code>Callable</code> arrived in Java 5 with the executor framework.</li>
+</ul></div></details>
+
+<details><summary data-q="4">sleep() vs wait()?</summary>
+<div class="ans"><p><code>sleep()</code> &mdash; static, on <code>Thread</code>, <b>keeps all locks</b>, wakes on time, callable anywhere. <code>wait()</code> &mdash; instance method on <code>Object</code>, <b>releases the monitor</b>, wakes on <code>notify()</code>/timeout/spurious wakeup, and must be inside <code>synchronized</code> on the same object or you get <code>IllegalMonitorStateException</code>.</p></div></details>
+
+<details><summary data-q="5">Why are wait/notify on Object and not Thread?</summary>
+<div class="ans"><p>Because they operate on the <b>monitor</b>, and every object has a monitor &mdash; not every wait is about a thread. Threads wait on the <i>condition of an object</i> (a queue being non-empty), so the wait set logically belongs to that object.</p></div></details>
+
+<details><summary data-q="6">Why must wait() be in a while loop?</summary>
+<div class="ans"><p>Spurious wakeups are allowed by the spec, and with <code>notifyAll()</code> many threads wake but only one wins the lock &mdash; by the time the others acquire it the condition may be false again. <code>while</code> re-checks; <code>if</code> proceeds on a stale assumption.</p></div></details>
+
+<details><summary data-q="7">notify() vs notifyAll()?</summary>
+<div class="ans"><p><code>notify()</code> wakes one arbitrary waiter &mdash; you cannot pick which. With mixed waiter types (producers and consumers on the same monitor) it can wake the wrong one and stall everything. <code>notifyAll()</code> is safe but causes a thundering herd. The precise alternative is multiple <code>Condition</code> objects on a <code>ReentrantLock</code>.</p></div></details>
+
+<details><summary data-q="8">volatile vs synchronized?</summary>
+<div class="ans"><p><code>volatile</code> gives visibility + ordering on one field, never blocks, and does <b>not</b> give atomicity. <code>synchronized</code> gives mutual exclusion plus visibility and ordering over a block of code. <code>volatile count++</code> is still broken.</p></div></details>
+
+<details><summary data-q="9">What is the Java Memory Model?</summary>
+<div class="ans"><p>The JMM defines when a write by one thread becomes visible to another, and which reorderings the compiler/CPU may perform. Its core relation is <b>happens-before</b>: unlock&rarr;lock, volatile write&rarr;read, <code>start()</code>&rarr;thread body, thread body&rarr;<code>join()</code>, final-field freeze, and transitivity.</p></div></details>
+
+<details><summary data-q="10">Is HashMap thread-safe? What breaks?</summary>
+<div class="ans"><p>No. Concurrent <code>put</code>s can lose entries, corrupt the table, and in Java 7 could create a circular linked list during resize causing a <b>100% CPU infinite loop</b> in <code>get()</code>. Java 8 avoids the cycle but data is still lost. Use <code>ConcurrentHashMap</code>.</p></div></details>
+
+<details><summary data-q="11">ConcurrentHashMap vs Hashtable vs synchronizedMap?</summary>
+<div class="ans"><p><code>Hashtable</code> and <code>Collections.synchronizedMap</code> lock the <b>whole map</b> &mdash; one writer, and readers block too. <code>ConcurrentHashMap</code> locks only the bin being written (CAS if it is empty), reads never lock, and iterators are weakly consistent instead of fail-fast.</p></div></details>
+
+<details><summary data-q="12">Why does ConcurrentHashMap forbid null?</summary>
+<div class="ans"><p><code>get(k) == null</code> would be ambiguous: absent, or present-but-null? In a single-threaded <code>HashMap</code> you disambiguate with <code>containsKey</code>; concurrently the map can change between the two calls, so the ambiguity is unfixable. The API bans null instead.</p></div></details>
+
+<details><summary data-q="13">Explain the ThreadPoolExecutor admission order.</summary>
+<div class="ans"><p>1. If running threads &lt; <code>corePoolSize</code> &rarr; create a new thread. 2. Else offer to the <b>work queue</b>. 3. Only if the queue is <b>full</b> &rarr; create threads up to <code>maximumPoolSize</code>. 4. If that also fails &rarr; <code>RejectedExecutionHandler</code>. Key insight: with an <b>unbounded</b> queue, step 3 never happens and <code>maximumPoolSize</code> is meaningless.</p></div></details>
+
+<details><summary data-q="14">Why avoid Executors.newFixedThreadPool in production?</summary>
+<div class="ans"><p>It uses an unbounded <code>LinkedBlockingQueue</code>: under overload the queue grows until <code>OutOfMemoryError</code>, with no back-pressure. <code>newCachedThreadPool</code> has the opposite problem &mdash; unbounded <b>thread</b> creation. Build <code>ThreadPoolExecutor</code> yourself with a bounded queue and <code>CallerRunsPolicy</code>.</p></div></details>
+
+<details><summary data-q="15">How do you size a thread pool?</summary>
+<div class="ans"><p>CPU-bound: <code>N_cores + 1</code>. I/O-bound: <code>N_cores × targetUtilisation × (1 + waitTime/serviceTime)</code>. In practice: measure, don't guess &mdash; and never let the pool be unbounded.</p></div></details>
+
+<details><summary data-q="16">submit() vs execute()?</summary>
+<div class="ans"><p><code>execute(Runnable)</code> returns void; an exception reaches the thread's <code>UncaughtExceptionHandler</code>. <code>submit()</code> returns a <code>Future</code> and <b>captures</b> the exception inside it &mdash; if nobody calls <code>get()</code>, the failure is silently swallowed. Common source of "the task just stopped working".</p></div></details>
+
+<details><summary data-q="17">shutdown() vs shutdownNow()?</summary>
+<div class="ans"><p><code>shutdown()</code> &mdash; graceful: no new tasks, existing queue drains. <code>shutdownNow()</code> &mdash; interrupts running tasks and returns the tasks still queued. Neither blocks; use <code>awaitTermination</code> for that. <code>shutdownNow()</code> only <i>requests</i> cancellation &mdash; a task ignoring interrupts keeps going.</p></div></details>
+
+<details><summary data-q="18">How do you stop a thread safely?</summary>
+<div class="ans"><p>Cooperatively. Either a <code>volatile boolean</code> flag checked in the loop, or <code>interrupt()</code> plus <code>isInterrupted()</code> checks and catching <code>InterruptedException</code>. Never <code>stop()</code> &mdash; it kills the thread mid-update and releases its locks, leaving objects corrupted.</p></div></details>
+
+<details><summary data-q="19">What happens if you swallow InterruptedException?</summary>
+<div class="ans"><p>The JVM clears the interrupt flag when it throws, so swallowing it destroys the signal: enclosing code and <code>shutdownNow()</code> never learn that cancellation was requested. Either rethrow it, or restore with <code>Thread.currentThread().interrupt()</code>.</p></div></details>
+
+<details><summary data-q="20">Daemon vs user thread?</summary>
+<div class="ans"><p>The JVM exits when the last <b>user</b> thread ends, killing daemons abruptly &mdash; their <code>finally</code> blocks may never run. <code>setDaemon(true)</code> must be called before <code>start()</code>. Use daemons only for background housekeeping, never for work that must complete.</p></div></details>
+
+<details><summary data-q="21">What is a deadlock and how do you prevent it?</summary>
+<div class="ans"><p>Two or more threads each hold a lock the other needs &mdash; circular wait. Prevent by breaking one Coffman condition: <b>global lock ordering</b> (best), <code>tryLock</code> with timeout and backoff, shrinking critical sections, or using a single lock / higher-level concurrent structure.</p></div></details>
+
+<details><summary data-q="22">Deadlock vs livelock vs starvation?</summary>
+<div class="ans"><p><b>Deadlock</b> &mdash; blocked forever, zero CPU. <b>Livelock</b> &mdash; running, responding to each other, zero progress. <b>Starvation</b> &mdash; a thread makes no progress because others always win the resource; fix with a fair lock.</p></div></details>
+
+<details><summary data-q="23">What is reentrancy?</summary>
+<div class="ans"><p>A thread already holding a lock can acquire it again; the JVM keeps a hold count and only releases at zero. Without it, one synchronized method calling another on the same object would deadlock with itself. Both <code>synchronized</code> and <code>ReentrantLock</code> are reentrant; a <code>Semaphore(1)</code> is not.</p></div></details>
+
+<details><summary data-q="24">synchronized vs ReentrantLock &mdash; when do you pick the lock?</summary>
+<div class="ans"><p>When you need <code>tryLock</code>, a timeout, interruptible acquisition, fairness, multiple condition queues, or to acquire and release in different scopes. Otherwise prefer <code>synchronized</code>: shorter, impossible to forget the unlock, and JIT-optimised (biased/lightweight locking).</p></div></details>
+
+<details><summary data-q="25">What is CAS? Where is it used?</summary>
+<div class="ans"><p>Compare-And-Swap: an atomic CPU instruction that writes only if the value still matches the expected one, else fails and the caller retries. It is the basis of <code>Atomic*</code> classes, <code>ConcurrentHashMap</code>'s empty-bin insert, and the AQS queue behind <code>ReentrantLock</code>. Weakness: the ABA problem and CPU spinning under high contention.</p></div></details>
+
+<details><summary data-q="26">What is AQS?</summary>
+<div class="ans"><p><code>AbstractQueuedSynchronizer</code> &mdash; a framework holding an <code>int state</code> plus a FIFO queue of parked threads. <code>ReentrantLock</code>, <code>Semaphore</code>, <code>CountDownLatch</code> and <code>ReentrantReadWriteLock</code> are all thin subclasses that just define what <code>state</code> means.</p></div></details>
+
+<details><summary data-q="27">CountDownLatch vs CyclicBarrier?</summary>
+<div class="ans"><p>Latch: one-shot, count only goes down, waiters and counters are different threads. Barrier: reusable, the arriving threads are the waiting threads, supports a barrier action, and resets automatically after each round.</p></div></details>
+
+<details><summary data-q="28">How do you make a class thread-safe?</summary>
+<div class="ans"><p>In order of preference: make it <b>immutable</b> (final fields, no setters); confine state to a thread or the stack; use atomic/concurrent classes; and only then synchronize &mdash; guarding <b>all</b> access to the state, reads included, with the same lock.</p></div></details>
+
+<details><summary data-q="29">Why is double-checked locking broken without volatile?</summary>
+<div class="ans"><p><code>new Singleton()</code> = allocate, construct, assign. The JIT may reorder the assign before the construct, so another thread can see a non-null reference to a <b>partially constructed</b> object. <code>volatile</code> inserts the barrier that forbids that reordering.</p></div></details>
+
+<details><summary data-q="30">Best way to write a singleton for concurrency?</summary>
+<div class="ans"><p><b>Enum singleton</b> &mdash; thread-safe by classloading, plus serialization- and reflection-proof. Or the <b>static holder idiom</b>: an inner class whose static final field initialises on first use, using the JVM's class-initialisation lock. Both beat double-checked locking.</p></div></details>
+
+<details><summary data-q="31">What is ThreadLocal and its risk?</summary>
+<div class="ans"><p>Per-thread storage held in the Thread object itself &mdash; no sharing, no locks. In a pool the thread is reused, so a value never removed leaks memory and bleeds into the next task. Always <code>remove()</code> in <code>finally</code>.</p></div></details>
+
+<details><summary data-q="32">What is false sharing?</summary>
+<div class="ans"><p>Two independent variables land on the same 64-byte CPU cache line. One core writing its variable invalidates the line for the other core, so both keep re-fetching from memory &mdash; big slowdown with no logical contention. Mitigations: padding, or <code>@Contended</code>. It is why <code>LongAdder</code> spreads counters across cells.</p></div></details>
+
+<details><summary data-q="33">What does Thread.yield() actually do?</summary>
+<div class="ans"><p>Hints to the scheduler that the current thread will give up its remaining slice. It is only a hint &mdash; the scheduler may immediately reschedule the same thread, and behaviour varies by OS. Never rely on it for correctness.</p></div></details>
+
+<details><summary data-q="34">Explain the fork/join idiom.</summary>
+<div class="ans"><p><code>left.fork(); right.compute(); left.join();</code> &mdash; hand one half to the pool, do the other half on the current thread, then join. Work-stealing deques keep workers busy. A size <b>threshold</b> is essential or the splitting costs more than the work.</p></div></details>
+
+<details><summary data-q="35">Which pool does a parallel stream use?</summary>
+<div class="ans"><p><code>ForkJoinPool.commonPool()</code>, sized <code>cores − 1</code> and shared JVM-wide. Blocking inside a parallel stream starves every other parallel stream and default <code>CompletableFuture</code>. Pass your own pool where you can, or don't go parallel.</p></div></details>
+
+<details><summary data-q="36">thenApply vs thenCompose?</summary>
+<div class="ans"><p><code>thenApply</code> is <code>map</code>; if the function returns a future you get <code>CF&lt;CF&lt;T&gt;&gt;</code>. <code>thenCompose</code> is <code>flatMap</code> and flattens it. Use compose when the next step is itself asynchronous.</p></div></details>
+
+<details><summary data-q="37">How does ConcurrentHashMap work in Java 8?</summary>
+<div class="ans"><p>No segments. An empty bin is filled with a CAS; a non-empty bin is locked with <code>synchronized</code> on its first node. Bins longer than 8 become red-black trees. Reads are lock-free via volatile <code>Node</code> fields. <code>size()</code> uses a <code>LongAdder</code>-style counter array.</p></div></details>
+
+<details><summary data-q="38">How would you find a deadlock in a running JVM?</summary>
+<div class="ans"><p><code>jstack &lt;pid&gt;</code> or <code>jcmd &lt;pid&gt; Thread.print</code> &mdash; the JVM explicitly reports "Found one Java-level deadlock" with both stack traces. VisualVM/JMC have a detect button, and <code>ThreadMXBean.findDeadlockedThreads()</code> does it in code.</p></div></details>
+
+<details><summary data-q="39">Are local variables thread-safe?</summary>
+<div class="ans"><p>The variable itself, yes &mdash; each thread has its own stack frame. But a local <b>reference</b> to a shared object gives no protection: thread safety is a property of the object, not the variable.</p></div></details>
+
+<details><summary data-q="40">Is a static variable shared between threads?</summary>
+<div class="ans"><p>Yes &mdash; static fields live in the class metadata area, one copy per class per classloader, visible to every thread. Static mutable state is the most common hidden race in real code.</p></div></details>
+
+<details><summary data-q="41">What is a virtual thread and when do you use it?</summary>
+<div class="ans"><p>A JVM-scheduled thread with a heap-allocated growable stack, multiplexed onto carrier threads. Blocking I/O unmounts it instead of parking an OS thread, so millions can run. Use for I/O-heavy concurrency; never pool them; avoid <code>synchronized</code> around blocking calls (it pins the carrier).</p></div></details>
+
+<details><summary data-q="42">What happens if an exception escapes run()?</summary>
+<div class="ans"><p>The thread terminates. The exception goes to the thread's <code>UncaughtExceptionHandler</code>, then the <code>ThreadGroup</code>'s, then the default one &mdash; which prints the stack trace. Other threads are unaffected, and <code>main</code> does <b>not</b> see it.</p></div></details>
+
+<details><summary data-q="43">Can two threads read the same object at the same time?</summary>
+<div class="ans"><p>Yes, if nobody writes. Concurrent reads of immutable or effectively-final data need no synchronization. The moment one thread writes, all accesses &mdash; reads included &mdash; must be synchronized or the field made volatile.</p></div></details>
+
+<details><summary data-q="44">What is a race condition vs a data race?</summary>
+<div class="ans"><p>A <b>data race</b> is the low-level fact: two threads access the same location, at least one writes, with no happens-before between them &mdash; undefined behaviour per the JMM. A <b>race condition</b> is the higher-level bug: correctness depends on timing (e.g. check-then-act). You can have a race condition with no data race, and vice versa.</p></div></details>
+
+<details><summary data-q="45">How do you share data between two threads safely?</summary>
+<div class="ans"><p>Best: hand it off through a <code>BlockingQueue</code> &mdash; no shared mutable state at all. Otherwise: make the object immutable, use an atomic/concurrent class, or guard every access with the same lock. If it is a one-way flag, <code>volatile</code> is enough.</p></div></details>
+
+</div>
+</section>
+
+<!-- ============================================================ 22 -->
+<section id="s22">
+<h2><span class="num">22</span>Must-do coding programs</h2><div class="h2rule"></div>
+<p class="lead">Write each one from scratch, run it, then write it a second way. These cover almost every coding round.</p>
+
+<h4>Tier 1 &mdash; asked constantly</h4>
+<ol>
+<li><b>Print even and odd numbers alternately</b> with two threads &mdash; do it three ways: <code>wait/notify</code>, <code>ReentrantLock + Condition</code>, and <code>Semaphore</code>.</li>
+<li><b>Producer&ndash;Consumer</b> with a bounded buffer &mdash; hand-written <code>wait/notify</code> version, then the <code>BlockingQueue</code> version.</li>
+<li><b>Print 1 to N in sequence with 3 threads</b> (T1 prints 1, T2 prints 2, T3 prints 3, T1 prints 4&hellip;).</li>
+<li><b>Thread-safe singleton</b> &mdash; double-checked locking, static holder, enum.</li>
+<li><b>Demonstrate a race condition</b> on <code>count++</code>, then fix it three ways: <code>synchronized</code>, <code>AtomicInteger</code>, <code>ReentrantLock</code>.</li>
+</ol>
+
+<h4>Tier 2 &mdash; senior-leaning</h4>
+<ol start="6">
+<li><b>Create a deadlock deliberately</b>, prove it with <code>jstack</code>, then fix it with lock ordering.</li>
+<li><b>Bank account transfer</b> that is safe under concurrent transfers in both directions.</li>
+<li><b>Implement your own BlockingQueue</b> using <code>wait/notify</code> (put, take, bounded).</li>
+<li><b>Dining philosophers</b> without deadlock.</li>
+<li><b>Custom thread pool</b> &mdash; N worker threads consuming from a shared queue, with shutdown.</li>
+<li><b>Rate limiter</b> &mdash; token bucket with a <code>Semaphore</code> + <code>ScheduledExecutorService</code> refill.</li>
+</ol>
+
+<h4>Tier 3 &mdash; framework level</h4>
+<ol start="12">
+<li><b>Parallel sum / merge sort</b> with <code>RecursiveTask</code> and a threshold.</li>
+<li><b>Call 3 APIs in parallel and merge</b> with <code>CompletableFuture.allOf</code> + timeouts + <code>exceptionally</code>.</li>
+<li><b>ExecutorService with CountDownLatch</b> &mdash; start N workers, wait for all, aggregate results.</li>
+<li><b>Thread-safe LRU cache</b> &mdash; <code>LinkedHashMap</code> + lock, or <code>ConcurrentHashMap</code> + eviction.</li>
+</ol>
+
+<div class="box ask">
+<span class="lbl">How to present any concurrency program</span>
+<ol>
+<li>Name the <b>shared mutable state</b> out loud.</li>
+<li>Say which <b>invariant</b> must hold.</li>
+<li>Name the <b>mechanism</b> you chose and why (lock / atomic / queue / immutability).</li>
+<li>Mention how it <b>terminates</b> &mdash; shutdown, interruption, poison pill.</li>
+</ol>
+<p>Interviewers score that reasoning far higher than a fast keyboard.</p>
+</div>
+</section>
+
+<!-- ============================================================ 23 -->
+<section id="s23">
+<h2><span class="num">23</span>Last-night cheat sheet</h2><div class="h2rule"></div>
+
+<h4>Say these exactly right</h4>
+<ul>
+<li><code>start()</code> creates a thread; <code>run()</code> does not.</li>
+<li><code>sleep()</code> <b>keeps</b> the lock; <code>wait()</code> <b>releases</b> it.</li>
+<li><code>wait()</code>/<code>notify()</code> must be inside <code>synchronized</code>, always in a <code>while</code> loop.</li>
+<li><code>volatile</code> = visibility + ordering, <b>never</b> atomicity.</li>
+<li>Pool order: core &rarr; <b>queue</b> &rarr; max &rarr; reject.</li>
+<li>Unbounded queue makes <code>maximumPoolSize</code> meaningless.</li>
+<li><code>submit()</code> hides exceptions in the <code>Future</code>; <code>execute()</code> does not.</li>
+<li>Lock ordering is the primary deadlock cure.</li>
+<li>Java <code>RUNNABLE</code> ≠ running &mdash; it also means "ready".</li>
+<li><code>ConcurrentHashMap</code> allows no nulls; reads never lock.</li>
+<li>Always <code>ThreadLocal.remove()</code> in a pool.</li>
+<li>Prefer immutability over synchronization.</li>
+</ul>
+
+<h4>Never say these</h4>
+<ul>
+<li><span class="bad">"volatile makes count++ thread-safe"</span></li>
+<li><span class="bad">"synchronized static and synchronized instance methods use the same lock"</span></li>
+<li><span class="bad">"wait() can be called anywhere"</span></li>
+<li><span class="bad">"setPriority guarantees execution order"</span></li>
+<li><span class="bad">"more threads always means faster"</span></li>
+<li><span class="bad">"stop() is how you stop a thread"</span></li>
+</ul>
+
+<h4>Study order for revision</h4>
+<p>Sections 00&ndash;06 are one sitting (fundamentals). 07&ndash;13 are the correctness core &mdash; give them the most time, they carry the most interview weight. 14&ndash;20 are the framework layer you actually use at work. Then drill section 21 out loud and code section 22 from a blank file.</p>
+
+<footer>
+Java Multithreading &mdash; Complete Revision &nbsp;&middot;&nbsp; src/Complete_Revesion/MultiThreading/
+</footer>
+</section>
+
+</main>
+</div>
+
+<!-- Your saved notes are written into this block by "Save to file". Do not edit by hand. -->
+<script id="mt-data" type="application/json">{"topics":[],"notes":{}}</script>
+
+<script>
+/* =====================================================================
+   Notes engine — lets you add your own coloured notes and whole new
+   topics without ever writing HTML.
+   Storage: browser localStorage (instant) + baked into this file when
+   you press "Save to file".
+   ===================================================================== */
+(function () {
+  'use strict';
+
+  var STORE = 'mt-notes-v1';
+
+  /* Name stamped on every note you write. Change the word below if you
+     ever want a different signature. */
+  var AUTHOR = 'Subhranshu';
+
+  var KINDS = [
+    { k: 'def',   label: 'Concept'        },
+    { k: 'win',   label: 'Do this'        },
+    { k: 'trap',  label: 'Trap'           },
+    { k: 'ask',   label: 'Asked'          },
+    { k: 'under', label: 'Under the hood' }
+  ];
+
+  var root = document.documentElement;
+  var main = document.querySelector('main');
+  var rail = document.querySelector('.rail');
+  var data = load();
+  var dirty = false;
+
+  /* ---------------------------------------------------------- theme */
+  try {
+    var savedTheme = localStorage.getItem('mt-theme');
+    if (savedTheme) root.setAttribute('data-theme', savedTheme);
+  } catch (e) {}
+
+  document.getElementById('btn-theme').addEventListener('click', function () {
+    var isDark = root.getAttribute('data-theme') === 'dark' ||
+      (!root.hasAttribute('data-theme') &&
+       window.matchMedia('(prefers-color-scheme: dark)').matches);
+    var next = isDark ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('mt-theme', next); } catch (e) {}
+  });
+
+  /* ---------------------------------------------------------- storage */
+  function load() {
+    var d = null;
+    try {
+      var raw = localStorage.getItem(STORE);
+      if (raw) d = JSON.parse(raw);
+    } catch (e) {}
+    if (!d) {
+      var el = document.getElementById('mt-data');
+      if (el) { try { d = JSON.parse(el.textContent || 'null'); } catch (e2) {} }
+    }
+    if (!d || typeof d !== 'object') d = {};
+    if (!Array.isArray(d.topics)) d.topics = [];
+    if (!d.notes || typeof d.notes !== 'object') d.notes = {};
+    return d;
+  }
+
+  function save() {
+    dirty = true;
+    document.body.classList.add('unsaved');
+    try { localStorage.setItem(STORE, JSON.stringify(data)); }
+    catch (e) { toast('Browser storage is blocked — press "Save to file" so nothing is lost.'); }
+  }
+
+  function uid() {
+    return 'n' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  }
+
+  /* ---------------------------------------------------------- helpers */
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  }
+
+  function mark(n) { n.setAttribute('data-injected', '1'); return n; }
+
+  function toast(msg) {
+    var old = document.querySelector('.toast');
+    if (old) old.remove();
+    var t = mark(el('div', 'toast', msg));
+    document.body.appendChild(t);
+    setTimeout(function () { if (t.parentNode) t.remove(); }, 4200);
+  }
+
+  function sections() {
+    return Array.prototype.slice.call(main.querySelectorAll('section'));
+  }
+
+  function kindLabel(k) {
+    for (var i = 0; i < KINDS.length; i++) if (KINDS[i].k === k) return KINDS[i].label;
+    return 'Note';
+  }
+
+  /* ------------------------------------------------ Java highlighter
+     Colours pasted code the same way as the hand-written blocks:
+       grey italic = comments   green = strings   orange = keywords
+       blue = numbers
+     Order matters: comments and strings are matched first so a // or a
+     keyword inside them is left alone. Text is inserted as text nodes,
+     so < > & in your code can never break the page.                    */
+  var TOKEN = new RegExp(
+    '(\\/\\/[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/)' +                    /* 1 comment   */
+    '|("(?:\\\\.|[^"\\\\])*"|\'(?:\\\\.|[^\'\\\\])*\')' +          /* 2 string    */
+    '|(@[A-Za-z_]\\w*)' +                                          /* 3 annotation*/
+    '|(\\b0[xXbB][0-9a-fA-F_]+[LlFfDd]?\\b' +
+      '|\\b\\d[\\d_]*(?:\\.[\\d_]+)?(?:[eE][-+]?\\d+)?[LlFfDd]?\\b)' + /* 4 number */
+    '|\\b(abstract|assert|boolean|break|byte|case|catch|char|class|const|continue' +
+      '|default|do|double|else|enum|extends|final|finally|float|for|goto|if' +
+      '|implements|import|instanceof|int|interface|long|native|new|package|private' +
+      '|protected|public|record|return|sealed|short|static|strictfp|super|switch' +
+      '|synchronized|this|throw|throws|transient|try|var|void|volatile|while|yield' +
+      '|true|false|null)\\b',                                      /* 5 keyword   */
+    'g');
+
+  /* ------------------------------------------------ image embedding
+     Pictures are shrunk to 1200px and stored INSIDE this file as a
+     data: URI, so they survive moving the file, exporting it and git.
+     Nothing is ever linked to a path on your disk.                    */
+  var MAX_DIM = 1200;
+
+  function compressImage(file, cb) {
+    var fr = new FileReader();
+    fr.onerror = function () { cb(null); };
+    fr.onload = function () {
+      var img = new Image();
+      img.onerror = function () { cb(null); };
+      img.onload = function () {
+        var w = img.naturalWidth || img.width;
+        var h = img.naturalHeight || img.height;
+        if (!w || !h) { cb(fr.result); return; }
+        var scale = Math.min(1, MAX_DIM / Math.max(w, h));
+        var cw = Math.max(1, Math.round(w * scale));
+        var ch = Math.max(1, Math.round(h * scale));
+
+        var png = null, jpg = null;
+        try {
+          var c1 = document.createElement('canvas');
+          c1.width = cw; c1.height = ch;
+          c1.getContext('2d').drawImage(img, 0, 0, cw, ch);
+          png = c1.toDataURL('image/png');
+        } catch (e) {}
+        try {
+          var c2 = document.createElement('canvas');
+          c2.width = cw; c2.height = ch;
+          var x2 = c2.getContext('2d');
+          x2.fillStyle = '#ffffff';
+          x2.fillRect(0, 0, cw, ch);
+          x2.drawImage(img, 0, 0, cw, ch);
+          jpg = c2.toDataURL('image/jpeg', 0.82);
+        } catch (e) {}
+
+        var best = (png && jpg) ? (png.length <= jpg.length ? png : jpg)
+                                : (png || jpg || fr.result);
+        cb(best);
+      };
+      img.src = fr.result;
+    };
+    fr.readAsDataURL(file);
+  }
+
+  function addImages(fileList, bucket, done) {
+    var files = Array.prototype.slice.call(fileList || [])
+      .filter(function (f) { return f && /^image\//.test(f.type); });
+    if (!files.length) return;
+    var left = files.length;
+    files.forEach(function (f) {
+      compressImage(f, function (src) {
+        if (src) bucket.push(src);
+        if (--left === 0) done();
+      });
+    });
+  }
+
+  function highlightInto(codeEl, src) {
+    TOKEN.lastIndex = 0;
+    var last = 0, m;
+    while ((m = TOKEN.exec(src)) !== null) {
+      if (m.index === TOKEN.lastIndex) { TOKEN.lastIndex++; continue; }
+      if (m.index > last) {
+        codeEl.appendChild(document.createTextNode(src.slice(last, m.index)));
+      }
+      var cls = m[1] ? 'cm' : m[2] ? 'st' : m[3] ? 'kw' : m[4] ? 'nu' : 'kw';
+      codeEl.appendChild(el('span', cls, m[0]));
+      last = TOKEN.lastIndex;
+    }
+    if (last < src.length) codeEl.appendChild(document.createTextNode(src.slice(last)));
+  }
+
+  /* ------------------------------------------------ render one note */
+  function noteEl(secId, note, index) {
+    var box = mark(el('div', 'box ' + note.kind));
+
+    var lbl = el('span', 'lbl');
+    lbl.appendChild(document.createTextNode(note.label || kindLabel(note.kind)));
+    lbl.appendChild(el('span', 'tag', '  · written by ' + (note.author || AUTHOR)));
+    box.appendChild(lbl);
+
+    var ops = el('div', 'noteops');
+    var edit = el('button', 'opbtn', 'Edit');
+    edit.type = 'button';
+    edit.addEventListener('click', function () { openEditor(secId, index, box); });
+    var del = el('button', 'opbtn', 'Delete');
+    del.type = 'button';
+    del.addEventListener('click', function () {
+      if (!window.confirm('Delete this note?')) return;
+      data.notes[secId].splice(index, 1);
+      if (!data.notes[secId].length) delete data.notes[secId];
+      save(); render();
+    });
+    ops.appendChild(edit); ops.appendChild(del);
+    box.appendChild(ops);
+
+    String(note.text || '').split(/\n\s*\n/).forEach(function (para) {
+      if (!para.trim()) return;
+      var p = el('p');
+      para.split('\n').forEach(function (line, i) {
+        if (i) p.appendChild(el('br'));
+        p.appendChild(document.createTextNode(line));
+      });
+      box.appendChild(p);
+    });
+
+    if (note.code && note.code.trim()) {
+      var pre = el('pre');
+      pre.style.margin = '0 0 12px';
+      var codeEl = el('code');
+      highlightInto(codeEl, note.code);
+      pre.appendChild(codeEl);
+      box.appendChild(pre);
+    }
+
+    (note.images || []).forEach(function (src, i) {
+      var fig = el('figure', 'notefig');
+      var im = document.createElement('img');
+      im.src = src;
+      im.loading = 'lazy';
+      im.alt = (note.label || kindLabel(note.kind)) + ' — picture ' + (i + 1);
+      fig.appendChild(im);
+      box.appendChild(fig);
+    });
+
+    return box;
+  }
+
+  /* ------------------------------------------------ the note editor */
+  function openEditor(secId, index, replaceNode) {
+    var existing = index != null ? data.notes[secId][index] : null;
+    var host = document.getElementById(secId);
+    if (!host) return;
+
+    var form = mark(el('div', 'editor'));
+
+    /* colour chips */
+    var r1 = el('div', 'row');
+    r1.appendChild(el('label', null, 'Colour'));
+    var chips = el('div', 'chips');
+    var group = 'kind-' + uid();
+    KINDS.forEach(function (kd) {
+      var lab = el('label', 'chip c-' + kd.k);
+      var inp = document.createElement('input');
+      inp.type = 'radio'; inp.name = group; inp.value = kd.k;
+      if (existing ? existing.kind === kd.k : kd.k === 'def') inp.checked = true;
+      lab.appendChild(inp);
+      lab.appendChild(el('span', null, kd.label));
+      chips.appendChild(lab);
+    });
+    r1.appendChild(chips);
+    form.appendChild(r1);
+
+    /* label */
+    var r2 = el('div', 'row');
+    r2.appendChild(el('label', null, 'Heading (optional)'));
+    var labelInput = document.createElement('input');
+    labelInput.type = 'text';
+    labelInput.placeholder = 'e.g. My doubt / Asked in TCS / Revise again';
+    labelInput.value = existing ? (existing.label || '') : '';
+    r2.appendChild(labelInput);
+    form.appendChild(r2);
+
+    /* text */
+    var r3 = el('div', 'row');
+    r3.appendChild(el('label', null, 'Note'));
+    var textArea = document.createElement('textarea');
+    textArea.placeholder = 'Write normally. Leave a blank line to start a new paragraph.';
+    textArea.value = existing ? (existing.text || '') : '';
+    r3.appendChild(textArea);
+    form.appendChild(r3);
+
+    /* code */
+    var r4 = el('div', 'row');
+    r4.appendChild(el('label', null, 'Code (optional)'));
+    var codeArea = document.createElement('textarea');
+    codeArea.className = 'code';
+    codeArea.placeholder = 'Paste Java here. Type < and > normally — nothing needs escaping.';
+    codeArea.value = existing ? (existing.code || '') : '';
+    r4.appendChild(codeArea);
+    form.appendChild(r4);
+
+    /* images */
+    var imgs = (existing && Array.isArray(existing.images)) ? existing.images.slice() : [];
+    var r5 = el('div', 'row');
+    r5.appendChild(el('label', null, 'Images (optional)'));
+
+    var zone = el('div', 'dropzone');
+    var fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'image/*';
+    fileInput.multiple = true;
+    zone.appendChild(fileInput);
+    zone.appendChild(el('div', 'zonetext',
+      'Click to choose a picture   ·   paste a screenshot with Ctrl+V   ·   or drop files here'));
+    r5.appendChild(zone);
+
+    var thumbs = el('div', 'thumbs');
+    r5.appendChild(thumbs);
+    r5.appendChild(el('div', 'hint',
+      'Pictures are shrunk and stored inside this file, so they never break. Ctrl+Enter saves, Esc cancels.'));
+    form.appendChild(r5);
+
+    function drawThumbs() {
+      while (thumbs.firstChild) thumbs.removeChild(thumbs.firstChild);
+      imgs.forEach(function (src, i) {
+        var t = el('div', 'thumb');
+        var im = document.createElement('img');
+        im.src = src;
+        im.alt = 'attached picture ' + (i + 1);
+        t.appendChild(im);
+        var x = el('button', 'thumbx', '×');
+        x.type = 'button';
+        x.title = 'Remove this picture';
+        x.addEventListener('click', function () { imgs.splice(i, 1); drawThumbs(); });
+        t.appendChild(x);
+        thumbs.appendChild(t);
+      });
+    }
+
+    function tookImages() {
+      drawThumbs();
+      var bytes = imgs.reduce(function (a, s) { return a + s.length; }, 0);
+      if (bytes > 3000000) {
+        toast('That is a lot of picture data — press "Save to file" soon so nothing is lost.');
+      }
+    }
+
+    zone.addEventListener('click', function (ev) {
+      if (ev.target !== fileInput) fileInput.click();
+    });
+    fileInput.addEventListener('change', function () {
+      addImages(fileInput.files, imgs, tookImages);
+      fileInput.value = '';
+    });
+    ['dragenter', 'dragover'].forEach(function (evt) {
+      zone.addEventListener(evt, function (ev) {
+        ev.preventDefault(); zone.classList.add('over');
+      });
+    });
+    ['dragleave', 'drop'].forEach(function (evt) {
+      zone.addEventListener(evt, function () { zone.classList.remove('over'); });
+    });
+    zone.addEventListener('drop', function (ev) {
+      ev.preventDefault();
+      addImages(ev.dataTransfer && ev.dataTransfer.files, imgs, tookImages);
+    });
+    form.addEventListener('paste', function (ev) {
+      var f = ev.clipboardData && ev.clipboardData.files;
+      if (f && f.length) {
+        var pics = Array.prototype.slice.call(f)
+          .filter(function (x) { return /^image\//.test(x.type); });
+        if (pics.length) { ev.preventDefault(); addImages(pics, imgs, tookImages); }
+      }
+    });
+    drawThumbs();
+
+    /* buttons */
+    var btns = el('div', 'btns');
+    var ok = el('button', 'tbtn primary', existing ? 'Update note' : 'Save note');
+    ok.type = 'button';
+    var cancel = el('button', 'tbtn', 'Cancel');
+    cancel.type = 'button';
+    btns.appendChild(ok); btns.appendChild(cancel);
+    form.appendChild(btns);
+
+    function commit() {
+      var text = textArea.value.trim();
+      var code = codeArea.value.replace(/\s+$/, '');
+      if (!text && !code && !imgs.length) {
+        toast('Nothing to save — write a note, paste code, or add a picture.');
+        return;
+      }
+      var chosen = form.querySelector('input[name="' + group + '"]:checked');
+      var note = {
+        id: existing ? existing.id : uid(),
+        kind: chosen ? chosen.value : 'def',
+        label: labelInput.value.trim(),
+        text: text,
+        code: code,
+        images: imgs,
+        author: AUTHOR
+      };
+      if (!data.notes[secId]) data.notes[secId] = [];
+      if (existing) data.notes[secId][index] = note;
+      else data.notes[secId].push(note);
+      save(); render();
+      toast('Saved in this browser. Press "Save to file" to make it permanent.');
+    }
+
+    ok.addEventListener('click', commit);
+    cancel.addEventListener('click', function () { render(); });
+    form.addEventListener('keydown', function (ev) {
+      if (ev.key === 'Escape') { ev.preventDefault(); render(); }
+      if (ev.key === 'Enter' && (ev.ctrlKey || ev.metaKey)) { ev.preventDefault(); commit(); }
+    });
+
+    if (replaceNode && replaceNode.parentNode) {
+      replaceNode.parentNode.replaceChild(form, replaceNode);
+    } else {
+      var addrow = host.querySelector('.addrow');
+      if (addrow) host.insertBefore(form, addrow); else host.appendChild(form);
+    }
+    textArea.focus();
+  }
+
+  /* ------------------------------------------------ new topic form */
+  function openTopicForm() {
+    var old = document.getElementById('topic-form');
+    if (old) { old.remove(); return; }
+
+    var form = mark(el('div', 'editor'));
+    form.id = 'topic-form';
+
+    var r1 = el('div', 'row');
+    r1.appendChild(el('label', null, 'Topic title'));
+    var title = document.createElement('input');
+    title.type = 'text';
+    title.placeholder = 'e.g. Memory barriers';
+    r1.appendChild(title);
+    form.appendChild(r1);
+
+    var r2 = el('div', 'row');
+    r2.appendChild(el('label', null, 'Put it after'));
+    var sel = document.createElement('select');
+    sections().forEach(function (s) {
+      var h = s.querySelector('h2');
+      var o = document.createElement('option');
+      o.value = s.id;
+      o.textContent = h ? h.textContent.replace(/\s+/g, ' ').trim() : s.id;
+      sel.appendChild(o);
+    });
+    r2.appendChild(sel);
+    r2.appendChild(el('div', 'hint', 'The new topic and its index entry appear right after the one you pick.'));
+    form.appendChild(r2);
+
+    var btns = el('div', 'btns');
+    var ok = el('button', 'tbtn primary', 'Create topic');
+    ok.type = 'button';
+    var cancel = el('button', 'tbtn', 'Cancel');
+    cancel.type = 'button';
+    btns.appendChild(ok); btns.appendChild(cancel);
+    form.appendChild(btns);
+
+    ok.addEventListener('click', function () {
+      var t = title.value.trim();
+      if (!t) { toast('Give the topic a title first.'); return; }
+      var afterId = sel.value;
+      var sameParent = data.topics.filter(function (x) { return x.after === afterId; }).length;
+      var anchor = document.getElementById(afterId);
+      var baseNum = anchor && anchor.querySelector('.num')
+        ? anchor.querySelector('.num').textContent.replace(/[^0-9a-z]/gi, '') : '';
+      var id = 'u' + uid();
+      data.topics.push({
+        id: id,
+        title: t,
+        after: afterId,
+        num: baseNum ? baseNum.slice(0, 2) + String.fromCharCode(97 + sameParent) : '+',
+        author: AUTHOR
+      });
+      save(); render();
+      var made = document.getElementById(id);
+      if (made) made.scrollIntoView({ block: 'start' });
+      toast('Topic added. Now press "+ Add my note" inside it.');
+    });
+    cancel.addEventListener('click', function () { form.remove(); });
+
+    main.insertBefore(form, main.querySelector('section'));
+    title.focus();
+  }
+
+  /* ------------------------------------------------ delete a topic */
+  function topicOps(topic) {
+    var ops = el('div', 'noteops');
+    ops.appendChild(el('span', 'byline', 'written by ' + (topic.author || AUTHOR)));
+    var del = el('button', 'opbtn', 'Delete topic');
+    del.type = 'button';
+    del.addEventListener('click', function () {
+      if (!window.confirm('Delete the topic "' + topic.title + '" and all notes inside it?')) return;
+      data.topics = data.topics.filter(function (x) { return x.id !== topic.id; });
+      delete data.notes[topic.id];
+      save(); render();
+    });
+    ops.appendChild(del);
+    return ops;
+  }
+
+  /* ------------------------------------------------ render everything */
+  function render() {
+    Array.prototype.slice.call(document.querySelectorAll('[data-injected]'))
+      .forEach(function (n) { if (n.parentNode) n.parentNode.removeChild(n); });
+
+    /* 1. custom topics (section + index entry) */
+    data.topics.forEach(function (t) {
+      var anchor = document.getElementById(t.after);
+      if (!anchor) { var all = sections(); anchor = all[all.length - 1]; }
+      if (!anchor) return;
+      while (anchor.nextElementSibling &&
+             anchor.nextElementSibling.tagName === 'SECTION' &&
+             anchor.nextElementSibling.hasAttribute('data-injected')) {
+        anchor = anchor.nextElementSibling;
+      }
+
+      var sec = mark(el('section'));
+      sec.id = t.id;
+      var h2 = el('h2');
+      h2.appendChild(el('span', 'num', t.num || '+'));
+      h2.appendChild(document.createTextNode(t.title));
+      sec.appendChild(h2);
+      sec.appendChild(el('div', 'h2rule'));
+      sec.appendChild(topicOps(t));
+      anchor.parentNode.insertBefore(sec, anchor.nextSibling);
+
+      var linkAnchor = rail.querySelector('a[href="#' + t.after + '"]');
+      if (linkAnchor) {
+        while (linkAnchor.nextElementSibling &&
+               linkAnchor.nextElementSibling.tagName === 'A' &&
+               linkAnchor.nextElementSibling.hasAttribute('data-injected')) {
+          linkAnchor = linkAnchor.nextElementSibling;
+        }
+      }
+      var a = mark(el('a'));
+      a.href = '#' + t.id;
+      a.appendChild(el('span', 'n', t.num || '+'));
+      a.appendChild(document.createTextNode(t.title));
+      if (linkAnchor) linkAnchor.parentNode.insertBefore(a, linkAnchor.nextSibling);
+      else rail.appendChild(a);
+    });
+
+    /* 2. notes + add button in every section */
+    sections().forEach(function (sec) {
+      var list = data.notes[sec.id] || [];
+      list.forEach(function (note, i) { sec.appendChild(noteEl(sec.id, note, i)); });
+
+      var row = mark(el('div', 'addrow'));
+      var btn = el('button', 'addbtn', '+ Add my note');
+      btn.type = 'button';
+      btn.addEventListener('click', function () { openEditor(sec.id, null, null); });
+      row.appendChild(btn);
+      sec.appendChild(row);
+    });
+  }
+
+  /* ==================================================================
+     SAVING
+     Two paths:
+       1. Direct write  - browser writes into THIS file on disk.
+                          Needs the File System Access API (Chrome/Edge)
+                          and you pick the file once; the choice is
+                          remembered afterwards.
+       2. Download      - fallback everywhere else. Lands in Downloads,
+                          you move it over the old file yourself.
+     ================================================================== */
+
+  var fileHandle = null;
+
+  function buildHtml() {
+    var clone = document.documentElement.cloneNode(true);
+    Array.prototype.slice.call(clone.querySelectorAll('[data-injected]'))
+      .forEach(function (n) { if (n.parentNode) n.parentNode.removeChild(n); });
+    clone.removeAttribute('data-theme');
+
+    var holder = clone.querySelector('#mt-data');
+    if (holder) holder.textContent = JSON.stringify(data).replace(/</g, '\\u003c');
+
+    return '<!doctype html>\n' + clone.outerHTML;
+  }
+
+  /* ---- remember the chosen file across sessions (IndexedDB) ---- */
+  function openDb() {
+    return new Promise(function (res, rej) {
+      var r = indexedDB.open('mt-notes-fs', 1);
+      r.onupgradeneeded = function () { r.result.createObjectStore('h'); };
+      r.onsuccess = function () { res(r.result); };
+      r.onerror = function () { rej(r.error); };
+    });
+  }
+  function putHandle(h) {
+    return openDb().then(function (db) {
+      return new Promise(function (res, rej) {
+        var tx = db.transaction('h', 'readwrite');
+        tx.objectStore('h').put(h, 'file');
+        tx.oncomplete = res;
+        tx.onerror = function () { rej(tx.error); };
+      });
+    });
+  }
+  function getStoredHandle() {
+    return openDb().then(function (db) {
+      return new Promise(function (res, rej) {
+        var tx = db.transaction('h', 'readonly');
+        var q = tx.objectStore('h').get('file');
+        q.onsuccess = function () { res(q.result || null); };
+        q.onerror = function () { rej(q.error); };
+      });
+    });
+  }
+
+  function hasPermission(h) {
+    var opts = { mode: 'readwrite' };
+    if (!h.queryPermission) return Promise.resolve(true);
+    return h.queryPermission(opts).then(function (p) {
+      if (p === 'granted') return true;
+      return h.requestPermission(opts).then(function (p2) { return p2 === 'granted'; });
+    }).catch(function () { return false; });
+  }
+
+  function pickFile() {
+    return window.showSaveFilePicker({
+      suggestedName: 'MultiThreading_Notes.html',
+      types: [{ description: 'HTML page', accept: { 'text/html': ['.html'] } }]
+    });
+  }
+
+  function saveDirect(html) {
+    if (!window.showSaveFilePicker) return Promise.reject(new Error('unsupported'));
+
+    var start = fileHandle
+      ? Promise.resolve(fileHandle)
+      : getStoredHandle().catch(function () { return null; });
+
+    return start
+      .then(function (h) {
+        if (!h) return pickFile();
+        return hasPermission(h).then(function (ok) { return ok ? h : pickFile(); });
+      })
+      .then(function (h) {
+        fileHandle = h;
+        putHandle(h).catch(function () {});
+        return h.createWritable();
+      })
+      .then(function (w) {
+        return w.write(html).then(function () { return w.close(); });
+      })
+      .then(function () {
+        markSaved();
+        toast('Written straight into the file. Nothing to move.');
+      });
+  }
+
+  function downloadFile(html) {
+    var blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'MultiThreading_Notes.html';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 3000);
+    markSaved();
+    toast('Downloaded. Move it into src\\Complete_Revesion\\MultiThreading\\ over the old file.');
+  }
+
+  function markSaved() {
+    dirty = false;
+    document.body.classList.remove('unsaved');
+  }
+
+  function exportFile() {
+    var html = buildHtml();
+    saveDirect(html).catch(function (err) {
+      if (err && err.name === 'AbortError') return;   /* you cancelled the dialog */
+      downloadFile(html);
+    });
+  }
+
+  document.getElementById('btn-topic').addEventListener('click', openTopicForm);
+  document.getElementById('btn-export').addEventListener('click', exportFile);
+
+  window.addEventListener('beforeunload', function (ev) {
+    if (!dirty) return;
+    ev.preventDefault();
+    ev.returnValue = '';
+  });
+
+  render();
+})();
+</script>
+
+</body>
+</html>
