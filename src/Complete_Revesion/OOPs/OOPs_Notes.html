@@ -1,0 +1,3352 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Java OOP Revision</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<style>
+/* ============================== TOKENS ============================== */
+:root{
+  --paper:#EBEEF2;  --card:#FFFFFF;  --sunk:#F3F5F8;
+  --ink:#141A22;    --ink-2:#39424F; --muted:#5C6673;
+  --rule:#D3D9E1;   --rule-soft:#E3E8EE;
+
+  --accent:#C9531A;            /* signal orange - running / emphasis      */
+  --concept:#2C5C8F;           /* slate blue    - definitions & concepts  */
+  --safe:#15765A;              /* green         - correct practice        */
+  --danger:#B8332A;            /* red           - bug / gotcha            */
+  --tip:#96660A;               /* amber         - interview tip           */
+  --deep:#5E3E96;              /* violet        - internals / JVM detail  */
+
+  --concept-bg:#E7EEF6; --safe-bg:#E2F1EB; --danger-bg:#FBE8E6;
+  --tip-bg:#FAF0DC;     --deep-bg:#EEE9F7; --accent-bg:#FBEADF;
+
+  --code-bg:#161B23; --code-ink:#DDE3EC; --code-key:#F0A15E;
+  --code-str:#8FD19E; --code-com:#7C8898; --code-num:#9BB8F2;
+
+  --shadow:0 1px 0 rgba(20,26,34,.05), 0 6px 20px -12px rgba(20,26,34,.30);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0E1116; --card:#161B23; --sunk:#1B212B;
+    --ink:#E4E9F0;   --ink-2:#B6C0CD; --muted:#8C97A6;
+    --rule:#2A323E;  --rule-soft:#222933;
+
+    --accent:#FF9257; --concept:#7FB2E8; --safe:#4FC79C;
+    --danger:#F4796C; --tip:#E3B45A;     --deep:#B197EC;
+
+    --concept-bg:#16283C; --safe-bg:#10302A; --danger-bg:#361E1E;
+    --tip-bg:#33280F;     --deep-bg:#251E3B; --accent-bg:#35220F;
+
+    --code-bg:#0B0E13; --code-ink:#D6DDE8;
+    --shadow:0 1px 0 rgba(0,0,0,.4), 0 8px 24px -14px rgba(0,0,0,.8);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0E1116; --card:#161B23; --sunk:#1B212B;
+  --ink:#E4E9F0;   --ink-2:#B6C0CD; --muted:#8C97A6;
+  --rule:#2A323E;  --rule-soft:#222933;
+
+  --accent:#FF9257; --concept:#7FB2E8; --safe:#4FC79C;
+  --danger:#F4796C; --tip:#E3B45A;     --deep:#B197EC;
+
+  --concept-bg:#16283C; --safe-bg:#10302A; --danger-bg:#361E1E;
+  --tip-bg:#33280F;     --deep-bg:#251E3B; --accent-bg:#35220F;
+
+  --code-bg:#0B0E13; --code-ink:#D6DDE8;
+  --shadow:0 1px 0 rgba(0,0,0,.4), 0 8px 24px -14px rgba(0,0,0,.8);
+}
+
+/* ============================== BASE ============================== */
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:1.5rem}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:"Source Serif 4", Georgia, "Times New Roman", serif;
+  font-size:17px; line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4,.disp{font-family:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif; text-wrap:balance}
+code,kbd,.mono{font-family:"IBM Plex Mono",ui-monospace,Consolas,monospace}
+
+/* ============================== SHELL ============================== */
+.shell{display:grid; grid-template-columns:250px minmax(0,1fr); gap:44px; max-width:1240px; margin:0 auto; padding:0 26px}
+
+/* --- TOC rail --- */
+.rail{position:sticky; top:0; align-self:start; height:100vh; overflow-y:auto; padding:26px 0 40px; border-right:1px solid var(--rule)}
+.rail .brand{font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--accent); margin-bottom:14px}
+.rail a{display:block; text-decoration:none; color:var(--ink-2); font-family:"IBM Plex Sans Condensed",sans-serif; font-size:13.5px; line-height:1.35; padding:5px 10px 5px 0; border-left:2px solid transparent; padding-left:10px}
+.rail a:hover{color:var(--accent); border-left-color:var(--accent); background:var(--sunk)}
+.rail a:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.rail a .n{font-family:"IBM Plex Mono",monospace; font-size:10.5px; color:var(--muted); margin-right:7px}
+.rail .grp{font-family:"IBM Plex Mono",monospace; font-size:9.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); margin:18px 0 6px; padding-left:10px}
+
+/* --- main column --- */
+main{max-width:790px; padding:34px 0 120px}
+
+/* ============================== HEADER ============================== */
+.masthead{border-bottom:3px solid var(--ink); padding-bottom:18px; margin-bottom:8px}
+.eyebrow{font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--accent); margin:0 0 8px}
+h1{font-size:clamp(34px,5.4vw,50px); line-height:1.02; font-weight:700; margin:0 0 10px; letter-spacing:-.015em}
+.sub{color:var(--muted); font-size:16px; margin:0}
+
+/* ============================== TOOLBAR ============================== */
+.toolbar{position:fixed; right:16px; top:14px; z-index:30; display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end}
+.tbtn{background:var(--card); color:var(--ink-2); border:1px solid var(--rule); font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.11em; text-transform:uppercase; padding:7px 11px; cursor:pointer}
+.tbtn:hover{border-color:var(--accent); color:var(--accent)}
+.tbtn:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.tbtn.primary{border-color:var(--accent); color:var(--accent); font-weight:600}
+
+/* --- sync button states --- */
+#btn-sync.on{border-color:var(--safe); color:var(--safe)}
+#btn-sync.busy{border-color:var(--tip); color:var(--tip)}
+#btn-sync.err{border-color:var(--danger); color:var(--danger)}
+.syncpanel{max-width:430px}
+.syncpanel .warn{font-family:"IBM Plex Sans Condensed",sans-serif; font-size:12.5px; color:var(--danger); margin-top:6px}
+.syncpanel ol{font-family:"IBM Plex Sans Condensed",sans-serif; font-size:13px; color:var(--ink-2); padding-left:20px; margin:0 0 12px}
+.syncpanel ol li{margin-bottom:4px}
+.syncpanel .state{font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.06em; color:var(--muted); margin-top:10px}
+
+/* ============================== NOTE EDITOR ============================== */
+.addrow{margin-top:20px; padding-top:12px; border-top:1px dashed var(--rule)}
+.addbtn{background:none; border:1px dashed var(--rule); color:var(--muted); font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.11em; text-transform:uppercase; padding:7px 12px; cursor:pointer}
+.addbtn:hover{border-color:var(--accent); color:var(--accent); border-style:solid}
+.addbtn:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+
+.editor{border:1px solid var(--accent); background:var(--card); padding:15px 16px 16px; margin:16px 0; box-shadow:var(--shadow)}
+.editor .row{margin-bottom:11px}
+.editor .row:last-child{margin-bottom:0}
+.editor label{display:block; font-family:"IBM Plex Mono",monospace; font-size:9.5px; letter-spacing:.15em; text-transform:uppercase; color:var(--muted); margin-bottom:5px}
+.editor input[type=text],.editor textarea,.editor select{width:100%; background:var(--sunk); color:var(--ink); border:1px solid var(--rule); padding:8px 10px; font-family:"IBM Plex Mono",monospace; font-size:13px; line-height:1.55}
+.editor textarea{resize:vertical; min-height:86px}
+.editor textarea.code{min-height:64px}
+.editor input:focus,.editor textarea:focus,.editor select:focus{outline:2px solid var(--accent); outline-offset:-1px; border-color:var(--accent)}
+.editor .hint{font-family:"IBM Plex Sans Condensed",sans-serif; font-size:12px; color:var(--muted); margin-top:5px}
+.editor .btns{display:flex; gap:8px; margin-top:14px}
+
+.chips{display:flex; flex-wrap:wrap; gap:6px}
+.chip{cursor:pointer; position:relative}
+.chip input{position:absolute; opacity:0; width:1px; height:1px}
+.chip span{display:inline-block; font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacing:.11em; text-transform:uppercase; padding:6px 10px; border:1px solid currentColor; opacity:.5}
+.chip input:checked + span{opacity:1; font-weight:600; box-shadow:inset 0 0 0 2px currentColor}
+.chip input:focus-visible + span{outline:2px solid var(--accent); outline-offset:2px}
+.chip.c-def span{color:var(--concept)} .chip.c-win span{color:var(--safe)} .chip.c-trap span{color:var(--danger)}
+.chip.c-ask span{color:var(--tip)}     .chip.c-under span{color:var(--deep)}
+
+.noteops{display:flex; gap:12px; margin-bottom:9px}
+.opbtn{background:none; border:0; padding:0; cursor:pointer; font-family:"IBM Plex Mono",monospace; font-size:9.5px; letter-spacing:.13em; text-transform:uppercase; color:var(--muted); text-decoration:underline; text-underline-offset:2px}
+.opbtn:hover{color:var(--accent)}
+.opbtn:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.box .lbl .tag{font-weight:400; opacity:.7; letter-spacing:.1em}
+.byline{font-family:"IBM Plex Mono",monospace; font-size:9.5px; letter-spacing:.13em; text-transform:uppercase; color:var(--accent); align-self:center}
+
+/* ============================== IMAGES ============================== */
+.dropzone{position:relative; border:1px dashed var(--rule); background:var(--sunk); padding:16px 14px; text-align:center; cursor:pointer}
+.dropzone:hover,.dropzone.over{border-color:var(--accent); border-style:solid; background:var(--accent-bg)}
+.dropzone input[type=file]{position:absolute; opacity:0; width:1px; height:1px}
+.zonetext{font-family:"IBM Plex Mono",monospace; font-size:11px; line-height:1.7; color:var(--muted); letter-spacing:.02em}
+.dropzone:hover .zonetext,.dropzone.over .zonetext{color:var(--accent)}
+.thumbs{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px}
+.thumb{position:relative; width:94px; height:70px; border:1px solid var(--rule); background:var(--sunk); overflow:hidden}
+.thumb img{width:100%; height:100%; object-fit:cover; display:block}
+.thumbx{position:absolute; top:0; right:0; width:20px; height:20px; line-height:18px; background:var(--danger); color:#fff; border:0; cursor:pointer; font-family:"IBM Plex Mono",monospace; font-size:13px; padding:0}
+.thumbx:hover{filter:brightness(1.15)}
+.notefig{margin:12px 0; padding:0; border:1px solid var(--rule); background:var(--card); box-shadow:none}
+.notefig img{display:block; width:100%; height:auto}
+
+.toast{position:fixed; left:50%; bottom:26px; transform:translateX(-50%); z-index:50; background:var(--ink); color:var(--paper); font-family:"IBM Plex Mono",monospace; font-size:12px; letter-spacing:.03em; padding:11px 18px; box-shadow:var(--shadow); max-width:90vw; text-align:center}
+.unsaved .tbtn.primary{background:var(--accent); color:var(--card)}
+
+/* ============================== SECTIONS ============================== */
+section{margin-top:52px; scroll-margin-top:20px}
+h2{font-size:27px; font-weight:700; margin:0 0 4px; letter-spacing:-.01em; display:flex; align-items:baseline; gap:12px}
+h2 .num{font-family:"IBM Plex Mono",monospace; font-size:13px; font-weight:500; color:var(--accent); flex:none}
+.h2rule{height:2px; background:var(--ink); margin:0 0 20px}
+h3{font-size:19px; font-weight:600; margin:28px 0 8px; color:var(--ink)}
+h4{font-size:15.5px; font-weight:600; margin:20px 0 6px; color:var(--ink-2); font-family:"IBM Plex Mono",monospace; letter-spacing:-.01em}
+p{margin:0 0 13px; max-width:68ch}
+ul,ol{margin:0 0 14px; padding-left:22px; max-width:66ch}
+li{margin:0 0 6px}
+li::marker{color:var(--accent)}
+hr{border:0; border-top:1px solid var(--rule-soft); margin:26px 0}
+a{color:var(--concept)}
+
+/* ============================== HIGHLIGHT SPANS ============================== */
+.k   {background:var(--concept-bg); color:var(--concept); padding:1px 5px; font-weight:600; font-family:"IBM Plex Mono",monospace; font-size:.86em}
+.good{background:var(--safe-bg);    color:var(--safe);    padding:1px 5px; font-weight:600}
+.bad {background:var(--danger-bg);  color:var(--danger);  padding:1px 5px; font-weight:600}
+.hot {background:var(--tip-bg);     color:var(--tip);     padding:1px 5px; font-weight:600}
+.jvm {background:var(--deep-bg);    color:var(--deep);    padding:1px 5px; font-weight:600}
+b,strong{font-weight:600; color:var(--ink)}
+p code,li code,td code{background:var(--sunk); border:1px solid var(--rule-soft); padding:.5px 5px; font-size:.84em; color:var(--ink)}
+
+/* ============================== CALLOUTS ============================== */
+.box{border:1px solid var(--rule); background:var(--card); padding:14px 16px 4px; margin:16px 0; box-shadow:var(--shadow)}
+.box > .lbl{font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacing:.17em; text-transform:uppercase; font-weight:600; display:block; margin-bottom:7px}
+.box p:last-child,.box ul:last-child,.box ol:last-child{margin-bottom:12px}
+.box.def   {background:var(--concept-bg); border-color:var(--concept)} .box.def   >.lbl{color:var(--concept)}
+.box.win   {background:var(--safe-bg);    border-color:var(--safe)}    .box.win   >.lbl{color:var(--safe)}
+.box.trap  {background:var(--danger-bg);  border-color:var(--danger)}  .box.trap  >.lbl{color:var(--danger)}
+.box.ask   {background:var(--tip-bg);     border-color:var(--tip)}     .box.ask   >.lbl{color:var(--tip)}
+.box.under {background:var(--deep-bg);    border-color:var(--deep)}    .box.under >.lbl{color:var(--deep)}
+
+/* ============================== CODE ============================== */
+pre{background:var(--code-bg); color:var(--code-ink); padding:14px 16px; margin:14px 0; overflow-x:auto; border:1px solid var(--rule); font-size:13px; line-height:1.55; box-shadow:var(--shadow)}
+pre code{font-family:"IBM Plex Mono",monospace; background:none; border:0; padding:0; color:inherit; white-space:pre}
+.cm{color:var(--code-com); font-style:italic}
+.kw{color:var(--code-key)} .st{color:var(--code-str)} .nu{color:var(--code-num)}
+
+/* ============================== TABLES ============================== */
+.tw{overflow-x:auto; margin:16px 0; border:1px solid var(--rule); box-shadow:var(--shadow)}
+table{border-collapse:collapse; width:100%; background:var(--card); font-size:14.5px; min-width:520px}
+th{background:var(--sunk); text-align:left; font-family:"IBM Plex Sans Condensed",sans-serif; font-weight:600; font-size:13px; letter-spacing:.02em; padding:9px 12px; border-bottom:2px solid var(--rule); color:var(--ink)}
+td{padding:9px 12px; border-bottom:1px solid var(--rule-soft); vertical-align:top; font-variant-numeric:tabular-nums}
+tr:last-child td{border-bottom:0}
+td.mono,th.mono{font-family:"IBM Plex Mono",monospace; font-size:12.5px}
+
+/* ============================== FIGURES ============================== */
+figure{margin:20px 0; background:var(--card); border:1px solid var(--rule); padding:16px; box-shadow:var(--shadow)}
+figure svg{display:block; width:100%; max-width:100%; height:auto; color:var(--ink-2)}
+figcaption{font-family:"IBM Plex Sans Condensed",sans-serif; font-size:13px; color:var(--muted); margin-top:11px; padding-top:9px; border-top:1px solid var(--rule-soft)}
+
+/* ============================== LEGEND ============================== */
+.legend{display:grid; grid-template-columns:repeat(auto-fit,minmax(215px,1fr)); gap:1px; background:var(--rule); border:1px solid var(--rule); margin:22px 0 4px}
+.legend div{background:var(--card); padding:10px 12px; font-size:13.5px; color:var(--ink-2)}
+.legend .sw{font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacing:.14em; text-transform:uppercase; font-weight:600; display:block; margin-bottom:3px}
+
+/* ============================== Q&A ============================== */
+.qa{border-top:1px solid var(--rule); margin-top:14px}
+.qa details{border-bottom:1px solid var(--rule)}
+.qa summary{cursor:pointer; padding:11px 4px 11px 0; font-family:"IBM Plex Sans Condensed",sans-serif; font-weight:600; font-size:16px; list-style:none; display:flex; gap:11px; align-items:baseline}
+.qa summary::-webkit-details-marker{display:none}
+.qa summary::before{content:"Q" attr(data-q); font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--accent); flex:none; min-width:30px}
+.qa summary:hover{color:var(--accent)}
+.qa details[open] summary{color:var(--accent)}
+.qa .ans{padding:0 4px 14px 41px; font-size:15.5px}
+.qa .ans p{margin-bottom:9px}
+.qa .ans ul{margin-bottom:9px}
+
+/* ============================== MISC ============================== */
+.pill{display:inline-block; font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacing:.13em; text-transform:uppercase; border:1px solid currentColor; padding:2px 7px; margin:0 5px 5px 0; color:var(--muted)}
+.pill.p1{color:var(--danger)} .pill.p2{color:var(--tip)} .pill.p3{color:var(--concept)}
+.lead{font-size:18.5px; color:var(--ink-2)}
+footer{margin-top:64px; padding-top:18px; border-top:3px solid var(--ink); font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--muted); letter-spacing:.04em}
+
+@media (max-width:900px){
+  .shell{grid-template-columns:1fr; gap:0}
+  .rail{position:static; height:auto; border-right:0; border-bottom:1px solid var(--rule); padding:20px 0; max-height:270px}
+  main{padding-top:24px}
+  body{font-size:16px}
+}
+@media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto} *{transition:none!important} }
+</style>
+</head>
+<body>
+
+<!--
+=====================================================================
+  YOU DO NOT NEED TO EDIT THIS FILE BY HAND.
+
+  Open the page in a browser and use the buttons:
+
+      + Add my note   at the bottom of every section
+                      -> pick a colour, type a heading and your note,
+                         paste code if you want. No tags, no escaping.
+
+      + Topic         top-right
+                      -> creates a whole new topic ANYWHERE in the
+                         middle, with its own index entry.
+
+      Sync            top-right
+                      -> notes live in ONE secret GitHub gist, shared by
+                         every machine. Connect once per system and your
+                         notes appear on both automatically: no download,
+                         no commit, no "which copy is newest".
+
+      Save to file    top-right
+                      -> downloads this page with your notes baked in.
+                         Replace the file in the OOPs folder
+                         and your notes are permanent + in git.
+
+  ---------------------------------------------------------------------
+  SETTING UP SYNC (once per machine)
+  ---------------------------------------------------------------------
+  1. github.com/settings/personal-access-tokens -> new fine-grained token
+     Account permissions -> Gists -> Read and write.  Nothing else.
+  2. Press "Sync", paste the token, leave "Gist id" EMPTY, press Connect.
+     A secret gist is created and its id is shown to you.
+  3. On the OTHER machine: press "Sync", paste a token, paste that SAME
+     gist id, press Connect.
+
+  This page shares the connection with MultiThreading_Notes.html and
+  CollectionFramework_Notes.html, so connecting in any one of them
+  connects them all. Inside the single gist each page keeps its own file:
+
+      oops-notes.json                  <- this page
+      multithreading-notes.json
+      collectionframework-notes.json
+
+  so the three sets of notes can never overwrite each other.
+
+  From then on: an edit auto-saves to the gist, and opening the page (or
+  switching back to the tab) pulls whatever the other machine wrote.
+
+  Both sides can edit while offline. Notes and topics carry an id and a
+  timestamp, so syncing merges them by id with the newer edit winning —
+  nothing is overwritten wholesale, and deletes travel too.
+
+  The token is kept in this browser's localStorage only. It is NEVER
+  written into this HTML file, so "Save to file" and git can never leak
+  it. Because localStorage is per browser, the token has to be pasted
+  once on each machine — but it is the SAME token string, not a new one.
+
+  Without sync, notes are kept in the browser as you type, but a browser
+  can be cleared — press "Save to file" when you finish a session.
+
+  ---------------------------------------------------------------------
+  RULE OF THUMB for hand-editing
+  ---------------------------------------------------------------------
+  Every section needs TWO things:
+      A) one <a> line in the left TOC  (<nav class="rail">)
+      B) one <section> block in <main>
+  The id in the TOC (#s07) must match the id on the <section>. That is
+  the ONLY thing that has to match — nothing else is hardcoded.
+
+  The 5 coloured callout boxes:
+      <div class="box def">   <span class="lbl">Definition</span>  BLUE
+      <div class="box win">   <span class="lbl">Do this</span>     GREEN
+      <div class="box trap">  <span class="lbl">Trap</span>        RED
+      <div class="box ask">   <span class="lbl">Asked</span>       AMBER
+      <div class="box under"> <span class="lbl">Under the hood</span> VIOLET
+
+  Inline highlights:
+      <span class="k">term</span>    blue mono  — a concept / keyword
+      <span class="good">text</span> green      — correct
+      <span class="bad">text</span>  red        — wrong / dangerous
+      <span class="hot">text</span>  amber      — interview point
+      <span class="jvm">text</span>  violet     — JVM internal
+
+  Inside <pre> you must escape:  <  ->  &lt;    >  ->  &gt;    &  ->  &amp;
+=====================================================================
+-->
+
+<div class="toolbar">
+  <button class="tbtn" id="btn-theme" type="button">Theme</button>
+  <button class="tbtn" id="btn-sync" type="button">Sync: off</button>
+  <button class="tbtn" id="btn-topic" type="button">+ Topic</button>
+  <button class="tbtn primary" id="btn-export" type="button">Save to file</button>
+</div>
+
+<div class="shell">
+
+<!-- =================== TOC =================== -->
+<nav class="rail">
+  <div class="brand">Revision Index</div>
+  <div class="grp">Foundations</div>
+  <a href="#s00"><span class="n">00</span>Why OOP exists</a>
+  <a href="#s01"><span class="n">01</span>Class, object, reference</a>
+  <a href="#s02"><span class="n">02</span>Constructors</a>
+  <a href="#s03"><span class="n">03</span>this &amp; super</a>
+  <a href="#s04"><span class="n">04</span>static vs instance</a>
+  <a href="#s05"><span class="n">05</span>Static control flow</a>
+  <a href="#s06"><span class="n">06</span>Instance control flow</a>
+  <div class="grp">The four pillars</div>
+  <a href="#s07"><span class="n">07</span>Encapsulation</a>
+  <a href="#s08"><span class="n">08</span>Inheritance (IS-A)</a>
+  <a href="#s09"><span class="n">09</span>Polymorphism</a>
+  <a href="#s10"><span class="n">10</span>Abstraction</a>
+  <div class="grp">Contracts</div>
+  <a href="#s11"><span class="n">11</span>Abstract classes</a>
+  <a href="#s12"><span class="n">12</span>Interfaces</a>
+  <a href="#s13"><span class="n">13</span>Abstract vs interface</a>
+  <a href="#s14"><span class="n">14</span>Diamond problem</a>
+  <a href="#s15"><span class="n">15</span>Overload vs override</a>
+  <a href="#s16"><span class="n">16</span>Composition (HAS-A)</a>
+  <div class="grp">Object &amp; identity</div>
+  <a href="#s17"><span class="n">17</span>equals, hashCode, toString</a>
+  <a href="#s18"><span class="n">18</span>Immutability &amp; final</a>
+  <a href="#s19"><span class="n">19</span>Access modifiers</a>
+  <div class="grp">Applied</div>
+  <a href="#s20"><span class="n">20</span>SOLID principles</a>
+  <a href="#s21"><span class="n">21</span>Patterns you must know</a>
+  <a href="#s22"><span class="n">22</span>Traps &amp; gotchas</a>
+  <div class="grp">Interview</div>
+  <a href="#s23"><span class="n">23</span>Question bank</a>
+  <a href="#s24"><span class="n">24</span>Must-do programs</a>
+  <a href="#s25"><span class="n">25</span>Last-night cheat sheet</a>
+</nav>
+
+<!-- =================== MAIN =================== -->
+<main>
+
+<header class="masthead">
+  <p class="eyebrow">Complete Revision &middot; Java OOP</p>
+  <h1>Object-Oriented Programming</h1>
+  <p class="sub">Every concept with a real thing it maps to and code you can run &mdash; in the order the ideas actually build on each other, with the interview angle marked.</p>
+</header>
+
+<div class="legend">
+  <div><span class="sw" style="color:var(--concept)">Blue &mdash; Concept</span>Definition / how it works</div>
+  <div><span class="sw" style="color:var(--safe)">Green &mdash; Do this</span>Correct practice, safe code</div>
+  <div><span class="sw" style="color:var(--danger)">Red &mdash; Trap</span>Bug, gotcha, wrong answer</div>
+  <div><span class="sw" style="color:var(--tip)">Amber &mdash; Asked</span>Actual interview question / tip</div>
+  <div><span class="sw" style="color:var(--deep)">Violet &mdash; Under the hood</span>JVM / compiler detail</div>
+</div>
+
+<!-- ============================================================ 00 -->
+<section id="s00">
+<h2><span class="num">00</span>Why OOP exists</h2><div class="h2rule"></div>
+
+<p class="lead">Procedural code keeps <b>data</b> and the <b>functions that touch it</b> in separate places. As a program grows, nothing stops any function from corrupting any data. OOP's move is to lock the two together and expose only a safe door.</p>
+
+<h3>The real problem, in one example</h3>
+<p>Imagine a bank balance in procedural style &mdash; the balance is a loose variable that any code can reach:</p>
+
+<pre><code><span class="cm">// procedural: balance is public property of the whole program</span>
+<span class="kw">double</span> balance = <span class="nu">5000</span>;
+
+<span class="kw">void</span> withdraw(<span class="kw">double</span> amt) { balance -= amt; }
+
+<span class="cm">// ...500 lines later, in a totally unrelated file:</span>
+balance = -<span class="nu">99999</span>;        <span class="cm">// nothing stops this. The bug is now invisible.</span>
+</code></pre>
+
+<p>In OOP the balance lives <i>inside</i> the account and the only way in is a method that can refuse:</p>
+
+<pre><code><span class="kw">class</span> Account {
+    <span class="kw">private double</span> balance = <span class="nu">5000</span>;      <span class="cm">// nobody outside can touch this</span>
+
+    <span class="kw">public void</span> withdraw(<span class="kw">double</span> amt) {
+        <span class="kw">if</span> (amt &lt;= <span class="nu">0</span> || amt &gt; balance)        <span class="cm">// the rule lives WITH the data</span>
+            <span class="kw">throw new</span> IllegalArgumentException(<span class="st">"invalid amount"</span>);
+        balance -= amt;
+    }
+
+    <span class="kw">public double</span> getBalance() { <span class="kw">return</span> balance; }
+}
+
+<span class="cm">// account.balance = -99999;  -> compile error. The bug is now impossible.</span>
+</code></pre>
+
+<div class="box def">
+<span class="lbl">Definition</span>
+<p><span class="k">Object-oriented programming</span> models a program as a set of <b>objects</b> that each hold their own state and expose behaviour, instead of as a list of procedures operating on shared data.</p>
+<p>The payoff is not "code reuse" (that is a side effect) &mdash; it is <b>containment</b>: a bug in one class can only damage what that class owns.</p>
+</div>
+
+<div class="tw"><table>
+<tr><th>Concern</th><th>Procedural</th><th>Object-oriented</th></tr>
+<tr><td>Data and logic</td><td>Separate</td><td>Bundled in a class</td></tr>
+<tr><td>Who can change a value</td><td>Anyone</td><td>Only the owning class</td></tr>
+<tr><td>Adding a new variant</td><td>Edit every <code>if/else</code></td><td>Add a subclass, change nothing</td></tr>
+<tr><td>Blast radius of a bug</td><td>Whole program</td><td>One class</td></tr>
+<tr><td>Unit of reuse</td><td>Function</td><td>Class / interface</td></tr>
+<tr><td>Typical failure</td><td>Someone mutated global state</td><td>Over-engineering, deep hierarchies</td></tr>
+</table></div>
+
+<div class="box ask">
+<span class="lbl">Asked</span>
+<p><b>"Is Java a pure object-oriented language?"</b> &mdash; <span class="bad">No</span>, and this is the expected answer. A pure OO language would have <i>everything</i> as an object. Java has <b>8 primitive types</b> (<code>byte short int long float double char boolean</code>) that are not objects, it has <code>static</code> members that belong to a class rather than an object, and it allows standalone-looking utility classes. Smalltalk is the usual "pure" example.</p>
+</div>
+</section>
+
+<!-- ============================================================ 01 -->
+<section id="s01">
+<h2><span class="num">01</span>Class, object, reference &mdash; three different things</h2><div class="h2rule"></div>
+
+<p>People use these words interchangeably and then get confused by <code>==</code>. They are three separate things living in two different memory areas.</p>
+
+<div class="box def">
+<span class="lbl">Definition</span>
+<p><span class="k">Class</span> &mdash; the blueprint. A design, loaded once into <span class="jvm">Metaspace</span>. Costs no per-object memory.</p>
+<p><span class="k">Object</span> &mdash; one built instance of that blueprint, living on the <b>heap</b>. Created only by <code>new</code> (or reflection / deserialization / <code>clone</code>).</p>
+<p><span class="k">Reference</span> &mdash; a variable on the <b>stack</b> that holds the <i>address</i> of an object. Not the object itself.</p>
+</div>
+
+<figure>
+<svg viewBox="0 0 700 290" role="img" aria-label="Two stack reference variables c1 and c2 both pointing at one Car object on the heap, while a third reference c3 points at a separate Car object; the class blueprint sits in metaspace">
+  <defs>
+    <marker id="oa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+
+  <!-- stack -->
+  <rect x="16" y="34" width="190" height="180" fill="none" stroke="currentColor" stroke-width="1.5"/>
+  <text x="26" y="26" font-size="11.5" font-family="monospace" fill="currentColor" letter-spacing="1">STACK (per thread)</text>
+
+  <rect x="34" y="54" width="154" height="34" fill="none" stroke="currentColor" stroke-width="1"/>
+  <text x="44" y="76" font-size="12" font-family="monospace" fill="currentColor">Car c1 = &bull;&mdash;&mdash;</text>
+
+  <rect x="34" y="98" width="154" height="34" fill="none" stroke="currentColor" stroke-width="1"/>
+  <text x="44" y="120" font-size="12" font-family="monospace" fill="currentColor">Car c2 = &bull;&mdash;&mdash;</text>
+
+  <rect x="34" y="142" width="154" height="34" fill="none" stroke="currentColor" stroke-width="1"/>
+  <text x="44" y="164" font-size="12" font-family="monospace" fill="currentColor">Car c3 = &bull;&mdash;&mdash;</text>
+
+  <text x="34" y="200" font-size="10.5" font-family="monospace" fill="currentColor">holds an address, not a car</text>
+
+  <!-- heap -->
+  <rect x="300" y="34" width="250" height="180" fill="none" stroke="currentColor" stroke-width="1.5"/>
+  <text x="310" y="26" font-size="11.5" font-family="monospace" fill="currentColor" letter-spacing="1">HEAP (shared)</text>
+
+  <rect x="322" y="56" width="206" height="62" fill="none" stroke="#C9531A" stroke-width="1.6"/>
+  <text x="334" y="76" font-size="12.5" font-family="sans-serif" fill="#C9531A" font-weight="600">Car @1a2b</text>
+  <text x="334" y="94" font-size="11" font-family="monospace" fill="currentColor">model = "Swift"</text>
+  <text x="334" y="110" font-size="11" font-family="monospace" fill="currentColor">speed = 0</text>
+
+  <rect x="322" y="140" width="206" height="62" fill="none" stroke="currentColor" stroke-width="1"/>
+  <text x="334" y="160" font-size="12.5" font-family="sans-serif" fill="currentColor" font-weight="600">Car @9f3c</text>
+  <text x="334" y="178" font-size="11" font-family="monospace" fill="currentColor">model = "Swift"</text>
+  <text x="334" y="194" font-size="11" font-family="monospace" fill="currentColor">speed = 0</text>
+
+  <!-- arrows -->
+  <line x1="188" y1="71" x2="318" y2="80" stroke="currentColor" stroke-width="1.2" marker-end="url(#oa)"/>
+  <line x1="188" y1="115" x2="318" y2="92" stroke="currentColor" stroke-width="1.2" marker-end="url(#oa)"/>
+  <line x1="188" y1="159" x2="318" y2="166" stroke="currentColor" stroke-width="1.2" marker-end="url(#oa)"/>
+
+  <!-- metaspace -->
+  <rect x="596" y="56" width="90" height="82" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3"/>
+  <text x="606" y="76" font-size="11" font-family="sans-serif" fill="currentColor" font-weight="600">Metaspace</text>
+  <text x="606" y="94" font-size="10" font-family="monospace" fill="currentColor">class Car</text>
+  <text x="606" y="108" font-size="10" font-family="monospace" fill="currentColor">(blueprint,</text>
+  <text x="606" y="121" font-size="10" font-family="monospace" fill="currentColor">loaded once)</text>
+
+  <text x="16" y="240" font-size="11.5" font-family="monospace" fill="currentColor">c1 == c2  ->  true   (same address)</text>
+  <text x="16" y="258" font-size="11.5" font-family="monospace" fill="#C9531A">c1 == c3  ->  false  (different objects, identical contents)</text>
+  <text x="16" y="276" font-size="11.5" font-family="monospace" fill="currentColor">c1.equals(c3) -> depends entirely on whether Car overrides equals()</text>
+</svg>
+<figcaption>Three references, two objects, one class. <code>==</code> compares the arrows; <code>equals()</code> is the only thing that can compare the boxes.</figcaption>
+</figure>
+
+<pre><code>Car c1 = <span class="kw">new</span> Car(<span class="st">"Swift"</span>);
+Car c2 = c1;                       <span class="cm">// copies the ADDRESS, not the car</span>
+Car c3 = <span class="kw">new</span> Car(<span class="st">"Swift"</span>);   <span class="cm">// a second, separate car</span>
+
+System.out.println(c1 == c2);      <span class="cm">// true  - same object</span>
+System.out.println(c1 == c3);      <span class="cm">// false - different objects</span>
+
+c2.setSpeed(<span class="nu">80</span>);
+System.out.println(c1.getSpeed()); <span class="cm">// 80  &lt;- c1 and c2 ARE the same car</span>
+</code></pre>
+
+<div class="box trap">
+<span class="lbl">Trap</span>
+<p><span class="bad">"I made a copy"</span> &mdash; <code>Car c2 = c1;</code> does <b>not</b> copy the object. You now have two remotes for one TV. Changing the channel through either remote changes the same TV. To get a real copy you need a copy constructor or <code>clone()</code>.</p>
+<p><span class="bad">Declaring is not creating.</span> <code>Car c;</code> creates a reference holding <code>null</code>. No object exists until <code>new</code> runs. Using it throws <code>NullPointerException</code>.</p>
+</div>
+
+<div class="box ask">
+<span class="lbl">Asked</span>
+<p><b>"How many objects are created here?"</b></p>
+<pre style="margin:0 0 12px"><code>String s1 = <span class="st">"hi"</span>;
+String s2 = <span class="st">"hi"</span>;
+String s3 = <span class="kw">new</span> String(<span class="st">"hi"</span>);</code></pre>
+<p><b>Two.</b> <code>s1</code> and <code>s2</code> share one object in the <span class="jvm">String Constant Pool</span> (literals are interned), so <code>s1 == s2</code> is <span class="good">true</span>. <code>new String()</code> always forces a fresh heap object, so <code>s1 == s3</code> is <span class="bad">false</span> &mdash; but <code>s1.equals(s3)</code> is <span class="good">true</span>.</p>
+</div>
+</section>
+
+<!-- ============================================================ 02 -->
+<section id="s02">
+<h2><span class="num">02</span>Constructors</h2><div class="h2rule"></div>
+
+<div class="box def">
+<span class="lbl">Definition</span>
+<p>A <span class="k">constructor</span> is a special block that runs <b>once</b>, immediately after the object's memory is allocated, to bring it to a valid starting state. Its name must exactly match the class name and it has <b>no return type</b> &mdash; not even <code>void</code>.</p>
+</div>
+
+<h3>Real-world framing</h3>
+<p>A constructor is the <b>showroom delivery checklist</b>. A car cannot leave the showroom without an engine number and a registration &mdash; those are mandatory. Colour and music system are optional extras. That is exactly constructor overloading:</p>
+
+<pre><code><span class="kw">class</span> Car {
+    <span class="kw">private final</span> String engineNo;    <span class="cm">// mandatory</span>
+    <span class="kw">private final</span> String regNo;       <span class="cm">// mandatory</span>
+    <span class="kw">private</span> String colour;             <span class="cm">// optional</span>
+
+    <span class="cm">// full constructor - the single real one</span>
+    Car(String engineNo, String regNo, String colour) {
+        <span class="kw">if</span> (engineNo == <span class="kw">null</span> || regNo == <span class="kw">null</span>)
+            <span class="kw">throw new</span> IllegalArgumentException(<span class="st">"cannot deliver without both"</span>);
+        <span class="kw">this</span>.engineNo = engineNo;
+        <span class="kw">this</span>.regNo    = regNo;
+        <span class="kw">this</span>.colour   = colour;
+    }
+
+    <span class="cm">// convenience constructor delegates - never duplicates the checks</span>
+    Car(String engineNo, String regNo) {
+        <span class="kw">this</span>(engineNo, regNo, <span class="st">"white"</span>);   <span class="cm">// MUST be the first statement</span>
+    }
+}
+</code></pre>
+
+<h3>The default constructor</h3>
+<p>If you write <b>no</b> constructor at all, the compiler inserts a no-arg one for you. The moment you write <i>any</i> constructor, that gift is withdrawn.</p>
+
+<pre><code><span class="kw">class</span> A { }                        <span class="cm">// compiler adds:  A() { super(); }</span>
+
+<span class="kw">class</span> B {
+    B(<span class="kw">int</span> x) { }                   <span class="cm">// you wrote one...</span>
+}
+<span class="cm">// new B();  -> COMPILE ERROR: no suitable constructor. Nothing is inserted now.</span>
+</code></pre>
+
+<div class="box under">
+<span class="lbl">Under the hood</span>
+<ul>
+<li>In bytecode a constructor is a method named <code>&lt;init&gt;</code>. A static initialiser becomes <code>&lt;clinit&gt;</code>.</li>
+<li>Every constructor's first act is a call to a <i>super</i> constructor. If you do not write <code>super(...)</code> or <code>this(...)</code>, the compiler silently inserts <code>super();</code> &mdash; which is why an <b>unbroken chain of constructors up to <code>Object</code></b> always runs.</li>
+<li>The compiler-generated default constructor gets the <b>same access modifier as the class</b>: a <code>public class</code> gets a <code>public</code> one, a package-private class gets a package-private one.</li>
+</ul>
+</div>
+
+<div class="box trap">
+<span class="lbl">Trap</span>
+<p><span class="bad">A "constructor" with a return type is just a method.</span> This compiles fine and is a classic trick question &mdash; <code>void Car()</code> is an ordinary method that happens to be named <code>Car</code>, and it will <b>never</b> run on <code>new Car()</code>.</p>
+<p><code>this(...)</code> and <code>super(...)</code> must each be the <b>first statement</b>, and you cannot use both in one constructor &mdash; there is only one first line.</p>
+<p>Constructors are <b>not inherited</b>. A subclass does not get its parent's constructors; it can only call them via <code>super(...)</code>.</p>
+</div>
+
+<div class="box ask">
+<span class="lbl">Asked</span>
+<p><b>"Can a constructor be <code>private</code>? What is the use?"</b> &mdash; <span class="good">Yes.</span> A private constructor blocks <code>new</code> from outside the class, which is exactly what you want for a <b>Singleton</b> (section 21), a <b>static utility class</b> like <code>Collections</code>, and <b>static factory methods</b> such as <code>Integer.valueOf()</code> or a Builder.</p>
+<p><b>"Can a constructor be <code>final</code>, <code>static</code>, or <code>abstract</code>?"</b> &mdash; <span class="bad">No</span> to all three. <code>final</code>/<code>abstract</code> are meaningless because constructors are never inherited or overridden, and <code>static</code> contradicts the job of initialising a specific instance.</p>
+</div>
+</section>
+
+<!-- ============================================================ 03 -->
+<section id="s03">
+<h2><span class="num">03</span><code>this</code> &amp; <code>super</code></h2><div class="h2rule"></div>
+
+<div class="box def">
+<span class="lbl">Definition</span>
+<p><span class="k">this</span> &mdash; a reference to <b>the object currently executing the method</b>. Passed invisibly to every instance method, which is why it does not exist in a <code>static</code> context.</p>
+<p><span class="k">super</span> &mdash; a reference to the <b>parent part</b> of this same object. Not a different object: one object, two layers.</p>
+</div>
+
+<div class="tw"><table>
+<tr><th class="mono">Form</th><th>Meaning</th><th>Where it may appear</th></tr>
+<tr><td class="mono">this.field</td><td>Disambiguate a field from a same-named parameter</td><td>Any instance method or constructor</td></tr>
+<tr><td class="mono">this.method()</td><td>Call another instance method</td><td>Any instance method or constructor</td></tr>
+<tr><td class="mono">this(args)</td><td>Call another constructor of the same class</td><td><b>First line</b> of a constructor only</td></tr>
+<tr><td class="mono">super.field</td><td>Reach a parent field hidden by a same-named child field</td><td>Any instance method</td></tr>
+<tr><td class="mono">super.method()</td><td>Call the parent's version of an overridden method</td><td>Any instance method</td></tr>
+<tr><td class="mono">super(args)</td><td>Call the parent constructor</td><td><b>First line</b> of a constructor only</td></tr>
+</table></div>
+
+<h3>The most common real use of <code>this</code></h3>
+<pre><code><span class="kw">class</span> Employee {
+    <span class="kw">private</span> String name;
+
+    Employee(String name) {
+        name = name;              <span class="cm">// BUG: assigns the parameter to itself.</span>
+        <span class="kw">this</span>.name = name;         <span class="cm">// correct: field  &lt;-  parameter</span>
+    }
+}
+</code></pre>
+
+<h3><code>super.method()</code> &mdash; extend, do not replace</h3>
+<p>Real case: a <code>SavingsAccount</code> wants the parent's withdrawal rules <i>plus</i> a minimum-balance rule. You do not copy the parent's code, you call it:</p>
+
+<pre><code><span class="kw">class</span> Account {
+    <span class="kw">protected double</span> balance;
+    <span class="kw">void</span> withdraw(<span class="kw">double</span> amt) {
+        <span class="kw">if</span> (amt &gt; balance) <span class="kw">throw new</span> IllegalStateException(<span class="st">"insufficient funds"</span>);
+        balance -= amt;
+    }
+}
+
+<span class="kw">class</span> SavingsAccount <span class="kw">extends</span> Account {
+    <span class="kw">private static final double</span> MIN = <span class="nu">1000</span>;
+
+    <span class="kw">@Override</span>
+    <span class="kw">void</span> withdraw(<span class="kw">double</span> amt) {
+        <span class="kw">if</span> (balance - amt &lt; MIN)
+            <span class="kw">throw new</span> IllegalStateException(<span class="st">"must keep "</span> + MIN);
+        <span class="kw">super</span>.withdraw(amt);       <span class="cm">// reuse the parent's checks + the actual debit</span>
+    }
+}
+</code></pre>
+
+<div class="box trap">
+<span class="lbl">Trap</span>
+<p><span class="bad"><code>this</code> in a static method</span> &rarr; compile error. A <code>static</code> method belongs to the class and has no object, so there is nothing for <code>this</code> to point at. Same for <code>super</code>.</p>
+<p><span class="bad"><code>super.super.method()</code> does not exist.</span> You can reach one level up, never two. Java deliberately blocks it &mdash; skipping a level would let you bypass a parent's invariants.</p>
+</div>
+</section>
+
+<!-- ============================================================ 04 -->
+<section id="s04">
+<h2><span class="num">04</span><code>static</code> vs instance</h2><div class="h2rule"></div>
+
+<div class="box def">
+<span class="lbl">Definition</span>
+<p><span class="k">static</span> members belong to the <b>class</b>: one copy, shared by every object, created when the class is loaded. <span class="k">Instance</span> members belong to <b>each object</b>: a fresh copy per <code>new</code>.</p>
+</div>
+
+<h3>Real-world framing</h3>
+<p>A college: every student has their own <code>rollNo</code> and <code>name</code> &mdash; instance fields. The <code>collegeName</code> is the same for all 3,000 students; storing it 3,000 times is pure waste &mdash; static field. And <code>totalStudents</code> is a property of the college, not of any one student:</p>
+
+<pre><code><span class="kw">class</span> Student {
+    <span class="kw">static final</span> String COLLEGE = <span class="st">"NIT Rourkela"</span>;  <span class="cm">// one copy, ever</span>
+    <span class="kw">static int</span> totalStudents;                        <span class="cm">// one counter for all</span>
+
+    <span class="kw">private final int</span> rollNo;                        <span class="cm">// per student</span>
+    <span class="kw">private final</span> String name;                      <span class="cm">// per student</span>
+
+    Student(<span class="kw">int</span> rollNo, String name) {
+        <span class="kw">this</span>.rollNo = rollNo;
+        <span class="kw">this</span>.name   = name;
+        totalStudents++;              <span class="cm">// shared state, bumped by every object</span>
+    }
+
+    <span class="kw">static int</span> getTotal() { <span class="kw">return</span> totalStudents; }
+}
+
+<span class="kw">new</span> Student(<span class="nu">1</span>, <span class="st">"Subhranshu"</span>);
+<span class="kw">new</span> Student(<span class="nu">2</span>, <span class="st">"Ankit"</span>);
+System.out.println(Student.getTotal());   <span class="cm">// 2   - called on the CLASS</span>
+</code></pre>
+
+<div class="tw"><table>
+<tr><th>Point</th><th class="mono">static</th><th>instance</th></tr>
+<tr><td>Belongs to</td><td>The class</td><td>Each object</td></tr>
+<tr><td>Copies in memory</td><td>Exactly one</td><td>One per object</td></tr>
+<tr><td>Created when</td><td>Class is loaded</td><td><code>new</code> runs</td></tr>
+<tr><td>Lives in</td><td>Metaspace</td><td>Heap, inside the object</td></tr>
+<tr><td>Called via</td><td><code>ClassName.member</code></td><td><code>reference.member</code></td></tr>
+<tr><td>Can access instance members?</td><td><span class="bad">No</span> &mdash; no object exists</td><td><span class="good">Yes</span>, both</td></tr>
+<tr><td>Can be overridden?</td><td><span class="bad">No</span> &mdash; only <i>hidden</i></td><td><span class="good">Yes</span></td></tr>
+<tr><td>Sees <code>this</code>?</td><td><span class="bad">No</span></td><td><span class="good">Yes</span></td></tr>
+</table></div>
+
+<div class="box trap">
+<span class="lbl">Trap &mdash; why <code>main</code> is static</span>
+<p><code>public static void main</code> must be static because the JVM has to call it <b>before any object exists</b>. If it were an instance method, the JVM would face a chicken-and-egg problem: it would need an object of your class to run <code>main</code>, but your code creates that object <i>inside</i> <code>main</code>.</p>
+</div>
+
+<div class="box ask">
+<span class="lbl">Asked</span>
+<p><b>"Can we call a static method on a reference variable?"</b> &mdash; <span class="good">Yes, it compiles</span> (<code>s1.getTotal()</code>), and it is <b>resolved at compile time using the reference's declared type</b>, ignoring the object entirely. It even works on <code>null</code>:</p>
+<pre style="margin:0 0 12px"><code>Student s = <span class="kw">null</span>;
+System.out.println(s.getTotal());   <span class="cm">// 2   - NO NullPointerException!</span></code></pre>
+<p>It is legal but bad style, and IDEs warn about it. Always write <code>Student.getTotal()</code>.</p>
+</div>
+</section>
+
+<!-- ============================================================ 05 -->
+<section id="s05">
+<h2><span class="num">05</span>Static control flow</h2><div class="h2rule"></div>
+
+<p class="lead">"In what order does everything run?" is asked constantly, and almost everyone gets the parent/child ordering wrong. Static flow happens <b>once per class</b>, the first time the class is loaded &mdash; before any object exists.</p>
+
+<div class="box def">
+<span class="lbl">Definition &mdash; the three passes</span>
+<p>When a class is loaded, the JVM does static work in <b>three distinct passes</b>:</p>
+<ol>
+<li><b>Identification</b> of all static members, top to bottom.</li>
+<li><b>Default value</b> assignment &mdash; every static field is set to its zero value (<code>0</code>, <code>false</code>, <code>null</code>). Nothing you wrote has run yet.</li>
+<li><b>Original assignment</b> &mdash; explicit initialisers and <code>static</code> blocks execute, <b>in the order they appear</b> in the source.</li>
+</ol>
+<p>And crucially: the <b>parent class is fully loaded first</b>.</p>
+</div>
+
+<h3>Your own file, traced</h3>
+<p>This is <code>src/CompleteJava/OOPS/StaticControlFlow.java</code>:</p>
+
+<pre><code><span class="kw">class</span> Parent1 {
+    <span class="kw">static int</span> x = <span class="nu">10</span>;
+    <span class="kw">static</span> { System.out.println(<span class="st">"Parent1 static block"</span>); }
+}
+<span class="kw">class</span> Child1 <span class="kw">extends</span> Parent1 {
+    <span class="kw">static int</span> y = <span class="nu">20</span>;
+    <span class="kw">static</span> { System.out.println(<span class="st">"Child1 static block"</span>); }
+}
+
+<span class="kw">public class</span> StaticControlFlow {
+    <span class="kw">public static void</span> main(String[] args) {
+        Child1 child1 = <span class="kw">new</span> Child1();
+    }
+}
+</code></pre>
+
+<div class="box win">
+<span class="lbl">Output &mdash; and why</span>
+<pre style="margin:0 0 12px"><code>Parent1 static block
+Child1 static block</code></pre>
+<p><code>new Child1()</code> forces <code>Child1</code> to load. Loading <code>Child1</code> requires <code>Parent1</code> to be loaded <b>first and completely</b>, so <code>Parent1</code>'s static block runs before <code>Child1</code>'s. Static flow runs <b>top-down: parent before child</b>.</p>
+</div>
+
+<h3>The read-before-write trick</h3>
+<p>This is the version interviewers actually use, because pass 2 and pass 3 are separate:</p>
+
+<pre><code><span class="kw">class</span> Demo {
+    <span class="kw">static int</span> i = m1();          <span class="cm">// 3rd: runs m1() -> prints j, which is still 0</span>
+    <span class="kw">static</span> { System.out.println(<span class="st">"static block, i = "</span> + i); }
+    <span class="kw">static int</span> j = <span class="nu">20</span>;
+
+    <span class="kw">static int</span> m1() {
+        System.out.println(<span class="st">"m1 sees j = "</span> + j);   <span class="cm">// j not assigned YET</span>
+        <span class="kw">return</span> <span class="nu">10</span>;
+    }
+
+    <span class="kw">public static void</span> main(String[] a) { System.out.println(<span class="st">"main, j = "</span> + j); }
+}
+</code></pre>
+
+<div class="box win">
+<span class="lbl">Output</span>
+<pre style="margin:0 0 12px"><code>m1 sees j = 0          &lt;- default value, pass 2 already happened
+static block, i = 10
+main, j = 20</code></pre>
+<p>Reading a static field <i>before</i> its original assignment gives you the <b>default value</b>, not a compile error. This is called <span class="hot">read indirectly, write directly</span> (RIWD).</p>
+</div>
+
+<div class="box trap">
+<span class="lbl">Trap</span>
+<p>Reading it <b>directly</b> before declaration <i>is</i> a compile error &mdash; "illegal forward reference":</p>
+<pre style="margin:0 0 12px"><code><span class="kw">static</span> { System.out.println(j); }   <span class="cm">// COMPILE ERROR</span>
+<span class="kw">static int</span> j = <span class="nu">20</span>;</code></pre>
+<p>Only reading it <i>through a method call</i> (indirectly) is allowed &mdash; which is exactly what makes the trick question work.</p>
+</div>
+
+<div class="box under">
+<span class="lbl">Under the hood</span>
+<p>All of pass 3 is compiled into one synthetic method called <code>&lt;clinit&gt;</code>. The JVM guarantees it runs <b>exactly once</b> and is <b>thread-safe</b> &mdash; the classloader holds a lock. That guarantee is what makes the "static holder" Singleton idiom in section 21 safe without any <code>synchronized</code>.</p>
+</div>
+</section>
+
+<!-- ============================================================ 06 -->
+<section id="s06">
+<h2><span class="num">06</span>Instance control flow</h2><div class="h2rule"></div>
+
+<p>Same three passes, but per object, and triggered by <code>new</code>. The ordering surprise here is that <b>the parent constructor finishes before the child's fields are initialised</b>.</p>
+
+<figure>
+<svg viewBox="0 0 700 300" role="img" aria-label="Order of execution on new Child(): parent static block, child static block, then parent instance initialisers and constructor, then child instance initialisers and constructor">
+  <defs>
+    <marker id="oa2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+
+  <text x="14" y="20" font-size="11" font-family="monospace" fill="#C9531A">ONCE PER CLASS &mdash; static flow</text>
+  <rect x="14" y="30" width="150" height="48" fill="none" stroke="currentColor" stroke-width="1.2"/>
+  <text x="24" y="50" font-size="11.5" font-family="monospace" fill="currentColor">1. Parent statics</text>
+  <text x="24" y="67" font-size="10" font-family="monospace" fill="currentColor">fields + static{}</text>
+
+  <line x1="168" y1="54" x2="200" y2="54" stroke="currentColor" stroke-width="1.2" marker-end="url(#oa2)"/>
+
+  <rect x="204" y="30" width="150" height="48" fill="none" stroke="currentColor" stroke-width="1.2"/>
+  <text x="214" y="50" font-size="11.5" font-family="monospace" fill="currentColor">2. Child statics</text>
+  <text x="214" y="67" font-size="10" font-family="monospace" fill="currentColor">fields + static{}</text>
+
+  <text x="382" y="50" font-size="10.5" font-family="monospace" fill="currentColor">never runs again,</text>
+  <text x="382" y="66" font-size="10.5" font-family="monospace" fill="currentColor">however many objects</text>
+
+  <line x1="88" y1="82" x2="88" y2="112" stroke="currentColor" stroke-width="1.2" marker-end="url(#oa2)"/>
+  <text x="100" y="102" font-size="10.5" font-family="monospace" fill="#C9531A">new Child()</text>
+
+  <text x="14" y="130" font-size="11" font-family="monospace" fill="#C9531A">ONCE PER OBJECT &mdash; instance flow</text>
+  <rect x="14" y="140" width="150" height="62" fill="none" stroke="currentColor" stroke-width="1.2"/>
+  <text x="24" y="160" font-size="11.5" font-family="monospace" fill="currentColor">3. super() first</text>
+  <text x="24" y="177" font-size="10" font-family="monospace" fill="currentColor">parent fields + {}</text>
+  <text x="24" y="193" font-size="10" font-family="monospace" fill="currentColor">parent constructor</text>
+
+  <line x1="168" y1="171" x2="200" y2="171" stroke="currentColor" stroke-width="1.2" marker-end="url(#oa2)"/>
+
+  <rect x="204" y="140" width="150" height="62" fill="none" stroke="#C9531A" stroke-width="1.6"/>
+  <text x="214" y="160" font-size="11.5" font-family="monospace" fill="#C9531A">4. Child body</text>
+  <text x="214" y="177" font-size="10" font-family="monospace" fill="currentColor">child fields + {}</text>
+  <text x="214" y="193" font-size="10" font-family="monospace" fill="currentColor">child constructor</text>
+
+  <line x1="358" y1="171" x2="390" y2="171" stroke="currentColor" stroke-width="1.2" marker-end="url(#oa2)"/>
+  <rect x="394" y="140" width="150" height="62" fill="none" stroke="currentColor" stroke-width="1.2"/>
+  <text x="404" y="166" font-size="11.5" font-family="monospace" fill="currentColor">object usable</text>
+  <text x="404" y="186" font-size="10" font-family="monospace" fill="currentColor">reference handed back</text>
+
+  <text x="14" y="236" font-size="11" font-family="monospace" fill="currentColor">Static: parent -&gt; child, ONCE.   Instance: parent -&gt; child, EVERY new.</text>
+  <text x="14" y="256" font-size="11" font-family="monospace" fill="#C9531A">Danger: at step 3 the parent constructor can call an overridden method,</text>
+  <text x="14" y="272" font-size="11" font-family="monospace" fill="#C9531A">and the child's fields are all still at their default values.</text>
+</svg>
+<figcaption>Static flow fires once per class; instance flow fires on every <code>new</code>. Both go parent-first &mdash; which creates the partially-built-object trap below.</figcaption>
+</figure>
+
+<h3>Your own file, traced</h3>
+<p><code>src/CompleteJava/OOPS/InstanceFlow.java</code> &mdash; note the parent is <code>abstract</code> and the child is empty:</p>
+
+<pre><code><span class="kw">abstract class</span> Parent {
+    Parent() { System.out.println(<span class="st">"Parent"</span>); }
+}
+<span class="kw">class</span> Child <span class="kw">extends</span> Parent { }
+
+<span class="kw">public class</span> InstanceFlow {
+    <span class="kw">public static void</span> main(String[] args) {
+        Child c = <span class="kw">new</span> Child();      <span class="cm">// prints: Parent</span>
+    }
+}
+</code></pre>
+
+<div class="box win">
+<span class="lbl">Why it prints "Parent"</span>
+<p><code>Child</code> has no constructor, so the compiler gives it <code>Child() { super(); }</code>. That <code>super()</code> runs <code>Parent()</code>, which prints. This proves two things people doubt: <b>an abstract class does have a constructor</b>, and <b>it does run</b> &mdash; you simply cannot call <code>new Parent()</code> directly.</p>
+</div>
+
+<h3>Full ordering demo</h3>
+<pre><code><span class="kw">class</span> P {
+    <span class="kw">static</span> { System.out.println(<span class="st">"1 P static"</span>); }
+    { System.out.println(<span class="st">"3 P instance block"</span>); }
+    P()  { System.out.println(<span class="st">"4 P constructor"</span>); }
+}
+<span class="kw">class</span> C <span class="kw">extends</span> P {
+    <span class="kw">static</span> { System.out.println(<span class="st">"2 C static"</span>); }
+    { System.out.println(<span class="st">"5 C instance block"</span>); }
+    C()  { System.out.println(<span class="st">"6 C constructor"</span>); }
+}
+<span class="cm">// new C(); new C();</span>
+<span class="cm">// 1 2 3 4 5 6   then   3 4 5 6   (statics never repeat)</span>
+</code></pre>
+
+<div class="box trap">
+<span class="lbl">Trap &mdash; the partially built object</span>
+<p>If a parent constructor calls a method the child overrides, the child's version runs <b>before the child's fields are initialised</b>. Everything looks <code>null</code> or <code>0</code>:</p>
+<pre style="margin:0 0 12px"><code><span class="kw">class</span> Parent {
+    Parent() { show(); }                  <span class="cm">// calls the CHILD's override</span>
+    <span class="kw">void</span> show() { }
+}
+<span class="kw">class</span> Child <span class="kw">extends</span> Parent {
+    <span class="kw">private</span> String msg = <span class="st">"ready"</span>;
+    <span class="kw">@Override void</span> show() { System.out.println(<span class="st">"msg = "</span> + msg); }
+}
+<span class="kw">new</span> Child();     <span class="cm">// prints "msg = null"   &lt;- NOT "ready"</span></code></pre>
+<p><span class="bad">Never call an overridable method from a constructor.</span> Make such methods <code>private</code>, <code>static</code> or <code>final</code>, or move the work into a factory method that runs after construction.</p>
+</div>
+</section>
+
+<!-- ============================================================ 07 -->
+<section id="s07">
+<h2><span class="num">07</span>Encapsulation</h2><div class="h2rule"></div>
+
+<div class="box def">
+<span class="lbl">Definition</span>
+<p><span class="k">Encapsulation</span> = binding data and the methods that operate on it into one unit, <b>and hiding the internal state</b> so it can only change through code you control.</p>
+<p>Hiding the data is called <span class="k">data hiding</span>. Encapsulation without <code>private</code> fields is not encapsulation &mdash; it is just a class.</p>
+</div>
+
+<h3>Real-world framing &mdash; the ATM</h3>
+<p>You never reach into the machine and move cash. You press buttons. The machine checks your PIN, checks your balance, checks the daily limit, and only then moves money. The buttons are the <code>public</code> methods; the cash drawer is a <code>private</code> field.</p>
+
+<pre><code><span class="kw">public class</span> BankAccount {
+    <span class="kw">private double</span> balance;              <span class="cm">// the cash drawer - sealed</span>
+    <span class="kw">private final</span> String accountNo;
+    <span class="kw">private int</span> failedPins;
+
+    <span class="kw">public</span> BankAccount(String accountNo, <span class="kw">double</span> opening) {
+        <span class="kw">if</span> (opening &lt; <span class="nu">0</span>) <span class="kw">throw new</span> IllegalArgumentException(<span class="st">"negative opening"</span>);
+        <span class="kw">this</span>.accountNo = accountNo;
+        <span class="kw">this</span>.balance   = opening;
+    }
+
+    <span class="cm">// read-only view: a getter with NO matching setter</span>
+    <span class="kw">public double</span> getBalance() { <span class="kw">return</span> balance; }
+
+    <span class="cm">// the ONLY doors in, each with its own rule</span>
+    <span class="kw">public void</span> deposit(<span class="kw">double</span> amt) {
+        <span class="kw">if</span> (amt &lt;= <span class="nu">0</span>) <span class="kw">throw new</span> IllegalArgumentException(<span class="st">"deposit must be &gt; 0"</span>);
+        balance += amt;
+    }
+
+    <span class="kw">public void</span> withdraw(<span class="kw">double</span> amt) {
+        <span class="kw">if</span> (amt &lt;= <span class="nu">0</span>)       <span class="kw">throw new</span> IllegalArgumentException(<span class="st">"invalid amount"</span>);
+        <span class="kw">if</span> (amt &gt; balance)  <span class="kw">throw new</span> IllegalStateException(<span class="st">"insufficient funds"</span>);
+        balance -= amt;
+    }
+}
+</code></pre>
+
+<p>Because <code>balance</code> is private with no setter, the balance can <b>never</b> be negative anywhere in the program. That guarantee is called an <span class="hot">invariant</span>, and it is the real product of encapsulation.</p>
+
+<div class="box trap">
+<span class="lbl">Trap &mdash; getters and setters are not encapsulation</span>
+<p>This class is <span class="bad">not encapsulated</span>, it is a public field with extra typing:</p>
+<pre style="margin:0 0 12px"><code><span class="kw">private double</span> balance;
+<span class="kw">public double</span> getBalance()          { <span class="kw">return</span> balance; }
+<span class="kw">public void</span> setBalance(<span class="kw">double</span> b)    { <span class="kw">this</span>.balance = b; }   <span class="cm">// no rule at all</span></code></pre>
+<p><code>setBalance(-99999)</code> still works. Encapsulation means <b>the setter enforces something</b>, or does not exist. Ask of every setter: "what would break if someone passed garbage here?"</p>
+</div>
+
+<div class="box trap">
+<span class="lbl">Trap &mdash; leaking a mutable field</span>
+<p>Returning a collection or array directly hands the caller your internals. They can now mutate your state behind your back:</p>
+<pre style="margin:0 0 12px"><code><span class="kw">private</span> List&lt;String&gt; txns = <span class="kw">new</span> ArrayList&lt;&gt;();
+
+<span class="kw">public</span> List&lt;String&gt; getTxns() { <span class="kw">return</span> txns; }                        <span class="cm">// LEAK</span>
+<span class="cm">// caller: account.getTxns().clear();   -> your history is gone</span>
+
+<span class="kw">public</span> List&lt;String&gt; getTxns() { <span class="kw">return</span> List.copyOf(txns); }           <span class="cm">// safe</span>
+<span class="cm">// or Collections.unmodifiableList(txns) for a live read-only view</span></code></pre>
+<p>Same applies in reverse: a constructor that stores a caller's list without copying lets them mutate it later. This is called a <b>defensive copy</b>.</p>
+</div>
+
+<div class="box ask">
+<span class="lbl">Asked</span>
+<p><b>"Difference between encapsulation and abstraction?"</b> &mdash; the single most common OOP interview question. <b>Encapsulation hides the data; abstraction hides the implementation.</b> Encapsulation is about <i>access</i> (solved with <code>private</code> + methods). Abstraction is about <i>design</i> (solved with interfaces and abstract classes). Encapsulation is how you achieve one small part of abstraction.</p>
+<p>Concretely: a car's engine internals being sealed away is encapsulation. "A car has a <code>start()</code> pedal and you do not care whether it is petrol, diesel or electric" is abstraction.</p>
+</div>
+</section>
+
+<!-- ============================================================ 08 -->
+<section id="s08">
+<h2><span class="num">08</span>Inheritance (IS-A)</h2><div class="h2rule"></div>
+
+<div class="box def">
+<span class="lbl">Definition</span>
+<p><span class="k">Inheritance</span> lets a class acquire the members of another class with <code>extends</code>, establishing an <span class="k">IS-A</span> relationship. <code>SavingsAccount extends Account</code> asserts "a savings account <b>is an</b> account", and the compiler will now let you use one wherever an <code>Account</code> is expected.</p>
+</div>
+
+<div class="tw"><table>
+<tr><th>Type</th><th>Meaning</th><th>Java support</th></tr>
+<tr><td>Single</td><td>One parent</td><td><span class="good">Yes</span></td></tr>
+<tr><td>Multilevel</td><td>A &rarr; B &rarr; C</td><td><span class="good">Yes</span></td></tr>
+<tr><td>Hierarchical</td><td>One parent, many children</td><td><span class="good">Yes</span></td></tr>
+<tr><td>Multiple (classes)</td><td>Two parent <b>classes</b></td><td><span class="bad">No</span> &mdash; diamond problem, section 14</td></tr>
+<tr><td>Multiple (interfaces)</td><td>Many parent <b>interfaces</b></td><td><span class="good">Yes</span></td></tr>
+<tr><td>Hybrid</td><td>Mix of the above</td><td>Only via interfaces</td></tr>
+</table></div>
+
+<h3>What is and is not inherited</h3>
+<div class="tw"><table>
+<tr><th>Member</th><th>Inherited?</th><th>Note</th></tr>
+<tr><td><code>public</code> / <code>protected</code></td><td><span class="good">Yes</span></td><td>The normal case</td></tr>
+<tr><td>default (package-private)</td><td>Only in the same package</td><td>Silently not inherited across packages</td></tr>
+<tr><td><code>private</code></td><td><span class="bad">No</span></td><td>Exists in the object, but invisible to the child</td></tr>
+<tr><td><code>static</code></td><td>Accessible, but <b>hidden</b> not overridden</td><td>See section 15</td></tr>
+<tr><td>Constructors</td><td><span class="bad">No</span></td><td>Only callable via <code>super(...)</code></td></tr>
+</table></div>
+
+<pre><code><span class="kw">class</span> Vehicle {
+    <span class="kw">protected</span> String brand;
+    <span class="kw">void</span> start() { System.out.println(brand + <span class="st">" starting"</span>); }
+}
+
+<span class="kw">class</span> Car <span class="kw">extends</span> Vehicle {
+    <span class="kw">private int</span> doors;
+
+    Car(String brand, <span class="kw">int</span> doors) {
+        <span class="kw">super</span>();                 <span class="cm">// implicit anyway</span>
+        <span class="kw">this</span>.brand = brand;      <span class="cm">// protected field, visible here</span>
+        <span class="kw">this</span>.doors = doors;
+    }
+    <span class="kw">void</span> openBoot() { System.out.println(<span class="st">"boot open"</span>); }
+}
+
+Vehicle v = <span class="kw">new</span> Car(<span class="st">"Maruti"</span>, <span class="nu">4</span>);   <span class="cm">// upcast - always safe</span>
+v.start();                             <span class="cm">// fine</span>
+<span class="cm">// v.openBoot();   -> COMPILE ERROR: Vehicle has no openBoot()</span>
+</code></pre>
+
+<div class="box under">
+<span class="lbl">Under the hood</span>
+<p>Every class without an explicit <code>extends</code> implicitly extends <code>java.lang.Object</code>. So every object you ever create already has <code>toString()</code>, <code>equals()</code>, <code>hashCode()</code>, <code>getClass()</code>, <code>wait()</code>, <code>notify()</code> and <code>clone()</code>. <code>Object</code> is the single root of the whole hierarchy &mdash; which is why <code>Object o = anything;</code> always compiles.</p>
+</div>
+
+<div class="box trap">
+<span class="lbl">Trap &mdash; inheritance is the most abused feature in OOP</span>
+<p><code>extends</code> is the <b>tightest coupling Java offers</b>. The child depends on the parent's internals, and a change in the parent silently breaks every child. The classic broken example:</p>
+<pre style="margin:0 0 12px"><code><span class="kw">class</span> Stack <span class="kw">extends</span> ArrayList&lt;String&gt; { ... }   <span class="cm">// WRONG</span></code></pre>
+<p>A stack is <b>not</b> an array list &mdash; you have just given every caller <code>get(5)</code>, <code>remove(2)</code> and <code>add(0, x)</code>, destroying the only rule a stack has. Java's own <code>java.util.Stack</code> made this mistake in 1.0 and it is still there as a warning.</p>
+<p>Use inheritance only when the child is <b>genuinely substitutable</b> for the parent (section 20, the L in SOLID). Otherwise use composition (section 16).</p>
+</div>
+
+<div class="box ask">
+<span class="lbl">Asked</span>
+<p><b>"Why does Java not support multiple inheritance of classes?"</b> &mdash; ambiguity. If <code>C extends A, B</code> and both define <code>m1()</code>, the compiler cannot know which to run; and if both inherit a field from a common grandparent, the object would carry two copies of it. Java chose to remove the ambiguity rather than add C++'s virtual-inheritance machinery. Interfaces are allowed because (before Java 8) they carried no implementation and no state to conflict.</p>
+</div>
+</section>
+
+<!-- ============================================================ 09 -->
+<section id="s09">
+<h2><span class="num">09</span>Polymorphism</h2><div class="h2rule"></div>
+
+<div class="box def">
+<span class="lbl">Definition</span>
+<p><span class="k">Polymorphism</span> = "many forms": one name, several behaviours, chosen by type.</p>
+<p><span class="k">Compile-time</span> (static / overloading) &mdash; the compiler picks the method from the <b>reference type</b> and the argument types. Decided before the program runs.</p>
+<p><span class="k">Runtime</span> (dynamic / overriding) &mdash; the JVM picks the method from the <b>actual object</b> on the heap. Decided while running. Also called <span class="jvm">dynamic method dispatch</span>.</p>
+</div>
+
+<figure>
+<svg viewBox="0 0 700 260" role="img" aria-label="A Payment reference variable pointing at an UpiPayment object: the compiler checks the method exists on the reference type Payment, while the JVM executes the version defined in the actual UpiPayment object">
+  <defs>
+    <marker id="oa3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+
+  <text x="14" y="22" font-size="12" font-family="monospace" fill="currentColor">Payment p = new UpiPayment();     p.pay(500);</text>
+
+  <!-- reference side -->
+  <rect x="14" y="44" width="250" height="92" fill="none" stroke="currentColor" stroke-width="1.3"/>
+  <text x="26" y="66" font-size="11" font-family="monospace" fill="#2C5C8F" letter-spacing="1">COMPILE TIME</text>
+  <text x="26" y="88" font-size="11.5" font-family="monospace" fill="currentColor">looks at the REFERENCE</text>
+  <text x="26" y="106" font-size="11.5" font-family="monospace" fill="currentColor">type: Payment</text>
+  <text x="26" y="126" font-size="10.5" font-family="monospace" fill="currentColor">"does pay(int) exist?"</text>
+
+  <!-- object side -->
+  <rect x="404" y="44" width="250" height="92" fill="none" stroke="#C9531A" stroke-width="1.6"/>
+  <text x="416" y="66" font-size="11" font-family="monospace" fill="#C9531A" letter-spacing="1">RUNTIME</text>
+  <text x="416" y="88" font-size="11.5" font-family="monospace" fill="currentColor">looks at the OBJECT</text>
+  <text x="416" y="106" font-size="11.5" font-family="monospace" fill="currentColor">type: UpiPayment</text>
+  <text x="416" y="126" font-size="10.5" font-family="monospace" fill="currentColor">"run WHOSE pay()?"</text>
+
+  <line x1="268" y1="90" x2="400" y2="90" stroke="currentColor" stroke-width="1.2" marker-end="url(#oa3)"/>
+  <text x="334" y="82" font-size="10" font-family="monospace" fill="currentColor" text-anchor="middle">passes</text>
+
+  <text x="14" y="172" font-size="11.5" font-family="monospace" fill="currentColor">Compiler decides WHICH METHOD SIGNATURE is legal.</text>
+  <text x="14" y="192" font-size="11.5" font-family="monospace" fill="#C9531A">JVM decides WHOSE BODY actually runs.</text>
+  <text x="14" y="218" font-size="11" font-family="monospace" fill="currentColor">So: a method the child adds is invisible through a parent reference,</text>
+  <text x="14" y="234" font-size="11" font-family="monospace" fill="currentColor">but a method the child OVERRIDES is the one that executes.</text>
+</svg>
+<figcaption>Overriding splits the decision in two. The reference type controls what you are <i>allowed</i> to call; the object controls what actually <i>runs</i>.</figcaption>
+</figure>
+
+<h3>Real-world framing &mdash; a payment gateway</h3>
+<p>Your checkout code should not care whether the user picked UPI, a card or net banking. It calls <code>pay()</code> on a <code>Payment</code>; the right implementation runs itself:</p>
+
+<pre><code><span class="kw">interface</span> Payment {
+    <span class="kw">void</span> pay(<span class="kw">double</span> amount);
+}
+
+<span class="kw">class</span> UpiPayment <span class="kw">implements</span> Payment {
+    <span class="kw">public void</span> pay(<span class="kw">double</span> a) { System.out.println(<span class="st">"UPI PIN -&gt; paid "</span> + a); }
+}
+<span class="kw">class</span> CardPayment <span class="kw">implements</span> Payment {
+    <span class="kw">public void</span> pay(<span class="kw">double</span> a) { System.out.println(<span class="st">"OTP -&gt; paid "</span> + a); }
+}
+<span class="kw">class</span> WalletPayment <span class="kw">implements</span> Payment {
+    <span class="kw">public void</span> pay(<span class="kw">double</span> a) { System.out.println(<span class="st">"wallet debit "</span> + a); }
+}
+
+<span class="cm">// checkout never mentions a single concrete class</span>
+<span class="kw">class</span> Checkout {
+    <span class="kw">void</span> complete(Payment method, <span class="kw">double</span> amount) {
+        method.pay(amount);          <span class="cm">// runtime picks the right body</span>
+    }
+}
+
+<span class="kw">new</span> Checkout().complete(<span class="kw">new</span> UpiPayment(), <span class="nu">499</span>);
+<span class="kw">new</span> Checkout().complete(<span class="kw">new</span> CardPayment(), <span class="nu">499</span>);
+</code></pre>
+
+<p>Adding <code>NetBankingPayment</code> tomorrow means writing <b>one new class and changing nothing else</b>. That is the whole point &mdash; compare it with the <code>if/else</code> chain it replaces:</p>
+
+<pre><code><span class="cm">// what polymorphism saves you from</span>
+<span class="kw">if</span> (type.equals(<span class="st">"upi"</span>))       { <span class="cm">/* ... */</span> }
+<span class="kw">else if</span> (type.equals(<span class="st">"card"</span>))  { <span class="cm">/* ... */</span> }
+<span class="kw">else if</span> (type.equals(<span class="st">"wallet"</span>)){ <span class="cm">/* ... */</span> }
+<span class="cm">// every new method = edit this file = risk breaking the other three</span>
+</code></pre>
+
+<div class="box trap">
+<span class="lbl">Trap &mdash; fields are NOT polymorphic</span>
+<p>Methods dispatch on the object. <b>Fields and static methods dispatch on the reference type.</b> This is a favourite exam question:</p>
+<pre style="margin:0 0 12px"><code><span class="kw">class</span> P { String name = <span class="st">"parent"</span>;  String who() { <span class="kw">return</span> <span class="st">"P"</span>; } }
+<span class="kw">class</span> C <span class="kw">extends</span> P { String name = <span class="st">"child"</span>; String who() { <span class="kw">return</span> <span class="st">"C"</span>; } }
+
+P ref = <span class="kw">new</span> C();
+System.out.println(ref.name);    <span class="cm">// "parent"  &lt;- FIELD: reference type wins</span>
+System.out.println(ref.who());   <span class="cm">// "C"       &lt;- METHOD: object wins</span></code></pre>
+<p>Fields are <b>hidden</b>, not overridden. Never shadow a parent field &mdash; there is no good reason to.</p>
+</div>
+
+<div class="box ask">
+<span class="lbl">Asked</span>
+<p><b>"Is overloading polymorphism?"</b> &mdash; yes, compile-time polymorphism, though some purists insist only overriding counts as "true" polymorphism because only it is resolved at runtime. Say both: <i>"overloading is compile-time, overriding is runtime; when people say polymorphism unqualified they usually mean overriding."</i></p>
+</div>
+</section>
+
+<!-- ============================================================ 10 -->
+<section id="s10">
+<h2><span class="num">10</span>Abstraction</h2><div class="h2rule"></div>
+
+<div class="box def">
+<span class="lbl">Definition</span>
+<p><span class="k">Abstraction</span> = exposing <b>what</b> a thing does while hiding <b>how</b> it does it. You design against a capability, not an implementation.</p>
+</div>
+
+<h3>Real-world framing &mdash; driving</h3>
+<p>You know a car needs <code>start()</code>, <code>accelerate()</code>, <code>brake()</code>. You do not know or care about spark timing, fuel injection or the battery management system. Learning to drive a petrol car means you can drive an EV: the <b>abstraction is stable even though every implementation detail changed</b>.</p>
+
+<p>In code, the win is that your class depends on an idea rather than a vendor:</p>
+
+<pre><code><span class="cm">// the abstraction: "something that can store a file"</span>
+<span class="kw">interface</span> FileStore {
+    String upload(<span class="kw">byte</span>[] data, String name);
+    <span class="kw">byte</span>[] download(String key);
+}
+
+<span class="kw">class</span> S3Store    <span class="kw">implements</span> FileStore { <span class="cm">/* AWS SDK calls */</span> }
+<span class="kw">class</span> LocalStore <span class="kw">implements</span> FileStore { <span class="cm">/* writes to disk  */</span> }
+
+<span class="kw">class</span> ProfileService {
+    <span class="kw">private final</span> FileStore store;       <span class="cm">// depends on the IDEA, not on AWS</span>
+
+    ProfileService(FileStore store) { <span class="kw">this</span>.store = store; }
+
+    <span class="kw">void</span> setPhoto(<span class="kw">byte</span>[] img) { store.upload(img, <span class="st">"profile.png"</span>); }
+}
+
+<span class="cm">// production</span>
+<span class="kw">new</span> ProfileService(<span class="kw">new</span> S3Store());
+<span class="cm">// unit test - no network, no AWS account, runs in 2ms</span>
+<span class="kw">new</span> ProfileService(<span class="kw">new</span> LocalStore());
+</code></pre>
+
+<p>Notice what abstraction actually bought: <b>testability</b> and the freedom to switch cloud providers without touching <code>ProfileService</code>.</p>
+
+<div class="tw"><table>
+<tr><th></th><th>Abstraction</th><th>Encapsulation</th></tr>
+<tr><td>Hides</td><td>Implementation / complexity</td><td>Data / state</td></tr>
+<tr><td>Question it answers</td><td>"What can this do?"</td><td>"Who may change this?"</td></tr>
+<tr><td>Achieved with</td><td><code>interface</code>, <code>abstract class</code></td><td><code>private</code> + methods that enforce rules</td></tr>
+<tr><td>Stage</td><td>Design</td><td>Implementation</td></tr>
+<tr><td>Real example</td><td>You press brake; ABS logic is hidden</td><td>You cannot reach into the brake fluid</td></tr>
+</table></div>
+
+<div class="box ask">
+<span class="lbl">Asked</span>
+<p><b>"How much abstraction do the two tools give?"</b> &mdash; an <code>abstract class</code> gives <b>partial</b> abstraction (it can have concrete methods and state). An <code>interface</code> gave <b>100%</b> abstraction before Java 8; since <code>default</code> methods arrived, it is also partial. If asked the old-fashioned way, mention that nuance &mdash; it shows you know the version history.</p>
+</div>
+</section>
+
+<!-- ============================================================ 11 -->
+<section id="s11">
+<h2><span class="num">11</span>Abstract classes</h2><div class="h2rule"></div>
+
+<div class="box def">
+<span class="lbl">Definition</span>
+<p>An <span class="k">abstract class</span> is a class that cannot be instantiated, declared with <code>abstract</code>. It exists to be extended. It may contain <b>abstract methods</b> (signature, no body) which every concrete subclass must implement.</p>
+</div>
+
+<h3>When it is the right tool</h3>
+<p>Use an abstract class when subclasses share <b>real code and state</b>, not just a capability. Real case: every payment method needs identical logging, fee calculation and validation &mdash; only the actual charge differs.</p>
+
+<pre><code><span class="kw">abstract class</span> BasePayment {
+    <span class="kw">protected final</span> String txnId;         <span class="cm">// shared STATE - an interface cannot do this</span>
+
+    BasePayment() { <span class="kw">this</span>.txnId = java.util.UUID.randomUUID().toString(); }
+
+    <span class="cm">// the template: fixed skeleton, one hole for the subclass</span>
+    <span class="kw">public final void</span> process(<span class="kw">double</span> amount) {
+        validate(amount);                  <span class="cm">// shared</span>
+        <span class="kw">double</span> fee = fee(amount);           <span class="cm">// subclass may override</span>
+        charge(amount + fee);              <span class="cm">// subclass MUST implement</span>
+        log(amount, fee);                  <span class="cm">// shared</span>
+    }
+
+    <span class="kw">protected abstract void</span> charge(<span class="kw">double</span> total);   <span class="cm">// no body: the hole</span>
+
+    <span class="kw">protected double</span> fee(<span class="kw">double</span> amt) { <span class="kw">return</span> <span class="nu">0</span>; }        <span class="cm">// sensible default</span>
+
+    <span class="kw">private void</span> validate(<span class="kw">double</span> a) {
+        <span class="kw">if</span> (a &lt;= <span class="nu">0</span>) <span class="kw">throw new</span> IllegalArgumentException(<span class="st">"bad amount"</span>);
+    }
+    <span class="kw">private void</span> log(<span class="kw">double</span> a, <span class="kw">double</span> f) {
+        System.out.println(txnId + <span class="st">" amount="</span> + a + <span class="st">" fee="</span> + f);
+    }
+}
+
+<span class="kw">class</span> UpiPayment <span class="kw">extends</span> BasePayment {
+    <span class="kw">protected void</span> charge(<span class="kw">double</span> total) { System.out.println(<span class="st">"UPI debit "</span> + total); }
+    <span class="cm">// fee() not overridden -> UPI is free</span>
+}
+
+<span class="kw">class</span> CardPayment <span class="kw">extends</span> BasePayment {
+    <span class="kw">protected void</span> charge(<span class="kw">double</span> total) { System.out.println(<span class="st">"card charge "</span> + total); }
+    <span class="kw">protected double</span> fee(<span class="kw">double</span> amt)   { <span class="kw">return</span> amt * <span class="nu">0.02</span>; }   <span class="cm">// 2% MDR</span>
+}
+</code></pre>
+
+<p>That shape &mdash; a <code>final</code> method defining the steps, with abstract holes &mdash; is the <span class="hot">Template Method</span> pattern, and it is the main reason abstract classes exist.</p>
+
+<div class="box win">
+<span class="lbl">Rules worth memorising</span>
+<ul>
+<li>An abstract class <b>can</b> have constructors, fields, static methods, and fully concrete methods.</li>
+<li>An abstract class <b>need not</b> have any abstract method &mdash; marking it <code>abstract</code> just to block <code>new</code> is legal and sometimes useful.</li>
+<li>A class with <b>even one</b> abstract method <b>must</b> be declared abstract.</li>
+<li>A subclass that does not implement every inherited abstract method must itself be abstract.</li>
+<li><code>abstract</code> cannot combine with <code>final</code> (contradiction: extend me / do not extend me), <code>static</code>, or <code>private</code>.</li>
+</ul>
+</div>
+
+<div class="box ask">
+<span class="lbl">Asked</span>
+<p><b>"Can an abstract class have a constructor? What is the point if you cannot instantiate it?"</b> &mdash; <span class="good">Yes.</span> It runs via <code>super()</code> when a subclass object is created, and it initialises the inherited state (<code>txnId</code> above). Your own <code>InstanceFlow.java</code> in section 06 demonstrates it printing.</p>
+<p><b>"Can you create an object of an abstract class?"</b> &mdash; not directly, but <code>new AbstractThing() { ... }</code> compiles: that is an <b>anonymous subclass</b>, and the object is of that subclass, not of the abstract class.</p>
+</div>
+</section>
+
+<!-- ============================================================ 12 -->
+<section id="s12">
+<h2><span class="num">12</span>Interfaces</h2><div class="h2rule"></div>
+
+<div class="box def">
+<span class="lbl">Definition</span>
+<p>An <span class="k">interface</span> is a pure contract: a set of method signatures a class promises to provide. It describes a <b>capability</b> ("can be compared", "can be closed") rather than an identity.</p>
+</div>
+
+<h3>What each modifier defaults to</h3>
+<div class="tw"><table>
+<tr><th>In an interface</th><th>Implicitly</th><th>Since</th></tr>
+<tr><td>Method (no body)</td><td><code>public abstract</code></td><td>1.0</td></tr>
+<tr><td>Field</td><td><code>public static final</code> &mdash; a constant</td><td>1.0</td></tr>
+<tr><td><code>default</code> method</td><td><code>public</code>, has a body, inheritable</td><td><b>8</b></td></tr>
+<tr><td><code>static</code> method</td><td><code>public</code>, not inherited</td><td><b>8</b></td></tr>
+<tr><td><code>private</code> method</td><td>helper for <code>default</code> methods</td><td><b>9</b></td></tr>
+</table></div>
+
+<pre><code><span class="kw">interface</span> Notifier {
+    <span class="kw">int</span> MAX_RETRY = <span class="nu">3</span>;                    <span class="cm">// public static final, whether you say it or not</span>
+
+    <span class="kw">void</span> send(String to, String msg);      <span class="cm">// public abstract</span>
+
+    <span class="cm">// default: added in Java 8 so interfaces could grow without</span>
+    <span class="cm">// breaking the thousands of classes already implementing them</span>
+    <span class="kw">default void</span> sendWithRetry(String to, String msg) {
+        <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nu">1</span>; i &lt;= MAX_RETRY; i++) {
+            <span class="kw">try</span> { send(to, msg); <span class="kw">return</span>; }
+            <span class="kw">catch</span> (RuntimeException e) { log(i, e); }
+        }
+        <span class="kw">throw new</span> IllegalStateException(<span class="st">"failed after "</span> + MAX_RETRY);
+    }
+
+    <span class="kw">private void</span> log(<span class="kw">int</span> attempt, Exception e) {    <span class="cm">// Java 9+, hidden helper</span>
+        System.out.println(<span class="st">"attempt "</span> + attempt + <span class="st">" failed: "</span> + e.getMessage());
+    }
+
+    <span class="kw">static</span> Notifier noop() { <span class="kw">return</span> (to, msg) -&gt; { }; }   <span class="cm">// factory, not inherited</span>
+}
+
+<span class="kw">class</span> SmsNotifier <span class="kw">implements</span> Notifier {
+    <span class="kw">public void</span> send(String to, String msg) { <span class="cm">/* call SMS gateway */</span> }
+}
+</code></pre>
+
+<div class="box win">
+<span class="lbl">Do this &mdash; a class can implement many interfaces</span>
+<p>This is Java's answer to multiple inheritance, and it composes cleanly because interfaces carry no state:</p>
+<pre style="margin:0 0 12px"><code><span class="kw">class</span> CloudFile <span class="kw">implements</span> Readable, Writable, Closeable, Comparable&lt;CloudFile&gt; { }</code></pre>
+<p>Each interface adds one capability. Compare with <code>extends</code>, where you get exactly one shot.</p>
+</div>
+
+<div class="box under">
+<span class="lbl">Under the hood &mdash; the marker interface</span>
+<p>An interface with <b>no members at all</b> is a <span class="k">marker interface</span> &mdash; you have these in <code>src/CompleteJava/OOPS/MarkerInterface/</code>. It carries no methods; its whole job is to <b>tag</b> a type so that other code can test it with <code>instanceof</code>.</p>
+<pre style="margin:0 0 12px"><code><span class="kw">interface</span> Deletable { }                <span class="cm">// no methods - a pure tag</span>
+
+<span class="kw">class</span> Dao {
+    <span class="kw">void</span> delete(Entity e) {
+        <span class="kw">if</span> (!(e <span class="kw">instanceof</span> Deletable))
+            <span class="kw">throw new</span> UnsupportedOperationException(e.getClass() + <span class="st">" is not deletable"</span>);
+        <span class="cm">// ... proceed</span>
+    }
+}</code></pre>
+<p>JDK examples: <code>Serializable</code>, <code>Cloneable</code>, <code>RandomAccess</code>. Modern code usually prefers <b>annotations</b> for this, because an annotation can carry parameters and does not pollute the type hierarchy &mdash; which is exactly what your <code>@important</code> annotation in <code>DiamondProbplem.java</code> is doing.</p>
+</div>
+
+<div class="box ask">
+<span class="lbl">Asked</span>
+<p><b>"Why were <code>default</code> methods added in Java 8?"</b> &mdash; <b>backward compatibility.</b> Java 8 needed to add <code>stream()</code> and <code>forEach()</code> to <code>Collection</code>. Adding an abstract method would have broken every existing implementation on earth overnight. <code>default</code> lets an interface ship a body, so old classes keep compiling.</p>
+<p><b>"Can an interface extend another interface?"</b> &mdash; yes, and it can extend <b>several</b>: <code>interface A extends B, C { }</code>. An interface never <code>implements</code>; it always <code>extends</code>.</p>
+<p><b>"Can an interface have a constructor?"</b> &mdash; <span class="bad">no</span>. There is no state to initialise and it is never instantiated.</p>
+</div>
+</section>
+
+<!-- ============================================================ 13 -->
+<section id="s13">
+<h2><span class="num">13</span>Abstract class vs interface</h2><div class="h2rule"></div>
+
+<p class="lead">Asked in essentially every interview. Learn the table, but lead with the one-line judgement underneath it &mdash; that is what separates a memorised answer from an understood one.</p>
+
+<div class="tw"><table>
+<tr><th>Point</th><th>Abstract class</th><th>Interface</th></tr>
+<tr><td>Keyword to use it</td><td><code>extends</code> (one only)</td><td><code>implements</code> (many)</td></tr>
+<tr><td>Instance state / fields</td><td><span class="good">Yes</span>, any kind</td><td><span class="bad">No</span> &mdash; only <code>public static final</code> constants</td></tr>
+<tr><td>Constructor</td><td><span class="good">Yes</span></td><td><span class="bad">No</span></td></tr>
+<tr><td>Concrete methods</td><td><span class="good">Yes</span></td><td>Only <code>default</code> / <code>static</code> / <code>private</code> (8+)</td></tr>
+<tr><td>Access modifiers on methods</td><td>Any</td><td><code>public</code> (or <code>private</code> helpers, 9+)</td></tr>
+<tr><td>Multiple inheritance</td><td><span class="bad">No</span></td><td><span class="good">Yes</span></td></tr>
+<tr><td>Models</td><td><b>IS-A</b> identity</td><td><b>CAN-DO</b> capability</td></tr>
+<tr><td>Adding a method later</td><td>Safe</td><td>Safe only if <code>default</code></td></tr>
+<tr><td>Speed of change</td><td>Hard &mdash; children are coupled</td><td>Easy &mdash; children are independent</td></tr>
+</table></div>
+
+<div class="box win">
+<span class="lbl">How to actually choose</span>
+<p><b>Interface</b> when unrelated things share a capability. <code>Comparable</code>, <code>Runnable</code>, <code>Payment</code>. A <code>File</code>, a <code>Socket</code> and a <code>Stream</code> are nothing alike, yet all <code>Closeable</code>.</p>
+<p><b>Abstract class</b> when related things share <b>code and state</b> you do not want to duplicate. <code>BasePayment</code> above holds a <code>txnId</code> and real logging &mdash; an interface cannot.</p>
+<p><b>Both together</b> is the normal professional answer: declare the contract as an interface, then offer an abstract skeleton implementation for convenience. The JDK does exactly this &mdash; <code>List</code> (interface) plus <code>AbstractList</code> (skeleton) plus <code>ArrayList</code> (concrete).</p>
+</div>
+
+<div class="box ask">
+<span class="lbl">Asked</span>
+<p><b>"Now that interfaces have <code>default</code> methods, are abstract classes useless?"</b> &mdash; no, and this is the modern follow-up. Interfaces still <b>cannot hold instance state</b>, cannot have constructors, and cannot have non-public members. The moment your shared logic needs a field, you need an abstract class.</p>
+</div>
+</section>
+
+<!-- ============================================================ 14 -->
+<section id="s14">
+<h2><span class="num">14</span>The diamond problem</h2><div class="h2rule"></div>
+
+<div class="box def">
+<span class="lbl">Definition</span>
+<p>The <span class="k">diamond problem</span> is the ambiguity that appears when a class inherits the <b>same method from two different parents</b>. With <code>D</code> inheriting from both <code>B</code> and <code>C</code>, which themselves extend <code>A</code>, a call to <code>d.m1()</code> has two candidate bodies and no rule to pick one.</p>
+</div>
+
+<figure>
+<svg viewBox="0 0 700 250" role="img" aria-label="Diamond shaped inheritance: class A at top, B and C both extending A and both defining m1, and D at the bottom inheriting from both B and C, leaving the call to m1 ambiguous">
+  <rect x="290" y="16" width="120" height="40" fill="none" stroke="currentColor" stroke-width="1.2"/>
+  <text x="350" y="41" font-size="13" font-family="monospace" fill="currentColor" text-anchor="middle">A</text>
+
+  <rect x="150" y="96" width="140" height="46" fill="none" stroke="currentColor" stroke-width="1.2"/>
+  <text x="220" y="116" font-size="13" font-family="monospace" fill="currentColor" text-anchor="middle">B</text>
+  <text x="220" y="133" font-size="10.5" font-family="monospace" fill="#C9531A" text-anchor="middle">m1() { "B" }</text>
+
+  <rect x="410" y="96" width="140" height="46" fill="none" stroke="currentColor" stroke-width="1.2"/>
+  <text x="480" y="116" font-size="13" font-family="monospace" fill="currentColor" text-anchor="middle">C</text>
+  <text x="480" y="133" font-size="10.5" font-family="monospace" fill="#C9531A" text-anchor="middle">m1() { "C" }</text>
+
+  <rect x="290" y="180" width="120" height="40" fill="none" stroke="#C9531A" stroke-width="1.6"/>
+  <text x="350" y="205" font-size="13" font-family="monospace" fill="#C9531A" text-anchor="middle">D</text>
+
+  <line x1="300" y1="56" x2="240" y2="94" stroke="currentColor" stroke-width="1.2"/>
+  <line x1="400" y1="56" x2="460" y2="94" stroke="currentColor" stroke-width="1.2"/>
+  <line x1="240" y1="142" x2="300" y2="178" stroke="currentColor" stroke-width="1.2"/>
+  <line x1="460" y1="142" x2="400" y2="178" stroke="currentColor" stroke-width="1.2"/>
+
+  <text x="60" y="205" font-size="11.5" font-family="monospace" fill="#C9531A">d.m1()  ->  B's or C's?</text>
+  <text x="60" y="224" font-size="11" font-family="monospace" fill="currentColor">no rule can decide</text>
+</svg>
+<figcaption>Java forbids this shape for classes outright, so the question never arises. For interfaces it allows the shape but forces <i>you</i> to resolve it.</figcaption>
+</figure>
+
+<h3>With classes: simply banned</h3>
+<pre><code><span class="cm">// class D extends B, C { }     -> COMPILE ERROR, full stop</span>
+</code></pre>
+
+<h3>With interfaces: allowed, but you must disambiguate</h3>
+<p>Once Java 8 gave interfaces bodies, the diamond became possible again. Java's answer: the compiler refuses to guess and makes you say which one you meant.</p>
+
+<pre><code><span class="kw">interface</span> B { <span class="kw">default</span> String m1() { <span class="kw">return</span> <span class="st">"B"</span>; } }
+<span class="kw">interface</span> C { <span class="kw">default</span> String m1() { <span class="kw">return</span> <span class="st">"C"</span>; } }
+
+<span class="kw">class</span> D <span class="kw">implements</span> B, C {
+    <span class="cm">// Without this override: "class D inherits unrelated defaults for m1()"</span>
+    <span class="kw">@Override</span>
+    <span class="kw">public</span> String m1() {
+        <span class="kw">return</span> B.<span class="kw">super</span>.m1();       <span class="cm">// the ONLY place this syntax is legal</span>
+    }
+}
+</code></pre>
+
+<div class="box win">
+<span class="lbl">The three resolution rules</span>
+<p>When the same method comes from several places, Java picks in this order:</p>
+<ol>
+<li><b>Class wins.</b> A method from a superclass beats any interface <code>default</code>.</li>
+<li><b>Most specific interface wins.</b> If <code>B extends A</code>, <code>B</code>'s default beats <code>A</code>'s.</li>
+<li><b>Otherwise: you decide.</b> Compile error until you override and pick with <code>Interface.super.method()</code>.</li>
+</ol>
+</div>
+
+<div class="box ask">
+<span class="lbl">Asked</span>
+<p><b>"Does Java have the diamond problem?"</b> &mdash; the right answer is nuanced: <b>not for classes</b>, because multiple class inheritance is banned. <b>Potentially for interfaces</b> since Java 8's default methods &mdash; but it is resolved at <b>compile time</b> by forcing an explicit override, so it never becomes a runtime surprise. Also note there is <b>no state</b> to duplicate, which is the half of the C++ problem Java avoids entirely.</p>
+</div>
+</section>
+
+<!-- ============================================================ 15 -->
+<section id="s15">
+<h2><span class="num">15</span>Overloading vs overriding</h2><div class="h2rule"></div>
+
+<div class="tw"><table>
+<tr><th>Point</th><th>Overloading</th><th>Overriding</th></tr>
+<tr><td>Where</td><td>Same class (or inherited)</td><td>Subclass</td></tr>
+<tr><td>Signature</td><td><b>Must differ</b> in parameters</td><td><b>Must be identical</b></td></tr>
+<tr><td>Return type</td><td>Free</td><td>Same, or a subtype (covariant)</td></tr>
+<tr><td>Resolved</td><td>Compile time, by reference type</td><td>Runtime, by object</td></tr>
+<tr><td>Also called</td><td>Static / early binding</td><td>Dynamic / late binding</td></tr>
+<tr><td><code>private</code>, <code>static</code>, <code>final</code></td><td>Can be overloaded</td><td><span class="bad">Cannot</span> be overridden</td></tr>
+</table></div>
+
+<div class="box win">
+<span class="lbl">The overriding rulebook</span>
+<ul>
+<li>Signature identical; return type same or a <b>subtype</b> (covariant return).</li>
+<li>Access may <b>widen</b>, never narrow: <code>protected</code> &rarr; <code>public</code> is fine, <code>public</code> &rarr; <code>private</code> is a compile error.</li>
+<li><b>Checked</b> exceptions may be narrowed or dropped, never broadened. <b>Unchecked</b> exceptions are unrestricted.</li>
+<li><code>final</code>, <code>static</code> and <code>private</code> methods cannot be overridden. Constructors cannot either.</li>
+<li>Always write <code>@Override</code> &mdash; it turns a silent typo into a compile error.</li>
+</ul>
+</div>
+
+<pre><code><span class="kw">class</span> Parent {
+    <span class="kw">protected</span> Object fetch() <span class="kw">throws</span> Exception { <span class="kw">return</span> <span class="kw">null</span>; }
+}
+
+<span class="kw">class</span> Child <span class="kw">extends</span> Parent {
+    <span class="kw">@Override</span>
+    <span class="kw">public</span> String fetch() <span class="kw">throws</span> java.io.IOException {   <span class="cm">// all three legal:</span>
+        <span class="kw">return</span> <span class="st">"data"</span>;                                   <span class="cm">// String IS-A Object  (covariant)</span>
+    }                                                  <span class="cm">// public widens protected</span>
+}                                                      <span class="cm">// IOException narrows Exception</span>
+</code></pre>
+
+<div class="box trap">
+<span class="lbl">Trap &mdash; static methods are hidden, not overridden</span>
+<pre style="margin:0 0 12px"><code><span class="kw">class</span> P { <span class="kw">static</span> String who() { <span class="kw">return</span> <span class="st">"P"</span>; } }
+<span class="kw">class</span> C <span class="kw">extends</span> P { <span class="kw">static</span> String who() { <span class="kw">return</span> <span class="st">"C"</span>; } }
+
+P ref = <span class="kw">new</span> C();
+System.out.println(ref.who());   <span class="cm">// "P"  &lt;- reference type, NOT the object</span></code></pre>
+<p>This is <b>method hiding</b>. There is no dynamic dispatch for statics, so polymorphism does not apply. Adding <code>@Override</code> to <code>C.who()</code> would fail to compile &mdash; a useful way to prove it to yourself.</p>
+</div>
+
+<div class="box trap">
+<span class="lbl">Trap &mdash; overload resolution surprises</span>
+<pre style="margin:0 0 12px"><code><span class="kw">void</span> f(Object o) { System.out.println(<span class="st">"Object"</span>); }
+<span class="kw">void</span> f(String s) { System.out.println(<span class="st">"String"</span>); }
+
+f(<span class="kw">null</span>);          <span class="cm">// "String"  - the MOST SPECIFIC match wins</span></code></pre>
+<p>And the classic: the compiler prefers <b>widening over boxing</b>, and boxing over varargs.</p>
+<pre style="margin:0 0 12px"><code><span class="kw">void</span> g(<span class="kw">long</span> x)    { System.out.println(<span class="st">"long"</span>); }
+<span class="kw">void</span> g(Integer x) { System.out.println(<span class="st">"Integer"</span>); }
+
+g(<span class="nu">5</span>);             <span class="cm">// "long"  - widening int->long beats boxing int->Integer</span></code></pre>
+</div>
+</section>
+
+<!-- ============================================================ 16 -->
+<section id="s16">
+<h2><span class="num">16</span>Composition (HAS-A) &mdash; and why to prefer it</h2><div class="h2rule"></div>
+
+<div class="box def">
+<span class="lbl">Definition</span>
+<p><span class="k">Composition</span> = a class <b>holds a reference</b> to another object and delegates work to it. A <b>HAS-A</b> relationship. A <code>Car</code> HAS-A <code>Engine</code>; a <code>Car</code> IS-A <code>Vehicle</code>.</p>
+<p><span class="k">Aggregation</span> is the loose flavour (the part survives the whole &mdash; a <code>Team</code> HAS <code>Player</code>s who exist without the team). <span class="k">Composition</span> proper is the strict flavour (the part dies with the whole &mdash; an <code>Order</code> and its <code>OrderLine</code>s).</p>
+</div>
+
+<h3>The same job done both ways</h3>
+<p>Say you need a queue that also counts everything ever added &mdash; a real requirement for metrics.</p>
+
+<pre><code><span class="cm">// ---------- inheritance: fragile ----------</span>
+<span class="kw">class</span> CountingQueue&lt;E&gt; <span class="kw">extends</span> ArrayDeque&lt;E&gt; {
+    <span class="kw">private int</span> added;
+
+    <span class="kw">@Override public boolean</span> add(E e)                  { added++; <span class="kw">return super</span>.add(e); }
+    <span class="kw">@Override public boolean</span> addAll(Collection&lt;? <span class="kw">extends</span> E&gt; c) {
+        added += c.size(); <span class="kw">return super</span>.addAll(c);
+    }
+    <span class="kw">public int</span> getAdded() { <span class="kw">return</span> added; }
+}
+<span class="cm">// BUG: if ArrayDeque.addAll() internally calls add(), every element is</span>
+<span class="cm">// counted TWICE. Your correctness depends on the parent's private</span>
+<span class="cm">// implementation details, which can change in any JDK release.</span>
+<span class="cm">// Also: push(), offer(), offerLast() all bypass your counter entirely.</span>
+</code></pre>
+
+<pre><code><span class="cm">// ---------- composition: solid ----------</span>
+<span class="kw">class</span> CountingQueue&lt;E&gt; {
+    <span class="kw">private final</span> Deque&lt;E&gt; inner = <span class="kw">new</span> ArrayDeque&lt;&gt;();   <span class="cm">// HAS-A</span>
+    <span class="kw">private int</span> added;
+
+    <span class="kw">public void</span> add(E e)      { added++; inner.add(e); }     <span class="cm">// you control every door</span>
+    <span class="kw">public</span> E    poll()        { <span class="kw">return</span> inner.poll(); }
+    <span class="kw">public int</span>  size()        { <span class="kw">return</span> inner.size(); }
+    <span class="kw">public int</span>  getAdded()    { <span class="kw">return</span> added; }
+}
+<span class="cm">// Cannot be broken by a JDK change. Exposes exactly the 4 methods you</span>
+<span class="cm">// meant to expose. Can swap ArrayDeque for LinkedList in one line.</span>
+</code></pre>
+
+<div class="box win">
+<span class="lbl">Do this &mdash; "favour composition over inheritance"</span>
+<p>The most quoted rule in OOP (Joshua Bloch, <i>Effective Java</i>). Reach for <code>extends</code> only when <b>all</b> of these hold:</p>
+<ul>
+<li>There is a genuine IS-A relationship, not just convenient code sharing.</li>
+<li>The child is <b>fully substitutable</b> for the parent (section 20, LSP).</li>
+<li>The parent was <b>designed</b> for extension &mdash; documented, with stable hooks.</li>
+</ul>
+<p>Otherwise compose. Composition is testable (inject a fake), swappable at runtime, and does not leak the parent's API to your callers.</p>
+</div>
+
+<div class="box ask">
+<span class="lbl">Asked</span>
+<p><b>"Difference between IS-A and HAS-A, with an example?"</b> &mdash; <code>Car extends Vehicle</code> is IS-A: a car can be used anywhere a vehicle is expected. <code>Car</code> holding an <code>Engine</code> field is HAS-A: a car is not an engine and cannot be used as one. Test it out loud &mdash; "a car is an engine" is nonsense, so it must be HAS-A.</p>
+</div>
+</section>
+
+<!-- ============================================================ 17 -->
+<section id="s17">
+<h2><span class="num">17</span><code>equals</code>, <code>hashCode</code>, <code>toString</code></h2><div class="h2rule"></div>
+
+<p class="lead">Every class inherits these from <code>Object</code>, and the inherited versions are almost always wrong for your domain. Getting <code>equals</code>/<code>hashCode</code> wrong is the single most common cause of "my object vanished from the <code>HashMap</code>".</p>
+
+<div class="tw"><table>
+<tr><th>Method</th><th>Default behaviour in <code>Object</code></th><th>What you usually want</th></tr>
+<tr><td><code>toString()</code></td><td><code>ClassName@1a2b3c</code> &mdash; the hex hash</td><td>Readable field dump for logs</td></tr>
+<tr><td><code>equals(Object)</code></td><td><code>this == other</code> &mdash; identity only</td><td>Compare the fields that define identity</td></tr>
+<tr><td><code>hashCode()</code></td><td>Derived from the memory address</td><td>Derived from the same fields as <code>equals</code></td></tr>
+</table></div>
+
+<h3>Why it matters &mdash; the disappearing key</h3>
+<pre><code><span class="kw">class</span> Employee {
+    <span class="kw">private final int</span> id;
+    <span class="kw">private final</span> String name;
+    Employee(<span class="kw">int</span> id, String name) { <span class="kw">this</span>.id = id; <span class="kw">this</span>.name = name; }
+    <span class="cm">// no equals, no hashCode</span>
+}
+
+Map&lt;Employee, String&gt; roles = <span class="kw">new</span> HashMap&lt;&gt;();
+roles.put(<span class="kw">new</span> Employee(<span class="nu">1</span>, <span class="st">"Subhranshu"</span>), <span class="st">"Developer"</span>);
+
+System.out.println(roles.get(<span class="kw">new</span> Employee(<span class="nu">1</span>, <span class="st">"Subhranshu"</span>)));   <span class="cm">// null !</span>
+</code></pre>
+<p>The two objects are identical in content but different in memory, so their default hash codes differ, so <code>HashMap</code> looks in a different bucket and finds nothing. The entry is still in the map and is now <b>unreachable forever</b>.</p>
+
+<div class="box win">
+<span class="lbl">Do this &mdash; the correct implementation</span>
+<pre style="margin:0 0 12px"><code><span class="kw">@Override</span>
+<span class="kw">public boolean</span> equals(Object o) {
+    <span class="kw">if</span> (<span class="kw">this</span> == o) <span class="kw">return true</span>;                  <span class="cm">// fast path</span>
+    <span class="kw">if</span> (o == <span class="kw">null</span> || getClass() != o.getClass()) <span class="kw">return false</span>;
+    Employee e = (Employee) o;
+    <span class="kw">return</span> id == e.id &amp;&amp; Objects.equals(name, e.name);
+}
+
+<span class="kw">@Override</span>
+<span class="kw">public int</span> hashCode() {
+    <span class="kw">return</span> Objects.hash(id, name);          <span class="cm">// SAME fields as equals</span>
+}
+
+<span class="kw">@Override</span>
+<span class="kw">public</span> String toString() {
+    <span class="kw">return</span> <span class="st">"Employee{id="</span> + id + <span class="st">", name='"</span> + name + <span class="st">"'}"</span>;
+}</code></pre>
+</div>
+
+<div class="box def">
+<span class="lbl">The contract &mdash; learn these five words</span>
+<p><code>equals</code> must be: <b>reflexive</b> (<code>a.equals(a)</code>), <b>symmetric</b> (<code>a.equals(b) == b.equals(a)</code>), <b>transitive</b>, <b>consistent</b> (same answer every call), and <code>a.equals(null)</code> must be <code>false</code>.</p>
+<p>And the link that actually bites:</p>
+<ul>
+<li>If <code>a.equals(b)</code> then <code>a.hashCode() == b.hashCode()</code> &mdash; <b>mandatory</b>.</li>
+<li>Equal hash codes do <b>not</b> imply equality &mdash; that is just a collision, and is perfectly legal.</li>
+</ul>
+</div>
+
+<div class="box trap">
+<span class="lbl">Trap</span>
+<p><span class="bad">Overriding <code>equals</code> but not <code>hashCode</code></span> is the classic bug &mdash; your object works with <code>==</code> and <code>equals</code> but breaks in every hash-based collection. Override both or neither.</p>
+<p><span class="bad">Wrong signature.</span> <code>public boolean equals(Employee e)</code> is an <b>overload</b>, not an override. <code>Object.equals</code> is still there and still doing identity comparison, and collections will call <i>that</i> one. Write <code>@Override</code> and the compiler catches it.</p>
+<p><span class="bad">Mutable fields in <code>hashCode</code>.</span> Put an object in a <code>HashSet</code>, then mutate a field that feeds its hash, and it is lost &mdash; it now hashes to a bucket it is not in. Prefer immutable identity fields.</p>
+</div>
+
+<div class="box under">
+<span class="lbl">Under the hood &mdash; <code>record</code> does all of this for you</span>
+<p>Since Java 16, a <code>record</code> generates a correct <code>equals</code>, <code>hashCode</code>, <code>toString</code>, private final fields and an all-args constructor:</p>
+<pre style="margin:0 0 12px"><code><span class="kw">record</span> Employee(<span class="kw">int</span> id, String name) { }   <span class="cm">// that is the whole class</span></code></pre>
+<p>Records are implicitly <code>final</code> and immutable. Use them for plain data carriers &mdash; DTOs, map keys, return tuples. Mention this in interviews; it signals you follow modern Java.</p>
+</div>
+</section>
+
+<!-- ============================================================ 18 -->
+<section id="s18">
+<h2><span class="num">18</span>Immutability &amp; <code>final</code></h2><div class="h2rule"></div>
+
+<div class="tw"><table>
+<tr><th class="mono">final</th><th>Means</th></tr>
+<tr><td>variable</td><td>Assign exactly once. A <code>final</code> <b>reference</b> can still point at a mutable object.</td></tr>
+<tr><td>method</td><td>Cannot be overridden.</td></tr>
+<tr><td>class</td><td>Cannot be extended (<code>String</code>, <code>Integer</code>, all wrappers).</td></tr>
+</table></div>
+
+<div class="box trap">
+<span class="lbl">Trap &mdash; <code>final</code> does not mean immutable</span>
+<pre style="margin:0 0 12px"><code><span class="kw">final</span> List&lt;String&gt; list = <span class="kw">new</span> ArrayList&lt;&gt;();
+list.add(<span class="st">"hello"</span>);        <span class="cm">// LEGAL - the object is mutable</span>
+<span class="cm">// list = new ArrayList&lt;&gt;();  // illegal - the reference is final</span></code></pre>
+<p><code>final</code> freezes the <b>arrow</b>, not the <b>box</b>. This distinction is asked constantly.</p>
+</div>
+
+<h3>Building a genuinely immutable class</h3>
+<p>Five requirements &mdash; miss any one and it leaks:</p>
+
+<pre><code><span class="kw">public final class</span> Money {                       <span class="cm">// 1. final class: no subclass</span>
+    <span class="kw">private final</span> String currency;                <span class="cm">// 2. private final fields</span>
+    <span class="kw">private final</span> List&lt;String&gt; tags;
+
+    <span class="kw">public</span> Money(String currency, List&lt;String&gt; tags) {
+        <span class="kw">this</span>.currency = currency;
+        <span class="kw">this</span>.tags = List.copyOf(tags);             <span class="cm">// 3. defensive copy IN</span>
+    }
+
+    <span class="kw">public</span> String getCurrency() { <span class="kw">return</span> currency; }
+
+    <span class="kw">public</span> List&lt;String&gt; getTags() {
+        <span class="kw">return</span> tags;                              <span class="cm">// 4. already unmodifiable; else copy OUT</span>
+    }
+                                                   <span class="cm">// 5. NO setters at all</span>
+    <span class="cm">// "changing" it returns a new object</span>
+    <span class="kw">public</span> Money withCurrency(String c) { <span class="kw">return new</span> Money(c, tags); }
+}
+</code></pre>
+
+<div class="box win">
+<span class="lbl">Why bother</span>
+<ul>
+<li><b>Automatically thread-safe</b> &mdash; no state changes, so no race is possible. No locks needed.</li>
+<li><b>Safe as a map key</b> &mdash; its hash can never change (section 17).</li>
+<li><b>Free to share and cache</b> &mdash; no defensive copying by callers.</li>
+<li>Easier to reason about: the value you were handed is the value you keep.</li>
+</ul>
+<p>This is exactly why <code>String</code> is immutable, and why <code>String</code> is safe to use as a <code>HashMap</code> key everywhere.</p>
+</div>
+
+<div class="box ask">
+<span class="lbl">Asked</span>
+<p><b>"Why is <code>String</code> immutable in Java?"</b> &mdash; four reasons, give them in order: <b>(1)</b> the <span class="jvm">String Constant Pool</span> can only share one object between many references if nobody can change it; <b>(2)</b> <b>security</b> &mdash; a file path or SQL string validated and then mutated would defeat the check; <b>(3)</b> its <b>hashcode is cached</b>, which makes it a fast, reliable map key; <b>(4)</b> <b>thread safety</b> for free.</p>
+</div>
+</section>
+
+<!-- ============================================================ 19 -->
+<section id="s19">
+<h2><span class="num">19</span>Access modifiers</h2><div class="h2rule"></div>
+
+<div class="tw"><table>
+<tr><th>Modifier</th><th>Same class</th><th>Same package</th><th>Subclass, other package</th><th>Anywhere</th></tr>
+<tr><td class="mono">private</td><td><span class="good">Yes</span></td><td>No</td><td>No</td><td>No</td></tr>
+<tr><td class="mono">(default)</td><td><span class="good">Yes</span></td><td><span class="good">Yes</span></td><td>No</td><td>No</td></tr>
+<tr><td class="mono">protected</td><td><span class="good">Yes</span></td><td><span class="good">Yes</span></td><td><span class="good">Yes</span> (via inheritance)</td><td>No</td></tr>
+<tr><td class="mono">public</td><td><span class="good">Yes</span></td><td><span class="good">Yes</span></td><td><span class="good">Yes</span></td><td><span class="good">Yes</span></td></tr>
+</table></div>
+
+<div class="box win">
+<span class="lbl">Do this</span>
+<p>Start every field <code>private</code> and every class package-private. Widen only when something outside genuinely needs it. The narrowest thing that works is always the right default &mdash; you can always loosen later, but you can never tighten a public API without breaking callers.</p>
+</div>
+
+<div class="box trap">
+<span class="lbl">Trap &mdash; <code>protected</code> is subtler than it looks</span>
+<p>From a <b>different package</b>, a subclass can only touch a <code>protected</code> member <b>through a reference of its own type</b> (or a subtype), not through the parent's:</p>
+<pre style="margin:0 0 12px"><code><span class="cm">// package b;  class Child extends a.Parent {</span>
+<span class="kw">void</span> test(a.Parent p, Child c) {
+    c.protectedField = <span class="nu">1</span>;   <span class="cm">// OK   - own type</span>
+    p.protectedField = <span class="nu">1</span>;   <span class="cm">// COMPILE ERROR - parent reference, other package</span>
+}</code></pre>
+<p>Also: a <b>class</b> can only be <code>public</code> or package-private. <code>private class Foo</code> at top level is illegal (nested classes are a different story).</p>
+</div>
+
+<div class="box ask">
+<span class="lbl">Asked</span>
+<p><b>"Can we reduce visibility when overriding?"</b> &mdash; <span class="bad">no</span>. Overriding may only widen access. Narrowing would break substitutability: a caller holding a parent reference expects the method to be callable.</p>
+</div>
+</section>
+
+<!-- ============================================================ 20 -->
+<section id="s20">
+<h2><span class="num">20</span>SOLID principles</h2><div class="h2rule"></div>
+
+<p class="lead">Five design rules that turn "I know the syntax" into "I can design a class". Interviewers for 2&ndash;5 year roles ask for these <b>with an example</b>, so learn one concrete example each.</p>
+
+<h4>S &mdash; Single Responsibility</h4>
+<p>A class should have <b>one reason to change</b>. The classic violation bundles unrelated jobs:</p>
+<pre><code><span class="cm">// BAD: three reasons to change - business rules, DB schema, email template</span>
+<span class="kw">class</span> Employee {
+    <span class="kw">void</span> calculatePay()  { }
+    <span class="kw">void</span> saveToDatabase(){ }
+    <span class="kw">void</span> sendPayslipMail(){ }
+}
+
+<span class="cm">// GOOD</span>
+<span class="kw">class</span> Employee          { <span class="cm">/* data + rules only */</span> }
+<span class="kw">class</span> PayCalculator     { <span class="kw">double</span> calculate(Employee e) { <span class="kw">return</span> <span class="nu">0</span>; } }
+<span class="kw">class</span> EmployeeRepository{ <span class="kw">void</span> save(Employee e) { } }
+<span class="kw">class</span> PayslipMailer     { <span class="kw">void</span> send(Employee e) { } }
+</code></pre>
+
+<h4>O &mdash; Open/Closed</h4>
+<p>Open for <b>extension</b>, closed for <b>modification</b>. You should add behaviour by adding code, not by editing working code. Section 09's payment example is exactly this: a new payment method never touches <code>Checkout</code>.</p>
+
+<h4>L &mdash; Liskov Substitution</h4>
+<p>Anywhere a parent works, a child must work <b>without the caller noticing</b>. The famous violation:</p>
+<pre><code><span class="kw">class</span> Rectangle {
+    <span class="kw">protected int</span> w, h;
+    <span class="kw">void</span> setWidth(<span class="kw">int</span> w)  { <span class="kw">this</span>.w = w; }
+    <span class="kw">void</span> setHeight(<span class="kw">int</span> h) { <span class="kw">this</span>.h = h; }
+    <span class="kw">int</span> area() { <span class="kw">return</span> w * h; }
+}
+
+<span class="kw">class</span> Square <span class="kw">extends</span> Rectangle {          <span class="cm">// "a square IS-A rectangle"... in maths</span>
+    <span class="kw">void</span> setWidth(<span class="kw">int</span> w)  { <span class="kw">this</span>.w = <span class="kw">this</span>.h = w; }
+    <span class="kw">void</span> setHeight(<span class="kw">int</span> h) { <span class="kw">this</span>.w = <span class="kw">this</span>.h = h; }
+}
+
+<span class="kw">void</span> test(Rectangle r) {
+    r.setWidth(<span class="nu">5</span>); r.setHeight(<span class="nu">4</span>);
+    assert r.area() == <span class="nu">20</span>;      <span class="cm">// passes for Rectangle, FAILS (16) for Square</span>
+}
+</code></pre>
+<p>The lesson: <b>IS-A in English is not IS-A in code</b>. Substitutability is about behaviour, not vocabulary.</p>
+
+<h4>I &mdash; Interface Segregation</h4>
+<p>No client should be forced to depend on methods it does not use. Many small interfaces beat one fat one:</p>
+<pre><code><span class="cm">// BAD: a scanner is forced to implement fax() and print()</span>
+<span class="kw">interface</span> Machine { <span class="kw">void</span> print(); <span class="kw">void</span> scan(); <span class="kw">void</span> fax(); }
+
+<span class="cm">// GOOD</span>
+<span class="kw">interface</span> Printer { <span class="kw">void</span> print(); }
+<span class="kw">interface</span> Scanner { <span class="kw">void</span> scan(); }
+<span class="kw">interface</span> Fax     { <span class="kw">void</span> fax(); }
+<span class="kw">class</span> SimpleScanner <span class="kw">implements</span> Scanner { <span class="kw">public void</span> scan() { } }
+</code></pre>
+
+<h4>D &mdash; Dependency Inversion</h4>
+<p>Depend on <b>abstractions</b>, not concretions. High-level policy should not import low-level detail:</p>
+<pre><code><span class="cm">// BAD: OrderService is welded to MySQL forever</span>
+<span class="kw">class</span> OrderService {
+    <span class="kw">private final</span> MySqlOrderRepo repo = <span class="kw">new</span> MySqlOrderRepo();
+}
+
+<span class="cm">// GOOD: depends on an interface, gets the implementation from outside</span>
+<span class="kw">class</span> OrderService {
+    <span class="kw">private final</span> OrderRepo repo;
+    OrderService(OrderRepo repo) { <span class="kw">this</span>.repo = repo; }   <span class="cm">// constructor injection</span>
+}
+</code></pre>
+<p>This is literally what Spring's <code>@Autowired</code> automates &mdash; a good thing to say out loud, since it connects OOP theory to the framework you will actually use.</p>
+
+<div class="box ask">
+<span class="lbl">Asked</span>
+<p><b>"Which SOLID principle do you use most?"</b> &mdash; a good honest answer is <b>S</b> and <b>D</b>: single responsibility keeps classes small enough to test, and dependency inversion is what makes unit testing possible at all (you inject a fake repository instead of hitting a real database). Tie it to testing and it sounds like experience rather than recital.</p>
+</div>
+</section>
+
+<!-- ============================================================ 21 -->
+<section id="s21">
+<h2><span class="num">21</span>Patterns you must know</h2><div class="h2rule"></div>
+
+<h3>Singleton &mdash; exactly one instance</h3>
+<p>Real use: a configuration holder, a logger, a connection pool. Your <code>SingletonClass.java</code> uses the <code>synchronized</code> method version:</p>
+
+<pre><code><span class="cm">// your version - correct, but locks on EVERY call, even after creation</span>
+<span class="kw">class</span> Test {
+    <span class="kw">private static</span> Test test;
+    <span class="kw">private</span> Test() { }
+    <span class="kw">public synchronized static</span> Test getInstance() {
+        <span class="kw">return</span> test == <span class="kw">null</span> ? test = <span class="kw">new</span> Test() : test;
+    }
+}
+</code></pre>
+
+<div class="box win">
+<span class="lbl">Do this &mdash; the two versions worth memorising</span>
+<p><b>1. Static holder</b> (best for most cases). Lazy, thread-safe, zero synchronization &mdash; it leans on the JVM's guarantee that <code>&lt;clinit&gt;</code> runs once (section 05):</p>
+<pre style="margin:0 0 12px"><code><span class="kw">class</span> Config {
+    <span class="kw">private</span> Config() { }
+    <span class="kw">private static class</span> Holder {                 <span class="cm">// loaded only on first use</span>
+        <span class="kw">static final</span> Config INSTANCE = <span class="kw">new</span> Config();
+    }
+    <span class="kw">public static</span> Config getInstance() { <span class="kw">return</span> Holder.INSTANCE; }
+}</code></pre>
+<p><b>2. Enum singleton</b> (Bloch's recommendation). Immune to reflection <i>and</i> serialization attacks, which the others are not:</p>
+<pre style="margin:0 0 12px"><code><span class="kw">enum</span> Config {
+    INSTANCE;
+    <span class="kw">public void</span> load() { }
+}</code></pre>
+</div>
+
+<div class="box trap">
+<span class="lbl">Trap &mdash; the broken double-checked lock</span>
+<p>Without <code>volatile</code>, another thread can see a <b>partially constructed object</b>, because the assignment can be reordered before the constructor finishes:</p>
+<pre style="margin:0 0 12px"><code><span class="kw">private static volatile</span> Config instance;      <span class="cm">// volatile is MANDATORY</span>
+
+<span class="kw">public static</span> Config getInstance() {
+    <span class="kw">if</span> (instance == <span class="kw">null</span>) {                     <span class="cm">// 1st check: no lock, fast</span>
+        <span class="kw">synchronized</span> (Config.<span class="kw">class</span>) {
+            <span class="kw">if</span> (instance == <span class="kw">null</span>)                <span class="cm">// 2nd check: under lock</span>
+                instance = <span class="kw">new</span> Config();
+        }
+    }
+    <span class="kw">return</span> instance;
+}</code></pre>
+<p>Drop the <code>volatile</code> and this is a real, famous bug. See section 09 of your MultiThreading notes for why.</p>
+</div>
+
+<h3>Factory &mdash; hide which class you get</h3>
+<pre><code><span class="kw">class</span> PaymentFactory {
+    <span class="kw">static</span> Payment of(String type) {
+        <span class="kw">return switch</span> (type) {
+            <span class="kw">case</span> <span class="st">"upi"</span>    -&gt; <span class="kw">new</span> UpiPayment();
+            <span class="kw">case</span> <span class="st">"card"</span>   -&gt; <span class="kw">new</span> CardPayment();
+            <span class="kw">case</span> <span class="st">"wallet"</span> -&gt; <span class="kw">new</span> WalletPayment();
+            <span class="kw">default</span>       -&gt; <span class="kw">throw new</span> IllegalArgumentException(type);
+        };
+    }
+}
+<span class="cm">// caller says WHAT it wants, never HOW to build it</span>
+Payment p = PaymentFactory.of(<span class="st">"upi"</span>);
+</code></pre>
+
+<h3>Builder &mdash; many optional fields, readably</h3>
+<p>The cure for a constructor with eight parameters you can never remember the order of:</p>
+<pre><code>Pizza p = <span class="kw">new</span> Pizza.Builder(<span class="st">"medium"</span>)
+        .cheese(<span class="kw">true</span>)
+        .olives(<span class="kw">true</span>)
+        .jalapeno(<span class="kw">false</span>)
+        .build();
+</code></pre>
+
+<h3>Strategy &mdash; swap an algorithm at runtime</h3>
+<pre><code><span class="kw">interface</span> SortStrategy { <span class="kw">void</span> sort(<span class="kw">int</span>[] a); }
+
+<span class="kw">class</span> Sorter {
+    <span class="kw">private</span> SortStrategy strategy;                        <span class="cm">// HAS-A</span>
+    <span class="kw">void</span> setStrategy(SortStrategy s) { strategy = s; }     <span class="cm">// change mid-flight</span>
+    <span class="kw">void</span> sort(<span class="kw">int</span>[] a) { strategy.sort(a); }
+}
+<span class="cm">// small array -> insertion sort; huge array -> quicksort. Same caller.</span>
+</code></pre>
+<p>Note that Strategy is just <b>composition + polymorphism</b>. Most patterns are; that is why sections 09 and 16 matter more than memorising pattern names.</p>
+</section>
+
+<!-- ============================================================ 22 -->
+<section id="s22">
+<h2><span class="num">22</span>Traps &amp; gotchas</h2><div class="h2rule"></div>
+
+<div class="box trap">
+<span class="lbl">The ten that actually appear in interviews</span>
+<ol>
+<li><b>Fields are not polymorphic.</b> <code>ref.name</code> uses the reference type; <code>ref.method()</code> uses the object. (&sect;09)</li>
+<li><b>Static methods are hidden, not overridden.</b> No dynamic dispatch. (&sect;15)</li>
+<li><b>Calling an overridable method from a constructor</b> sees uninitialised child fields. (&sect;06)</li>
+<li><b><code>final</code> &ne; immutable.</b> A final reference to an <code>ArrayList</code> is still mutable. (&sect;18)</li>
+<li><b><code>equals</code> without <code>hashCode</code></b> breaks every hash collection. (&sect;17)</li>
+<li><b>Writing any constructor</b> removes the free no-arg one. (&sect;02)</li>
+<li><b><code>void Car()</code> is a method, not a constructor.</b> It never runs on <code>new</code>. (&sect;02)</li>
+<li><b>Overload resolution prefers widening over boxing</b>, and <code>f(null)</code> picks the most specific type. (&sect;15)</li>
+<li><b>Static fields read before assignment</b> give the default value, not an error. (&sect;05)</li>
+<li><b>Returning a mutable field</b> hands away control of your own state. (&sect;07)</li>
+</ol>
+</div>
+
+<div class="box ask">
+<span class="lbl">Asked &mdash; predict the output</span>
+<p>A compact question that tests four things at once:</p>
+<pre style="margin:0 0 12px"><code><span class="kw">class</span> A {
+    <span class="kw">static</span> { System.out.print(<span class="st">"1 "</span>); }
+    { System.out.print(<span class="st">"2 "</span>); }
+    A() { System.out.print(<span class="st">"3 "</span>); m(); }
+    <span class="kw">void</span> m() { System.out.print(<span class="st">"A.m "</span>); }
+}
+<span class="kw">class</span> B <span class="kw">extends</span> A {
+    <span class="kw">static</span> { System.out.print(<span class="st">"4 "</span>); }
+    <span class="kw">private</span> String s = <span class="st">"set"</span>;
+    { System.out.print(<span class="st">"5 "</span>); }
+    B() { System.out.print(<span class="st">"6 "</span>); }
+    <span class="kw">@Override void</span> m() { System.out.print(<span class="st">"B.m(s="</span> + s + <span class="st">") "</span>); }
+}
+<span class="cm">// new B();</span></code></pre>
+<p><b>Answer:</b> <code>1 4 2 3 B.m(s=null) 5 6</code></p>
+<p>Read it as: parent static, child static (once, parent first) &rarr; parent instance block, parent constructor &rarr; the constructor calls <code>m()</code>, which dispatches to <b>B's override</b> while <code>s</code> is <b>still null</b> &rarr; then child instance block, then child constructor. Trap 3 in one line of output.</p>
+</div>
+</section>
+
+<!-- ============================================================ 23 -->
+<section id="s23">
+<h2><span class="num">23</span>Question bank</h2><div class="h2rule"></div>
+
+<p>Answer these out loud before reading the answer. If you cannot say it in two sentences, you do not know it yet.</p>
+
+<div class="qa">
+
+<details><summary data-q="1">What are the four pillars of OOP?</summary>
+<div class="ans"><p>Encapsulation (bind and hide data), Inheritance (reuse via IS-A), Polymorphism (one name, many behaviours), Abstraction (expose what, hide how). Some add "message passing" as a fifth.</p></div></details>
+
+<details><summary data-q="2">Difference between encapsulation and abstraction?</summary>
+<div class="ans"><p>Encapsulation hides <b>data</b> using <code>private</code> plus rule-enforcing methods &mdash; an implementation concern. Abstraction hides <b>implementation</b> using interfaces and abstract classes &mdash; a design concern.</p></div></details>
+
+<details><summary data-q="3">Is Java purely object-oriented?</summary>
+<div class="ans"><p>No. It has 8 primitives that are not objects, plus <code>static</code> members that belong to a class rather than an instance.</p></div></details>
+
+<details><summary data-q="4">Why no multiple inheritance of classes?</summary>
+<div class="ans"><p>The diamond problem: duplicated state and ambiguous method resolution. Interfaces are permitted because they carry no instance state; since Java 8 the method ambiguity is possible but must be resolved explicitly with <code>Interface.super.method()</code>.</p></div></details>
+
+<details><summary data-q="5">Abstract class vs interface &mdash; when do you pick which?</summary>
+<div class="ans"><p>Interface for a capability shared by unrelated types; abstract class when related types share real code <b>and state</b>. Professionally, often both: interface for the contract, abstract class for a skeleton implementation (<code>List</code> / <code>AbstractList</code> / <code>ArrayList</code>).</p></div></details>
+
+<details><summary data-q="6">Can an abstract class have a constructor?</summary>
+<div class="ans"><p>Yes. It runs through <code>super()</code> when a subclass is instantiated, initialising inherited state. It just cannot be called with <code>new</code> directly.</p></div></details>
+
+<details><summary data-q="7">Can an abstract class have zero abstract methods?</summary>
+<div class="ans"><p>Yes &mdash; perfectly legal, and a valid way to prevent instantiation while still providing shared behaviour.</p></div></details>
+
+<details><summary data-q="8">Overloading vs overriding in one line each?</summary>
+<div class="ans"><p>Overloading: same name, <b>different parameters</b>, same class, resolved at <b>compile time</b>. Overriding: same signature, <b>subclass</b>, resolved at <b>runtime</b> by the actual object.</p></div></details>
+
+<details><summary data-q="9">Can we override a static method?</summary>
+<div class="ans"><p>No. Redeclaring it in a subclass is <b>method hiding</b>; resolution uses the reference type, so <code>P ref = new C(); ref.who();</code> calls <code>P</code>'s version. Adding <code>@Override</code> would not compile.</p></div></details>
+
+<details><summary data-q="10">Can we override a private or final method?</summary>
+<div class="ans"><p>No. A <code>private</code> method is not visible to the subclass (redeclaring it creates an unrelated new method), and <code>final</code> explicitly forbids it.</p></div></details>
+
+<details><summary data-q="11">Can a constructor be private? Why would you?</summary>
+<div class="ans"><p>Yes &mdash; for Singletons, static utility classes, and static factory methods like <code>Integer.valueOf()</code> or a Builder.</p></div></details>
+
+<details><summary data-q="12">What is covariant return type?</summary>
+<div class="ans"><p>An override may return a <b>subtype</b> of the parent's return type. <code>Object fetch()</code> can be overridden as <code>String fetch()</code>. Allowed since Java 5.</p></div></details>
+
+<details><summary data-q="13">Rules about exceptions when overriding?</summary>
+<div class="ans"><p><b>Checked</b>: may throw the same, a subclass of it, or fewer &mdash; never a broader checked exception. <b>Unchecked</b>: no restriction at all.</p></div></details>
+
+<details><summary data-q="14">Difference between <code>==</code> and <code>equals()</code>?</summary>
+<div class="ans"><p><code>==</code> compares <b>references</b> (same object?) for objects and values for primitives. <code>equals()</code> compares <b>content</b> &mdash; but only if the class overrides it; <code>Object.equals</code> just does <code>==</code>.</p></div></details>
+
+<details><summary data-q="15">What breaks if I override equals but not hashCode?</summary>
+<div class="ans"><p>Hash-based collections. Two equal objects can produce different hash codes, land in different buckets, and the entry becomes unreachable &mdash; <code>map.get(equalKey)</code> returns <code>null</code>.</p></div></details>
+
+<details><summary data-q="16">Can two unequal objects have the same hashCode?</summary>
+<div class="ans"><p>Yes &mdash; that is a legal collision. The contract only runs one way: equal objects <b>must</b> have equal hash codes.</p></div></details>
+
+<details><summary data-q="17">Why is String immutable?</summary>
+<div class="ans"><p>String pool sharing, security (a validated path cannot be mutated afterwards), cached hashcode for fast map keys, and free thread safety.</p></div></details>
+
+<details><summary data-q="18">Does <code>final</code> make an object immutable?</summary>
+<div class="ans"><p>No. It prevents <b>reassignment of the reference</b>. <code>final List</code> can still be added to. Immutability requires no setters, private final fields, defensive copies and ideally a final class.</p></div></details>
+
+<details><summary data-q="19">Why must <code>main</code> be static?</summary>
+<div class="ans"><p>So the JVM can invoke it without first creating an object &mdash; otherwise you would need an instance of the class before the code that creates instances has run.</p></div></details>
+
+<details><summary data-q="20">Order of execution: static blocks, instance blocks, constructors?</summary>
+<div class="ans"><p>Parent static &rarr; child static (once per class, on load), then per object: parent instance block &rarr; parent constructor &rarr; child instance block &rarr; child constructor.</p></div></details>
+
+<details><summary data-q="21">What is a marker interface? Give JDK examples.</summary>
+<div class="ans"><p>An interface with no members, used purely to tag a type for <code>instanceof</code> checks. <code>Serializable</code>, <code>Cloneable</code>, <code>RandomAccess</code>. Annotations are the modern alternative.</p></div></details>
+
+<details><summary data-q="22">Why were default methods added in Java 8?</summary>
+<div class="ans"><p>Backward compatibility &mdash; to add <code>stream()</code> and <code>forEach()</code> to <code>Collection</code> without breaking every existing implementation.</p></div></details>
+
+<details><summary data-q="23">Can an interface have a static method? Is it inherited?</summary>
+<div class="ans"><p>Yes since Java 8, and <b>no</b> &mdash; interface static methods are not inherited by implementing classes. Call them as <code>MyInterface.method()</code>.</p></div></details>
+
+<details><summary data-q="24">IS-A vs HAS-A?</summary>
+<div class="ans"><p>IS-A is inheritance (<code>Car extends Vehicle</code>) &mdash; the child is substitutable for the parent. HAS-A is composition (<code>Car</code> holds an <code>Engine</code>) &mdash; delegation, not substitution.</p></div></details>
+
+<details><summary data-q="25">Why favour composition over inheritance?</summary>
+<div class="ans"><p><code>extends</code> is the tightest coupling in Java: the child depends on the parent's internals, inherits its whole API, and breaks when the parent changes. Composition exposes only what you choose, is swappable at runtime, and is testable with fakes.</p></div></details>
+
+<details><summary data-q="26">What is the Liskov Substitution Principle, with a violation?</summary>
+<div class="ans"><p>A subtype must be usable anywhere the supertype is, without surprising the caller. <code>Square extends Rectangle</code> violates it: setting width then height gives an unexpected area.</p></div></details>
+
+<details><summary data-q="27">What is dynamic method dispatch?</summary>
+<div class="ans"><p>The JVM choosing an overridden method's body at <b>runtime</b> based on the actual object, not the reference type. The mechanism behind runtime polymorphism.</p></div></details>
+
+<details><summary data-q="28">What does <code>instanceof</code> do, and what is pattern matching?</summary>
+<div class="ans"><p><code>instanceof</code> tests whether an object is of a given type. Since Java 16 it also binds a variable: <code>if (o instanceof String s) { s.length(); }</code> &mdash; no separate cast needed.</p></div></details>
+
+<details><summary data-q="29">Upcasting vs downcasting?</summary>
+<div class="ans"><p>Upcasting (child &rarr; parent) is implicit and always safe. Downcasting (parent &rarr; child) needs an explicit cast and can throw <code>ClassCastException</code> &mdash; guard it with <code>instanceof</code>.</p></div></details>
+
+<details><summary data-q="30">Can you instantiate an abstract class?</summary>
+<div class="ans"><p>Not directly, but <code>new Abstract() { ... }</code> works &mdash; that creates an <b>anonymous subclass</b>, and the object belongs to that subclass.</p></div></details>
+
+<details><summary data-q="31">What is a record and when would you use it?</summary>
+<div class="ans"><p>A Java 16+ immutable data carrier that auto-generates the constructor, accessors, <code>equals</code>, <code>hashCode</code> and <code>toString</code>. Use for DTOs, map keys and return tuples. Implicitly final.</p></div></details>
+
+<details><summary data-q="32">Difference between aggregation and composition?</summary>
+<div class="ans"><p>Both are HAS-A. Aggregation is weak &mdash; the part outlives the whole (<code>Team</code> and <code>Player</code>). Composition is strong &mdash; the part dies with the whole (<code>Order</code> and <code>OrderLine</code>).</p></div></details>
+
+<details><summary data-q="33">What happens if a subclass does not implement all abstract methods?</summary>
+<div class="ans"><p>The subclass must itself be declared <code>abstract</code>, otherwise it is a compile error.</p></div></details>
+
+<details><summary data-q="34">Can an interface extend a class?</summary>
+<div class="ans"><p>No. An interface can only <code>extend</code> other interfaces (one or many). A class <code>implements</code> interfaces and <code>extends</code> at most one class.</p></div></details>
+
+<details><summary data-q="35">Why is the double-checked locking Singleton broken without volatile?</summary>
+<div class="ans"><p>Without <code>volatile</code>, instruction reordering lets the reference become visible before the constructor has finished, so another thread can obtain a partially constructed object.</p></div></details>
+
+<details><summary data-q="36">What is the best way to write a Singleton?</summary>
+<div class="ans"><p>An <code>enum</code> with a single constant &mdash; thread-safe, serialization-safe and reflection-proof. Otherwise the static holder idiom, which is lazy and lock-free.</p></div></details>
+
+<details><summary data-q="37">What is method chaining and how does it work?</summary>
+<div class="ans"><p>Each method returns <code>this</code> (or a builder), so calls can be strung together: <code>obj.a().b().c()</code>. The basis of the Builder pattern and of <code>StringBuilder</code>.</p></div></details>
+
+<details><summary data-q="38">Can we declare a class <code>static</code>?</summary>
+<div class="ans"><p>Only a <b>nested</b> class. A static nested class needs no outer instance; a non-static inner class holds an implicit reference to its outer object (a common memory-leak source).</p></div></details>
+
+<details><summary data-q="39">What is the object class hierarchy root, and what do you get free?</summary>
+<div class="ans"><p><code>java.lang.Object</code>. Every object gets <code>toString</code>, <code>equals</code>, <code>hashCode</code>, <code>getClass</code>, <code>clone</code>, <code>finalize</code>, <code>wait</code>, <code>notify</code>, <code>notifyAll</code>.</p></div></details>
+
+<details><summary data-q="40">Shallow copy vs deep copy?</summary>
+<div class="ans"><p>Shallow copies the fields, so reference fields still point at the <b>same</b> nested objects (what <code>Object.clone()</code> does). Deep copy recursively copies the nested objects too, giving full independence.</p></div></details>
+
+</div>
+</section>
+
+<!-- ============================================================ 24 -->
+<section id="s24">
+<h2><span class="num">24</span>Must-do programs</h2><div class="h2rule"></div>
+
+<p>Write each of these from a blank file, run it, and check the output matches what you predicted. Predicting wrong is the useful part.</p>
+
+<div class="tw"><table>
+<tr><th>#</th><th>Program</th><th>What it proves</th></tr>
+<tr><td>1</td><td>Static + instance block ordering with parent and child</td><td>&sect;05, &sect;06 &mdash; the full execution order</td></tr>
+<tr><td>2</td><td>Parent constructor calling an overridden method</td><td>The partially built object trap</td></tr>
+<tr><td>3</td><td><code>Payment</code> interface with 3 implementations + a factory</td><td>Runtime polymorphism, open/closed</td></tr>
+<tr><td>4</td><td><code>BankAccount</code> that cannot go negative</td><td>Encapsulation and invariants</td></tr>
+<tr><td>5</td><td><code>Employee</code> as a <code>HashMap</code> key, before and after <code>equals</code>/<code>hashCode</code></td><td>Why the contract exists</td></tr>
+<tr><td>6</td><td>Immutable <code>Money</code> class with a mutable <code>List</code> field</td><td>Defensive copying</td></tr>
+<tr><td>7</td><td>Field hiding vs method overriding with a parent reference</td><td>Fields are not polymorphic</td></tr>
+<tr><td>8</td><td>Two interfaces with the same <code>default</code> method</td><td>Diamond resolution syntax</td></tr>
+<tr><td>9</td><td>Singleton three ways: synchronized, static holder, enum</td><td>&sect;21 trade-offs</td></tr>
+<tr><td>10</td><td>Abstract <code>BasePayment</code> with a <code>final</code> template method</td><td>Template Method pattern</td></tr>
+<tr><td>11</td><td><code>CountingQueue</code> by inheritance, then by composition</td><td>Why composition wins</td></tr>
+<tr><td>12</td><td><code>Square extends Rectangle</code> and a test that fails</td><td>Liskov violation you can see</td></tr>
+</table></div>
+
+<div class="box win">
+<span class="lbl">How to practise these</span>
+<p>For each one: <b>write down the expected output first</b>, on paper, then run it. Every mismatch is a concept you thought you knew. Programs 1, 2, 5 and 7 are the four that most often expose a gap.</p>
+</div>
+</section>
+
+<!-- ============================================================ 25 -->
+<section id="s25">
+<h2><span class="num">25</span>Last-night cheat sheet</h2><div class="h2rule"></div>
+
+<h4>One-liners</h4>
+<ul>
+<li><b>Class</b> blueprint &middot; <b>object</b> heap instance &middot; <b>reference</b> stack variable holding an address.</li>
+<li><b>Encapsulation</b> hides data &middot; <b>abstraction</b> hides implementation.</li>
+<li><b>Overloading</b> = compile time, parameters differ &middot; <b>overriding</b> = runtime, signature identical.</li>
+<li><b>Methods</b> dispatch on the object &middot; <b>fields and statics</b> dispatch on the reference type.</li>
+<li><b>Static flow</b> once per class, parent first &middot; <b>instance flow</b> every <code>new</code>, parent first.</li>
+<li><b>Interface</b> = CAN-DO capability &middot; <b>abstract class</b> = IS-A with shared state.</li>
+<li><b><code>final</code></b> freezes the arrow, not the box.</li>
+<li><b>equals</b> without <b>hashCode</b> = objects lost in hash collections.</li>
+<li><b>extends</b> is the tightest coupling in Java &mdash; default to composition.</li>
+</ul>
+
+<h4>Cannot be done &mdash; the "no" list</h4>
+<div class="tw"><table>
+<tr><th>Attempt</th><th>Why not</th></tr>
+<tr><td>Override a <code>static</code> / <code>final</code> / <code>private</code> method</td><td>No dynamic dispatch / explicitly forbidden / not visible</td></tr>
+<tr><td>Override a constructor</td><td>Constructors are not inherited</td></tr>
+<tr><td><code>abstract final</code> class</td><td>Direct contradiction</td></tr>
+<tr><td><code>static</code> or <code>abstract</code> constructor</td><td>Nothing to override; must bind to an instance</td></tr>
+<tr><td>Interface with a constructor or instance field</td><td>No state, never instantiated</td></tr>
+<tr><td>Narrow access while overriding</td><td>Breaks substitutability</td></tr>
+<tr><td>Broaden a checked exception while overriding</td><td>Callers' catch blocks would be wrong</td></tr>
+<tr><td><code>this</code> / <code>super</code> in a static method</td><td>No object exists</td></tr>
+<tr><td><code>super.super.m()</code></td><td>Would bypass a parent's invariants</td></tr>
+<tr><td>Multiple class inheritance</td><td>Diamond problem</td></tr>
+<tr><td>Top-level <code>private</code> class</td><td>Nobody could ever use it</td></tr>
+</table></div>
+
+<h4>Say this if you blank out</h4>
+<div class="box ask">
+<span class="lbl">Asked &mdash; "tell me about OOP"</span>
+<p>"OOP models a program as objects that own their state and expose behaviour. The point is containment &mdash; a bug in one class can only damage what that class owns. The four pillars are encapsulation, inheritance, polymorphism and abstraction, and in practice the two I lean on most are <b>polymorphism</b>, to add behaviour without editing working code, and <b>composition</b> over inheritance, to keep classes loosely coupled and testable."</p>
+<p>That answer is short, correct, and mentions design judgement rather than definitions &mdash; which is what a 2&ndash;5 year interview is actually probing.</p>
+</div>
+
+<h4>Revision order</h4>
+<p>Sections 00&ndash;06 are one sitting (fundamentals &mdash; and 05/06 alone answer a surprising share of output-prediction questions). 07&ndash;16 are the core: give these the most time, they carry the most interview weight. 17&ndash;19 are the contracts you must not get wrong in real code. 20&ndash;22 are what separates a junior answer from a designed one. Then drill section 23 out loud and code section 24 from a blank file.</p>
+
+<footer>
+Java OOP &mdash; Complete Revision &nbsp;&middot;&nbsp; src/Complete_Revesion/OOPs/
+</footer>
+</section>
+
+</main>
+</div>
+
+
+<!-- Your saved notes are written into this block by "Save to file". Do not edit by hand. -->
+<script id="oops-data" type="application/json">{"topics":[],"notes":{}}</script>
+
+<script>
+/* =====================================================================
+   Notes engine — lets you add your own coloured notes and whole new
+   topics without ever writing HTML.
+   Storage: browser localStorage (instant) + baked into this file when
+   you press "Save to file".
+   ===================================================================== */
+(function () {
+  'use strict';
+
+  var STORE = 'oops-notes-v1';
+
+  /* Name stamped on every note you write. Change the word below if you
+     ever want a different signature. */
+  var AUTHOR = 'Subhranshu';
+
+  var KINDS = [
+    { k: 'def',   label: 'Concept'        },
+    { k: 'win',   label: 'Do this'        },
+    { k: 'trap',  label: 'Trap'           },
+    { k: 'ask',   label: 'Asked'          },
+    { k: 'under', label: 'Under the hood' }
+  ];
+
+  var root = document.documentElement;
+  var main = document.querySelector('main');
+  var rail = document.querySelector('.rail');
+  var data = load();
+  var dirty = false;
+
+  /* ---------------------------------------------------------- theme */
+  try {
+    var savedTheme = localStorage.getItem('oops-theme');
+    if (savedTheme) root.setAttribute('data-theme', savedTheme);
+  } catch (e) {}
+
+  document.getElementById('btn-theme').addEventListener('click', function () {
+    var isDark = root.getAttribute('data-theme') === 'dark' ||
+      (!root.hasAttribute('data-theme') &&
+       window.matchMedia('(prefers-color-scheme: dark)').matches);
+    var next = isDark ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('oops-theme', next); } catch (e) {}
+  });
+
+  /* ---------------------------------------------------------- storage */
+  function load() {
+    var d = null;
+    try {
+      var raw = localStorage.getItem(STORE);
+      if (raw) d = JSON.parse(raw);
+    } catch (e) {}
+    if (!d) {
+      var el = document.getElementById('oops-data');
+      if (el) { try { d = JSON.parse(el.textContent || 'null'); } catch (e2) {} }
+    }
+    if (!d || typeof d !== 'object') d = {};
+    if (!Array.isArray(d.topics)) d.topics = [];
+    if (!d.notes || typeof d.notes !== 'object') d.notes = {};
+
+    /* Notes written before sync existed have no id. Give them one now,
+       otherwise the merge cannot tell them apart and would duplicate
+       them on every machine. */
+    d.topics.forEach(function (t) { if (!t.id) t.id = 'u' + uid(); });
+    Object.keys(d.notes).forEach(function (k) {
+      if (!Array.isArray(d.notes[k])) { delete d.notes[k]; return; }
+      d.notes[k].forEach(function (n) { if (n && !n.id) n.id = uid(); });
+    });
+    return prune(d);
+  }
+
+  function save() {
+    dirty = true;
+    document.body.classList.add('unsaved');
+    cache();
+    if (gist && gist.cfg()) gist.schedulePush();
+  }
+
+  /* Write to localStorage without touching the dirty flag — used both by
+     save() and by a pull, where the incoming data is already safe on the
+     server and must not be reported as unsaved local work. */
+  function cache() {
+    try { localStorage.setItem(STORE, JSON.stringify(data)); }
+    catch (e) { toast('Browser storage is blocked — press "Save to file" so nothing is lost.'); }
+  }
+
+  function uid() {
+    return 'n' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  }
+
+  function indexOfNote(secId, id) {
+    var list = data.notes[secId] || [];
+    for (var i = 0; i < list.length; i++) if (list[i].id === id) return i;
+    return -1;
+  }
+
+  function findNote(secId, id) {
+    var i = indexOfNote(secId, id);
+    return i < 0 ? null : data.notes[secId][i];
+  }
+
+  /* ==================================================================
+     MERGE  —  how two machines agree on one set of notes
+     Every note and topic carries a stable id and an mtime. Merging is a
+     union by id where the newer mtime wins, so the result does not
+     depend on who happens to sync first, and no edit is ever silently
+     dropped. Deletes travel as tombstones (deleted:true) for the same
+     reason — a hard delete would be resurrected by the other side's
+     copy on the very next merge.
+     ================================================================== */
+  function newer(a, b) {
+    /* Undated rows come from before sync existed; treat them as oldest
+       so a dated edit always wins over them. */
+    var ta = a && a.mtime || 0, tb = b && b.mtime || 0;
+    if (ta !== tb) return ta > tb ? a : b;
+    /* Same millisecond: break the tie on content so that merging A into B
+       and B into A give the same answer. Without this the winner would
+       depend on which machine happened to sync first. */
+    return JSON.stringify(a) <= JSON.stringify(b) ? a : b;
+  }
+
+  /* A short fingerprint of what rows exist and how fresh each one is.
+     Used to decide whether our merged copy actually has anything the
+     server lacks, so we only write when there is something to write. */
+  function sig(d) {
+    var parts = [];
+    (d.topics || []).forEach(function (t) {
+      parts.push('t' + t.id + ':' + (t.mtime || 0) + ':' + (t.deleted ? 1 : 0));
+    });
+    Object.keys(d.notes || {}).forEach(function (k) {
+      (d.notes[k] || []).forEach(function (n) {
+        parts.push('n' + k + '/' + n.id + ':' + (n.mtime || 0) + ':' + (n.deleted ? 1 : 0));
+      });
+    });
+    return parts.sort().join('|');
+  }
+
+  function mergeList(mine, theirs) {
+    var out = [], seen = {};
+    (mine || []).concat(theirs || []).forEach(function (row) {
+      if (!row || !row.id) return;
+      if (seen[row.id] == null) { seen[row.id] = out.length; out.push(row); }
+      else out[seen[row.id]] = newer(out[seen[row.id]], row);
+    });
+    return out;
+  }
+
+  function mergeData(mine, theirs) {
+    var out = { topics: mergeList(mine.topics, theirs.topics), notes: {} };
+    var keys = {};
+    Object.keys(mine.notes || {}).forEach(function (k) { keys[k] = 1; });
+    Object.keys(theirs.notes || {}).forEach(function (k) { keys[k] = 1; });
+    Object.keys(keys).forEach(function (k) {
+      out.notes[k] = mergeList((mine.notes || {})[k], (theirs.notes || {})[k]);
+    });
+    return out;
+  }
+
+  /* Tombstones are only needed until every machine has seen them.
+     Drop the ones older than 90 days so the payload cannot grow without
+     bound. */
+  var TOMB_TTL = 90 * 24 * 60 * 60 * 1000;
+
+  function prune(d) {
+    var cut = Date.now() - TOMB_TTL;
+    d.topics = d.topics.filter(function (t) {
+      return !(t.deleted && (t.mtime || 0) < cut);
+    });
+    Object.keys(d.notes).forEach(function (k) {
+      d.notes[k] = d.notes[k].filter(function (n) {
+        return !(n.deleted && (n.mtime || 0) < cut);
+      });
+      if (!d.notes[k].length) delete d.notes[k];
+    });
+    return d;
+  }
+
+  function countLive(d) {
+    var n = 0;
+    Object.keys(d.notes || {}).forEach(function (k) {
+      d.notes[k].forEach(function (x) { if (!x.deleted) n++; });
+    });
+    return n;
+  }
+
+  /* ---------------------------------------------------------- helpers */
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  }
+
+  function mark(n) { n.setAttribute('data-injected', '1'); return n; }
+
+  function toast(msg) {
+    var old = document.querySelector('.toast');
+    if (old) old.remove();
+    var t = mark(el('div', 'toast', msg));
+    document.body.appendChild(t);
+    setTimeout(function () { if (t.parentNode) t.remove(); }, 4200);
+  }
+
+  function sections() {
+    return Array.prototype.slice.call(main.querySelectorAll('section'));
+  }
+
+  function kindLabel(k) {
+    for (var i = 0; i < KINDS.length; i++) if (KINDS[i].k === k) return KINDS[i].label;
+    return 'Note';
+  }
+
+  /* ------------------------------------------------ Java highlighter
+     Colours pasted code the same way as the hand-written blocks:
+       grey italic = comments   green = strings   orange = keywords
+       blue = numbers
+     Order matters: comments and strings are matched first so a // or a
+     keyword inside them is left alone. Text is inserted as text nodes,
+     so < > & in your code can never break the page.                    */
+  var TOKEN = new RegExp(
+    '(\\/\\/[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/)' +                    /* 1 comment   */
+    '|("(?:\\\\.|[^"\\\\])*"|\'(?:\\\\.|[^\'\\\\])*\')' +          /* 2 string    */
+    '|(@[A-Za-z_]\\w*)' +                                          /* 3 annotation*/
+    '|(\\b0[xXbB][0-9a-fA-F_]+[LlFfDd]?\\b' +
+      '|\\b\\d[\\d_]*(?:\\.[\\d_]+)?(?:[eE][-+]?\\d+)?[LlFfDd]?\\b)' + /* 4 number */
+    '|\\b(abstract|assert|boolean|break|byte|case|catch|char|class|const|continue' +
+      '|default|do|double|else|enum|extends|final|finally|float|for|goto|if' +
+      '|implements|import|instanceof|int|interface|long|native|new|package|private' +
+      '|protected|public|record|return|sealed|short|static|strictfp|super|switch' +
+      '|synchronized|this|throw|throws|transient|try|var|void|volatile|while|yield' +
+      '|true|false|null)\\b',                                      /* 5 keyword   */
+    'g');
+
+  /* ------------------------------------------------ image embedding
+     Pictures are shrunk to 1200px and stored INSIDE this file as a
+     data: URI, so they survive moving the file, exporting it and git.
+     Nothing is ever linked to a path on your disk.                    */
+  var MAX_DIM = 1200;
+
+  function compressImage(file, cb) {
+    var fr = new FileReader();
+    fr.onerror = function () { cb(null); };
+    fr.onload = function () {
+      var img = new Image();
+      img.onerror = function () { cb(null); };
+      img.onload = function () {
+        var w = img.naturalWidth || img.width;
+        var h = img.naturalHeight || img.height;
+        if (!w || !h) { cb(fr.result); return; }
+        var scale = Math.min(1, MAX_DIM / Math.max(w, h));
+        var cw = Math.max(1, Math.round(w * scale));
+        var ch = Math.max(1, Math.round(h * scale));
+
+        var png = null, jpg = null;
+        try {
+          var c1 = document.createElement('canvas');
+          c1.width = cw; c1.height = ch;
+          c1.getContext('2d').drawImage(img, 0, 0, cw, ch);
+          png = c1.toDataURL('image/png');
+        } catch (e) {}
+        try {
+          var c2 = document.createElement('canvas');
+          c2.width = cw; c2.height = ch;
+          var x2 = c2.getContext('2d');
+          x2.fillStyle = '#ffffff';
+          x2.fillRect(0, 0, cw, ch);
+          x2.drawImage(img, 0, 0, cw, ch);
+          jpg = c2.toDataURL('image/jpeg', 0.82);
+        } catch (e) {}
+
+        var best = (png && jpg) ? (png.length <= jpg.length ? png : jpg)
+                                : (png || jpg || fr.result);
+        cb(best);
+      };
+      img.src = fr.result;
+    };
+    fr.readAsDataURL(file);
+  }
+
+  function addImages(fileList, bucket, done) {
+    var files = Array.prototype.slice.call(fileList || [])
+      .filter(function (f) { return f && /^image\//.test(f.type); });
+    if (!files.length) return;
+    var left = files.length;
+    files.forEach(function (f) {
+      compressImage(f, function (src) {
+        if (src) bucket.push(src);
+        if (--left === 0) done();
+      });
+    });
+  }
+
+  function highlightInto(codeEl, src) {
+    TOKEN.lastIndex = 0;
+    var last = 0, m;
+    while ((m = TOKEN.exec(src)) !== null) {
+      if (m.index === TOKEN.lastIndex) { TOKEN.lastIndex++; continue; }
+      if (m.index > last) {
+        codeEl.appendChild(document.createTextNode(src.slice(last, m.index)));
+      }
+      var cls = m[1] ? 'cm' : m[2] ? 'st' : m[3] ? 'kw' : m[4] ? 'nu' : 'kw';
+      codeEl.appendChild(el('span', cls, m[0]));
+      last = TOKEN.lastIndex;
+    }
+    if (last < src.length) codeEl.appendChild(document.createTextNode(src.slice(last)));
+  }
+
+  /* ------------------------------------------------ render one note */
+  function noteEl(secId, note) {
+    var box = mark(el('div', 'box ' + note.kind));
+
+    var lbl = el('span', 'lbl');
+    lbl.appendChild(document.createTextNode(note.label || kindLabel(note.kind)));
+    lbl.appendChild(el('span', 'tag', '  · written by ' + (note.author || AUTHOR)));
+    box.appendChild(lbl);
+
+    var ops = el('div', 'noteops');
+    var edit = el('button', 'opbtn', 'Edit');
+    edit.type = 'button';
+    edit.addEventListener('click', function () { openEditor(secId, note.id, box); });
+    var del = el('button', 'opbtn', 'Delete');
+    del.type = 'button';
+    del.addEventListener('click', function () {
+      if (!window.confirm('Delete this note?')) return;
+      /* Tombstone, not splice: a removed row has to be able to travel to
+         the other machine. A hard delete would simply be re-added by the
+         next merge, because the other side still has the note.          */
+      note.deleted = true;
+      note.mtime = Date.now();
+      note.text = ''; note.code = ''; note.images = [];
+      save(); render();
+    });
+    ops.appendChild(edit); ops.appendChild(del);
+    box.appendChild(ops);
+
+    String(note.text || '').split(/\n\s*\n/).forEach(function (para) {
+      if (!para.trim()) return;
+      var p = el('p');
+      para.split('\n').forEach(function (line, i) {
+        if (i) p.appendChild(el('br'));
+        p.appendChild(document.createTextNode(line));
+      });
+      box.appendChild(p);
+    });
+
+    if (note.code && note.code.trim()) {
+      var pre = el('pre');
+      pre.style.margin = '0 0 12px';
+      var codeEl = el('code');
+      highlightInto(codeEl, note.code);
+      pre.appendChild(codeEl);
+      box.appendChild(pre);
+    }
+
+    (note.images || []).forEach(function (src, i) {
+      var fig = el('figure', 'notefig');
+      var im = document.createElement('img');
+      im.src = src;
+      im.loading = 'lazy';
+      im.alt = (note.label || kindLabel(note.kind)) + ' — picture ' + (i + 1);
+      fig.appendChild(im);
+      box.appendChild(fig);
+    });
+
+    return box;
+  }
+
+  /* ------------------------------------------------ the note editor */
+  function openEditor(secId, noteId, replaceNode) {
+    var existing = noteId != null ? findNote(secId, noteId) : null;
+    var host = document.getElementById(secId);
+    if (!host) return;
+
+    var form = mark(el('div', 'editor'));
+
+    /* colour chips */
+    var r1 = el('div', 'row');
+    r1.appendChild(el('label', null, 'Colour'));
+    var chips = el('div', 'chips');
+    var group = 'kind-' + uid();
+    KINDS.forEach(function (kd) {
+      var lab = el('label', 'chip c-' + kd.k);
+      var inp = document.createElement('input');
+      inp.type = 'radio'; inp.name = group; inp.value = kd.k;
+      if (existing ? existing.kind === kd.k : kd.k === 'def') inp.checked = true;
+      lab.appendChild(inp);
+      lab.appendChild(el('span', null, kd.label));
+      chips.appendChild(lab);
+    });
+    r1.appendChild(chips);
+    form.appendChild(r1);
+
+    /* label */
+    var r2 = el('div', 'row');
+    r2.appendChild(el('label', null, 'Heading (optional)'));
+    var labelInput = document.createElement('input');
+    labelInput.type = 'text';
+    labelInput.placeholder = 'e.g. My doubt / Asked in TCS / Revise again';
+    labelInput.value = existing ? (existing.label || '') : '';
+    r2.appendChild(labelInput);
+    form.appendChild(r2);
+
+    /* text */
+    var r3 = el('div', 'row');
+    r3.appendChild(el('label', null, 'Note'));
+    var textArea = document.createElement('textarea');
+    textArea.placeholder = 'Write normally. Leave a blank line to start a new paragraph.';
+    textArea.value = existing ? (existing.text || '') : '';
+    r3.appendChild(textArea);
+    form.appendChild(r3);
+
+    /* code */
+    var r4 = el('div', 'row');
+    r4.appendChild(el('label', null, 'Code (optional)'));
+    var codeArea = document.createElement('textarea');
+    codeArea.className = 'code';
+    codeArea.placeholder = 'Paste Java here. Type < and > normally — nothing needs escaping.';
+    codeArea.value = existing ? (existing.code || '') : '';
+    r4.appendChild(codeArea);
+    form.appendChild(r4);
+
+    /* images */
+    var imgs = (existing && Array.isArray(existing.images)) ? existing.images.slice() : [];
+    var r5 = el('div', 'row');
+    r5.appendChild(el('label', null, 'Images (optional)'));
+
+    var zone = el('div', 'dropzone');
+    var fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'image/*';
+    fileInput.multiple = true;
+    zone.appendChild(fileInput);
+    zone.appendChild(el('div', 'zonetext',
+      'Click to choose a picture   ·   paste a screenshot with Ctrl+V   ·   or drop files here'));
+    r5.appendChild(zone);
+
+    var thumbs = el('div', 'thumbs');
+    r5.appendChild(thumbs);
+    r5.appendChild(el('div', 'hint',
+      'Pictures are shrunk and stored inside this file, so they never break. Ctrl+Enter saves, Esc cancels.'));
+    form.appendChild(r5);
+
+    function drawThumbs() {
+      while (thumbs.firstChild) thumbs.removeChild(thumbs.firstChild);
+      imgs.forEach(function (src, i) {
+        var t = el('div', 'thumb');
+        var im = document.createElement('img');
+        im.src = src;
+        im.alt = 'attached picture ' + (i + 1);
+        t.appendChild(im);
+        var x = el('button', 'thumbx', '×');
+        x.type = 'button';
+        x.title = 'Remove this picture';
+        x.addEventListener('click', function () { imgs.splice(i, 1); drawThumbs(); });
+        t.appendChild(x);
+        thumbs.appendChild(t);
+      });
+    }
+
+    function tookImages() {
+      drawThumbs();
+      var bytes = imgs.reduce(function (a, s) { return a + s.length; }, 0);
+      if (bytes > 3000000) {
+        toast('That is a lot of picture data — press "Save to file" soon so nothing is lost.');
+      }
+    }
+
+    zone.addEventListener('click', function (ev) {
+      if (ev.target !== fileInput) fileInput.click();
+    });
+    fileInput.addEventListener('change', function () {
+      addImages(fileInput.files, imgs, tookImages);
+      fileInput.value = '';
+    });
+    ['dragenter', 'dragover'].forEach(function (evt) {
+      zone.addEventListener(evt, function (ev) {
+        ev.preventDefault(); zone.classList.add('over');
+      });
+    });
+    ['dragleave', 'drop'].forEach(function (evt) {
+      zone.addEventListener(evt, function () { zone.classList.remove('over'); });
+    });
+    zone.addEventListener('drop', function (ev) {
+      ev.preventDefault();
+      addImages(ev.dataTransfer && ev.dataTransfer.files, imgs, tookImages);
+    });
+    form.addEventListener('paste', function (ev) {
+      var f = ev.clipboardData && ev.clipboardData.files;
+      if (f && f.length) {
+        var pics = Array.prototype.slice.call(f)
+          .filter(function (x) { return /^image\//.test(x.type); });
+        if (pics.length) { ev.preventDefault(); addImages(pics, imgs, tookImages); }
+      }
+    });
+    drawThumbs();
+
+    /* buttons */
+    var btns = el('div', 'btns');
+    var ok = el('button', 'tbtn primary', existing ? 'Update note' : 'Save note');
+    ok.type = 'button';
+    var cancel = el('button', 'tbtn', 'Cancel');
+    cancel.type = 'button';
+    btns.appendChild(ok); btns.appendChild(cancel);
+    form.appendChild(btns);
+
+    function commit() {
+      var text = textArea.value.trim();
+      var code = codeArea.value.replace(/\s+$/, '');
+      if (!text && !code && !imgs.length) {
+        toast('Nothing to save — write a note, paste code, or add a picture.');
+        return;
+      }
+      var chosen = form.querySelector('input[name="' + group + '"]:checked');
+      var note = {
+        id: existing ? existing.id : uid(),
+        kind: chosen ? chosen.value : 'def',
+        label: labelInput.value.trim(),
+        text: text,
+        code: code,
+        images: imgs,
+        author: AUTHOR,
+        mtime: Date.now()          /* drives the cross-machine merge */
+      };
+      if (!data.notes[secId]) data.notes[secId] = [];
+      var at = existing ? indexOfNote(secId, existing.id) : -1;
+      if (at >= 0) data.notes[secId][at] = note;
+      else data.notes[secId].push(note);
+      save(); render();
+      toast(gist && gist.cfg()
+        ? 'Saved — syncing to your gist.'
+        : 'Saved in this browser. Press "Save to file" to make it permanent.');
+    }
+
+    ok.addEventListener('click', commit);
+    cancel.addEventListener('click', function () { render(); });
+    form.addEventListener('keydown', function (ev) {
+      if (ev.key === 'Escape') { ev.preventDefault(); render(); }
+      if (ev.key === 'Enter' && (ev.ctrlKey || ev.metaKey)) { ev.preventDefault(); commit(); }
+    });
+
+    if (replaceNode && replaceNode.parentNode) {
+      replaceNode.parentNode.replaceChild(form, replaceNode);
+    } else {
+      var addrow = host.querySelector('.addrow');
+      if (addrow) host.insertBefore(form, addrow); else host.appendChild(form);
+    }
+    textArea.focus();
+  }
+
+  /* ------------------------------------------------ new topic form */
+  function openTopicForm() {
+    var old = document.getElementById('topic-form');
+    if (old) { old.remove(); return; }
+
+    var form = mark(el('div', 'editor'));
+    form.id = 'topic-form';
+
+    var r1 = el('div', 'row');
+    r1.appendChild(el('label', null, 'Topic title'));
+    var title = document.createElement('input');
+    title.type = 'text';
+    title.placeholder = 'e.g. Memory barriers';
+    r1.appendChild(title);
+    form.appendChild(r1);
+
+    var r2 = el('div', 'row');
+    r2.appendChild(el('label', null, 'Put it after'));
+    var sel = document.createElement('select');
+    sections().forEach(function (s) {
+      var h = s.querySelector('h2');
+      var o = document.createElement('option');
+      o.value = s.id;
+      o.textContent = h ? h.textContent.replace(/\s+/g, ' ').trim() : s.id;
+      sel.appendChild(o);
+    });
+    r2.appendChild(sel);
+    r2.appendChild(el('div', 'hint', 'The new topic and its index entry appear right after the one you pick.'));
+    form.appendChild(r2);
+
+    var btns = el('div', 'btns');
+    var ok = el('button', 'tbtn primary', 'Create topic');
+    ok.type = 'button';
+    var cancel = el('button', 'tbtn', 'Cancel');
+    cancel.type = 'button';
+    btns.appendChild(ok); btns.appendChild(cancel);
+    form.appendChild(btns);
+
+    ok.addEventListener('click', function () {
+      var t = title.value.trim();
+      if (!t) { toast('Give the topic a title first.'); return; }
+      var afterId = sel.value;
+      var sameParent = data.topics.filter(function (x) {
+        return x.after === afterId && !x.deleted;
+      }).length;
+      var anchor = document.getElementById(afterId);
+      var baseNum = anchor && anchor.querySelector('.num')
+        ? anchor.querySelector('.num').textContent.replace(/[^0-9a-z]/gi, '') : '';
+      var id = 'u' + uid();
+      data.topics.push({
+        id: id,
+        title: t,
+        after: afterId,
+        num: baseNum ? baseNum.slice(0, 2) + String.fromCharCode(97 + sameParent) : '+',
+        author: AUTHOR,
+        mtime: Date.now()
+      });
+      save(); render();
+      var made = document.getElementById(id);
+      if (made) made.scrollIntoView({ block: 'start' });
+      toast('Topic added. Now press "+ Add my note" inside it.');
+    });
+    cancel.addEventListener('click', function () { form.remove(); });
+
+    main.insertBefore(form, main.querySelector('section'));
+    title.focus();
+  }
+
+  /* ------------------------------------------------ delete a topic */
+  function topicOps(topic) {
+    var ops = el('div', 'noteops');
+    ops.appendChild(el('span', 'byline', 'written by ' + (topic.author || AUTHOR)));
+    var del = el('button', 'opbtn', 'Delete topic');
+    del.type = 'button';
+    del.addEventListener('click', function () {
+      if (!window.confirm('Delete the topic "' + topic.title + '" and all notes inside it?')) return;
+      topic.deleted = true;
+      topic.mtime = Date.now();
+      (data.notes[topic.id] || []).forEach(function (n) {
+        n.deleted = true; n.mtime = Date.now();
+        n.text = ''; n.code = ''; n.images = [];
+      });
+      save(); render();
+    });
+    ops.appendChild(del);
+    return ops;
+  }
+
+  /* ------------------------------------------------ render everything */
+  function render() {
+    Array.prototype.slice.call(document.querySelectorAll('[data-injected]'))
+      .forEach(function (n) { if (n.parentNode) n.parentNode.removeChild(n); });
+
+    /* 1. custom topics (section + index entry) */
+    data.topics.forEach(function (t) {
+      if (t.deleted) return;
+      var anchor = document.getElementById(t.after);
+      if (!anchor) { var all = sections(); anchor = all[all.length - 1]; }
+      if (!anchor) return;
+      while (anchor.nextElementSibling &&
+             anchor.nextElementSibling.tagName === 'SECTION' &&
+             anchor.nextElementSibling.hasAttribute('data-injected')) {
+        anchor = anchor.nextElementSibling;
+      }
+
+      var sec = mark(el('section'));
+      sec.id = t.id;
+      var h2 = el('h2');
+      h2.appendChild(el('span', 'num', t.num || '+'));
+      h2.appendChild(document.createTextNode(t.title));
+      sec.appendChild(h2);
+      sec.appendChild(el('div', 'h2rule'));
+      sec.appendChild(topicOps(t));
+      anchor.parentNode.insertBefore(sec, anchor.nextSibling);
+
+      var linkAnchor = rail.querySelector('a[href="#' + t.after + '"]');
+      if (linkAnchor) {
+        while (linkAnchor.nextElementSibling &&
+               linkAnchor.nextElementSibling.tagName === 'A' &&
+               linkAnchor.nextElementSibling.hasAttribute('data-injected')) {
+          linkAnchor = linkAnchor.nextElementSibling;
+        }
+      }
+      var a = mark(el('a'));
+      a.href = '#' + t.id;
+      a.appendChild(el('span', 'n', t.num || '+'));
+      a.appendChild(document.createTextNode(t.title));
+      if (linkAnchor) linkAnchor.parentNode.insertBefore(a, linkAnchor.nextSibling);
+      else rail.appendChild(a);
+    });
+
+    /* 2. notes + add button in every section */
+    sections().forEach(function (sec) {
+      var list = (data.notes[sec.id] || []).filter(function (n) { return !n.deleted; });
+      list.forEach(function (note) { sec.appendChild(noteEl(sec.id, note)); });
+
+      var row = mark(el('div', 'addrow'));
+      var btn = el('button', 'addbtn', '+ Add my note');
+      btn.type = 'button';
+      btn.addEventListener('click', function () { openEditor(sec.id, null, null); });
+      row.appendChild(btn);
+      sec.appendChild(row);
+    });
+  }
+
+  /* ==================================================================
+     SAVING
+     Two paths:
+       1. Direct write  - browser writes into THIS file on disk.
+                          Needs the File System Access API (Chrome/Edge)
+                          and you pick the file once; the choice is
+                          remembered afterwards.
+       2. Download      - fallback everywhere else. Lands in Downloads,
+                          you move it over the old file yourself.
+     ================================================================== */
+
+  var fileHandle = null;
+
+  function buildHtml() {
+    var clone = document.documentElement.cloneNode(true);
+    Array.prototype.slice.call(clone.querySelectorAll('[data-injected]'))
+      .forEach(function (n) { if (n.parentNode) n.parentNode.removeChild(n); });
+    clone.removeAttribute('data-theme');
+
+    var holder = clone.querySelector('#oops-data');
+    if (holder) holder.textContent = JSON.stringify(data).replace(/</g, '\\u003c');
+
+    return '<!doctype html>\n' + clone.outerHTML;
+  }
+
+  /* ---- remember the chosen file across sessions (IndexedDB) ---- */
+  function openDb() {
+    return new Promise(function (res, rej) {
+      var r = indexedDB.open('oops-notes-fs', 1);
+      r.onupgradeneeded = function () { r.result.createObjectStore('h'); };
+      r.onsuccess = function () { res(r.result); };
+      r.onerror = function () { rej(r.error); };
+    });
+  }
+  function putHandle(h) {
+    return openDb().then(function (db) {
+      return new Promise(function (res, rej) {
+        var tx = db.transaction('h', 'readwrite');
+        tx.objectStore('h').put(h, 'file');
+        tx.oncomplete = res;
+        tx.onerror = function () { rej(tx.error); };
+      });
+    });
+  }
+  function getStoredHandle() {
+    return openDb().then(function (db) {
+      return new Promise(function (res, rej) {
+        var tx = db.transaction('h', 'readonly');
+        var q = tx.objectStore('h').get('file');
+        q.onsuccess = function () { res(q.result || null); };
+        q.onerror = function () { rej(q.error); };
+      });
+    });
+  }
+
+  function hasPermission(h) {
+    var opts = { mode: 'readwrite' };
+    if (!h.queryPermission) return Promise.resolve(true);
+    return h.queryPermission(opts).then(function (p) {
+      if (p === 'granted') return true;
+      return h.requestPermission(opts).then(function (p2) { return p2 === 'granted'; });
+    }).catch(function () { return false; });
+  }
+
+  function pickFile() {
+    return window.showSaveFilePicker({
+      suggestedName: 'OOPs_Notes.html',
+      types: [{ description: 'HTML page', accept: { 'text/html': ['.html'] } }]
+    });
+  }
+
+  function saveDirect(html) {
+    if (!window.showSaveFilePicker) return Promise.reject(new Error('unsupported'));
+
+    var start = fileHandle
+      ? Promise.resolve(fileHandle)
+      : getStoredHandle().catch(function () { return null; });
+
+    return start
+      .then(function (h) {
+        if (!h) return pickFile();
+        return hasPermission(h).then(function (ok) { return ok ? h : pickFile(); });
+      })
+      .then(function (h) {
+        fileHandle = h;
+        putHandle(h).catch(function () {});
+        return h.createWritable();
+      })
+      .then(function (w) {
+        return w.write(html).then(function () { return w.close(); });
+      })
+      .then(function () {
+        markSaved();
+        toast('Written straight into the file. Nothing to move.');
+      });
+  }
+
+  function downloadFile(html) {
+    var blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'OOPs_Notes.html';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 3000);
+    markSaved();
+    toast('Downloaded. Move it into src\\Complete_Revesion\\OOPs\\ over the old file.');
+  }
+
+  function markSaved() {
+    dirty = false;
+    document.body.classList.remove('unsaved');
+  }
+
+  function exportFile() {
+    var html = buildHtml();
+    saveDirect(html).catch(function (err) {
+      if (err && err.name === 'AbortError') return;   /* you cancelled the dialog */
+      downloadFile(html);
+    });
+  }
+
+  /* ==================================================================
+     GIST SYNC  —  the shared data source
+     The notes live in one secret GitHub gist. Every machine reads it on
+     open and writes back after an edit, so both systems converge without
+     exporting or committing anything.
+
+     The token is kept in localStorage under its own key, deliberately
+     OUTSIDE the `data` object, so "Save to file" can never bake your
+     credential into a file that goes to git.
+     ================================================================== */
+  var gist = (function () {
+    /* Shared with the other revision pages on purpose: connect once on a
+       machine and every notes page on it is connected. Each page keeps
+       its own FILE inside the one gist, so they never overwrite each
+       other. */
+    var CFG   = 'notes-gist-v1';     /* {token, gistId} — this machine only */
+    var FILE  = 'oops-notes.json';
+    var API   = 'https://api.github.com/gists/';
+    var DEBOUNCE = 1500;
+
+    var timer = null;
+    var busy = false;
+    var queued = false;
+    var lastSeen = 0;                /* remote stamp we last reconciled with */
+    var btn = document.getElementById('btn-sync');
+
+    function cfg() {
+      try {
+        var raw = localStorage.getItem(CFG);
+        if (!raw) return null;
+        var c = JSON.parse(raw);
+        return (c && c.token && c.gistId) ? c : null;
+      } catch (e) { return null; }
+    }
+
+    function setCfg(c) {
+      try {
+        if (c) localStorage.setItem(CFG, JSON.stringify(c));
+        else localStorage.removeItem(CFG);
+      } catch (e) {}
+    }
+
+    function status(text, cls) {
+      btn.textContent = 'Sync: ' + text;
+      btn.className = 'tbtn' + (cls ? ' ' + cls : '');
+    }
+
+    function req(url, opts) {
+      var c = cfg();
+      opts = opts || {};
+      opts.headers = {
+        'Accept': 'application/vnd.github+json',
+        'Authorization': 'Bearer ' + c.token,
+        'X-GitHub-Api-Version': '2022-11-28'
+      };
+      if (opts.body) opts.headers['Content-Type'] = 'application/json';
+      return fetch(url, opts).then(function (r) {
+        if (r.status === 401 || r.status === 403) {
+          throw new Error('Token rejected by GitHub (401/403). Check it has the "gists" permission and has not expired.');
+        }
+        if (r.status === 404) {
+          throw new Error('Gist not found (404). The id may be wrong, or the token belongs to a different account.');
+        }
+        if (!r.ok) throw new Error('GitHub returned ' + r.status);
+        return r.json();
+      });
+    }
+
+    /* A gist file over ~1 MB comes back truncated, with the full body at
+       raw_url. Images are data: URIs, so this is reachable in practice. */
+    function contentOf(g) {
+      var f = g.files && g.files[FILE];
+      if (!f) return Promise.resolve(null);
+      if (!f.truncated) return Promise.resolve(f.content);
+      return fetch(f.raw_url).then(function (r) { return r.text(); });
+    }
+
+    function parse(txt) {
+      if (!txt) return null;
+      var p;
+      try { p = JSON.parse(txt); } catch (e) { return null; }
+      if (!p || typeof p !== 'object') return null;
+      if (!p.data || typeof p.data !== 'object') return null;
+      if (!Array.isArray(p.data.topics)) p.data.topics = [];
+      if (!p.data.notes || typeof p.data.notes !== 'object') p.data.notes = {};
+      return p;
+    }
+
+    function payload() {
+      return JSON.stringify({
+        v: 1,
+        updatedAt: Date.now(),
+        device: navigator.platform || 'unknown',
+        data: data
+      }, null, 1);
+    }
+
+    /* ---- pull: merge the server copy into ours ---- */
+    function pull(quiet) {
+      if (!cfg()) return Promise.resolve(false);
+      status('checking', 'busy');
+      return req(API + cfg().gistId)
+        .then(contentOf)
+        .then(function (txt) {
+          var remote = parse(txt);
+          if (!remote) { lastSeen = 0; status('on', 'on'); return false; }
+
+          var mineSig = sig(data);
+          var theirSig = sig(remote.data);
+          data = prune(mergeData(data, remote.data));
+          lastSeen = remote.updatedAt || 0;
+
+          var mergedSig = sig(data);
+          var gained = mergedSig !== mineSig;    /* server had rows we lacked */
+          var owed   = mergedSig !== theirSig;   /* we have rows server lacks */
+
+          if (gained) {
+            cache();
+            render();
+            if (!quiet) toast('Pulled from gist — ' + countLive(data) + ' notes now here.');
+          }
+          status('on', 'on');
+          if (owed) push(true);
+          else markSaved();
+          return gained;
+        })
+        .catch(function (e) {
+          status('error', 'err');
+          if (!quiet) toast(e.message);
+          return false;
+        });
+    }
+
+    /* ---- push: write our copy back, re-merging if we were beaten ---- */
+    function push(quiet) {
+      if (!cfg()) return Promise.resolve(false);
+      if (busy) { queued = true; return Promise.resolve(false); }
+      busy = true;
+      status('saving', 'busy');
+
+      /* Read-before-write. Without this, two machines editing different
+         sections would each overwrite the other's section wholesale. */
+      return req(API + cfg().gistId)
+        .then(contentOf)
+        .then(function (txt) {
+          var remote = parse(txt);
+          if (remote && (remote.updatedAt || 0) > lastSeen) {
+            data = prune(mergeData(data, remote.data));
+            cache();
+            render();
+          }
+          var body = {};
+          body[FILE] = { content: payload() };
+          return req(API + cfg().gistId, {
+            method: 'PATCH',
+            body: JSON.stringify({ files: body })
+          });
+        })
+        .then(function (g) {
+          return contentOf(g).then(function (t) {
+            var back = parse(t);
+            lastSeen = back ? (back.updatedAt || 0) : Date.now();
+          });
+        })
+        .then(function () {
+          markSaved();
+          status('on', 'on');
+          if (!quiet) toast('Synced. Open the page on your other system to see it.');
+          return true;
+        })
+        .catch(function (e) {
+          status('error', 'err');
+          toast('Not synced — ' + e.message);
+          return false;
+        })
+        .then(function (r) {
+          busy = false;
+          if (queued) { queued = false; schedulePush(); }
+          return r;
+        });
+    }
+
+    function schedulePush() {
+      if (timer) clearTimeout(timer);
+      status('saving', 'busy');
+      timer = setTimeout(function () { timer = null; push(true); }, DEBOUNCE);
+    }
+
+    /* ---- first-time setup: make the gist for them ---- */
+    function create(token) {
+      var body = {
+        description: 'Java revision notes (synced by the Complete_Revesion notes pages)',
+        'public': false,
+        files: {}
+      };
+      body.files[FILE] = { content: payload() };
+      return fetch('https://api.github.com/gists', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/vnd.github+json',
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json',
+          'X-GitHub-Api-Version': '2022-11-28'
+        },
+        body: JSON.stringify(body)
+      }).then(function (r) {
+        if (r.status === 401 || r.status === 403) {
+          throw new Error('GitHub rejected that token. It needs the "gists" permission (read and write).');
+        }
+        if (!r.ok) throw new Error('Could not create the gist — GitHub returned ' + r.status);
+        return r.json();
+      });
+    }
+
+    /* ---- the settings panel ---- */
+    function openPanel() {
+      var old = document.querySelector('.syncpanel');
+      if (old) { old.remove(); return; }
+
+      var c = cfg();
+      var form = mark(el('div', 'editor syncpanel'));
+
+      var head = el('div', 'row');
+      head.appendChild(el('label', null, 'Sync notes across your systems'));
+      var steps = el('ol');
+      [
+        'Open github.com/settings/personal-access-tokens and make a fine-grained token.',
+        'Set Account permissions → Gists → Read and write. Nothing else is needed.',
+        'Paste it below and press Connect. Repeat once on your other system.'
+      ].forEach(function (s) { steps.appendChild(el('li', null, s)); });
+      head.appendChild(steps);
+      form.appendChild(head);
+
+      var r1 = el('div', 'row');
+      r1.appendChild(el('label', null, 'GitHub token'));
+      var tok = document.createElement('input');
+      tok.type = 'text';
+      tok.placeholder = 'github_pat_...';
+      tok.value = c ? c.token : '';
+      tok.autocomplete = 'off'; tok.spellcheck = false;
+      r1.appendChild(tok);
+      var warn = el('div', 'warn',
+        'Stored only in this browser, never in the HTML file and never in git.');
+      r1.appendChild(warn);
+      form.appendChild(r1);
+
+      var r2 = el('div', 'row');
+      r2.appendChild(el('label', null, 'Gist id — leave empty on the FIRST machine to create one'));
+      var gid = document.createElement('input');
+      gid.type = 'text';
+      gid.placeholder = 'paste the id shown after the first machine connects';
+      gid.value = c ? c.gistId : '';
+      gid.autocomplete = 'off'; gid.spellcheck = false;
+      r2.appendChild(gid);
+      form.appendChild(r2);
+
+      var state = el('div', 'state', c
+        ? 'Connected to gist ' + c.gistId
+        : 'Not connected — notes stay in this browser only.');
+      form.appendChild(state);
+
+      var btns = el('div', 'btns');
+      var ok = el('button', 'tbtn primary', c ? 'Save changes' : 'Connect');
+      ok.type = 'button';
+      var now = el('button', 'tbtn', 'Sync now');
+      now.type = 'button';
+      var off = el('button', 'tbtn', 'Disconnect');
+      off.type = 'button';
+      var close = el('button', 'tbtn', 'Close');
+      close.type = 'button';
+      btns.appendChild(ok); btns.appendChild(now);
+      if (c) btns.appendChild(off);
+      btns.appendChild(close);
+      form.appendChild(btns);
+
+      ok.addEventListener('click', function () {
+        var t = tok.value.trim();
+        var g = gid.value.trim();
+        if (!t) { toast('Paste a token first.'); return; }
+
+        if (!g) {
+          state.textContent = 'Creating a secret gist…';
+          create(t).then(function (res) {
+            setCfg({ token: t, gistId: res.id });
+            lastSeen = 0;
+            status('on', 'on');
+            form.remove();
+            toast('Gist created. Its id is ' + res.id +
+                  ' — enter that id with the same token on your other system.');
+            window.prompt('Copy this gist id and use it on your other system:', res.id);
+          }).catch(function (e) {
+            state.textContent = e.message;
+            toast(e.message);
+          });
+          return;
+        }
+
+        setCfg({ token: t, gistId: g });
+        lastSeen = 0;
+        form.remove();
+        pull(false).then(function () { if (dirty) push(false); });
+      });
+
+      now.addEventListener('click', function () {
+        pull(false).then(function () { return push(false); });
+      });
+
+      off.addEventListener('click', function () {
+        if (!window.confirm('Stop syncing on this machine? Your notes stay both here and in the gist.')) return;
+        setCfg(null);
+        status('off', '');
+        form.remove();
+        toast('Disconnected. This machine no longer reads or writes the gist.');
+      });
+
+      close.addEventListener('click', function () { form.remove(); });
+
+      main.insertBefore(form, main.querySelector('section'));
+      (c ? gid : tok).focus();
+    }
+
+    function init() {
+      if (!cfg()) { status('off', ''); return; }
+      status('on', 'on');
+      pull(true);
+      /* Coming back to the tab is the natural moment to check whether the
+         other machine wrote something. */
+      window.addEventListener('focus', function () {
+        if (!busy && !timer) pull(true);
+      });
+    }
+
+    btn.addEventListener('click', openPanel);
+
+    return { cfg: cfg, pull: pull, push: push, schedulePush: schedulePush, init: init };
+  })();
+
+  document.getElementById('btn-topic').addEventListener('click', openTopicForm);
+  document.getElementById('btn-export').addEventListener('click', exportFile);
+
+  window.addEventListener('beforeunload', function (ev) {
+    if (!dirty) return;
+    ev.preventDefault();
+    ev.returnValue = '';
+  });
+
+  render();
+  gist.init();
+})();
+</script>
+
+</body>
+</html>
