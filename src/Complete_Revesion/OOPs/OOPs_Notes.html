@@ -278,8 +278,12 @@ footer{margin-top:64px; padding-top:18px; border-top:3px solid var(--ink); font-
      Account permissions -> Gists -> Read and write.  Nothing else.
   2. Press "Sync", paste the token, leave "Gist id" EMPTY, press Connect.
      A secret gist is created and its id is shown to you.
-  3. On the OTHER machine: press "Sync", paste a token, paste that SAME
-     gist id, press Connect.
+  3. On the OTHER machine: press "Sync", paste a token and press Connect.
+     Leaving the gist id EMPTY is fine there too - it finds the gist your
+     account already has. Paste the id only if you want to be explicit.
+
+  Reconnecting after Disconnect never makes a second gist: the id is
+  remembered, and a new one is only created after you confirm.
 
   This page shares the connection with MultiThreading_Notes.html and
   CollectionFramework_Notes.html, so connecting in any one of them
@@ -3032,10 +3036,25 @@ Java OOP &mdash; Complete Revision &nbsp;&middot;&nbsp; src/Complete_Revesion/OO
       } catch (e) { return null; }
     }
 
+    /* The last gist this machine used, kept under its OWN key so that
+       Disconnect cannot erase it. Without this, reconnecting would meet
+       an empty gist-id box, and an empty box used to mean "create one" -
+       silently making a SECOND gist and stranding every existing note in
+       the first. */
+    var LAST = 'notes-gist-last';
+
+    function lastGistId() {
+      try { return localStorage.getItem(LAST) || ''; } catch (e) { return ''; }
+    }
+
     function setCfg(c) {
       try {
-        if (c) localStorage.setItem(CFG, JSON.stringify(c));
-        else localStorage.removeItem(CFG);
+        if (c) {
+          localStorage.setItem(CFG, JSON.stringify(c));
+          localStorage.setItem(LAST, c.gistId);
+        } else {
+          localStorage.removeItem(CFG);      /* LAST deliberately survives */
+        }
       } catch (e) {}
     }
 
@@ -3185,6 +3204,41 @@ Java OOP &mdash; Complete Revision &nbsp;&middot;&nbsp; src/Complete_Revesion/OO
       timer = setTimeout(function () { timer = null; push(true); }, DEBOUNCE);
     }
 
+    /* ---- find the gist this account already has ----
+       Every notes page stores its own file inside the one shared gist, so
+       spotting any of these names identifies it. That means a machine can
+       rediscover the gist from the token alone - no need to carry the id
+       between systems, and no way to accidentally start a second one. */
+    var KNOWN = ['oops-notes.json', 'multithreading-notes.json',
+                 'collectionframework-notes.json'];
+
+    function findGist(token) {
+      return fetch('https://api.github.com/gists?per_page=100', {
+        headers: {
+          'Accept': 'application/vnd.github+json',
+          'Authorization': 'Bearer ' + token,
+          'X-GitHub-Api-Version': '2022-11-28'
+        }
+      }).then(function (r) {
+        if (r.status === 401 || r.status === 403) {
+          throw new Error('GitHub rejected that token. It needs the "gists" permission (read and write).');
+        }
+        if (!r.ok) throw new Error('Could not list your gists - GitHub returned ' + r.status);
+        return r.json();
+      }).then(function (list) {
+        var hits = (list || []).filter(function (g) {
+          for (var i = 0; i < KNOWN.length; i++) {
+            if (g.files && g.files[KNOWN[i]]) return true;
+          }
+          return false;
+        });
+        hits.sort(function (a, b) {          /* newest first */
+          return String(b.updated_at).localeCompare(String(a.updated_at));
+        });
+        return hits.length ? hits[0].id : null;
+      });
+    }
+
     /* ---- first-time setup: make the gist for them ---- */
     function create(token) {
       var body = {
@@ -3225,7 +3279,8 @@ Java OOP &mdash; Complete Revision &nbsp;&middot;&nbsp; src/Complete_Revesion/OO
       [
         'Open github.com/settings/personal-access-tokens and make a fine-grained token.',
         'Set Account permissions → Gists → Read and write. Nothing else is needed.',
-        'Paste it below and press Connect. Repeat once on your other system.'
+        'Paste it below and press Connect, then do the same once on your '
+          + 'other system. The gist id is optional.'
       ].forEach(function (s) { steps.appendChild(el('li', null, s)); });
       head.appendChild(steps);
       form.appendChild(head);
@@ -3244,18 +3299,21 @@ Java OOP &mdash; Complete Revision &nbsp;&middot;&nbsp; src/Complete_Revesion/OO
       form.appendChild(r1);
 
       var r2 = el('div', 'row');
-      r2.appendChild(el('label', null, 'Gist id — leave empty on the FIRST machine to create one'));
+      r2.appendChild(el('label', null,
+        'Gist id — optional, found automatically from your token'));
       var gid = document.createElement('input');
       gid.type = 'text';
-      gid.placeholder = 'paste the id shown after the first machine connects';
-      gid.value = c ? c.gistId : '';
+      gid.placeholder = 'leave empty: reuses the gist this account already has';
+      gid.value = c ? c.gistId : lastGistId();
       gid.autocomplete = 'off'; gid.spellcheck = false;
       r2.appendChild(gid);
       form.appendChild(r2);
 
       var state = el('div', 'state', c
         ? 'Connected to gist ' + c.gistId
-        : 'Not connected — notes stay in this browser only.');
+        : (lastGistId()
+            ? 'Not connected. Connect reuses gist ' + lastGistId() + '.'
+            : 'Not connected — notes stay in this browser only.'));
       form.appendChild(state);
 
       var btns = el('div', 'btns');
@@ -3278,15 +3336,36 @@ Java OOP &mdash; Complete Revision &nbsp;&middot;&nbsp; src/Complete_Revesion/OO
         if (!t) { toast('Paste a token first.'); return; }
 
         if (!g) {
-          state.textContent = 'Creating a secret gist…';
-          create(t).then(function (res) {
-            setCfg({ token: t, gistId: res.id });
-            lastSeen = 0;
-            status('on', 'on');
-            form.remove();
-            toast('Gist created. Its id is ' + res.id +
-                  ' — enter that id with the same token on your other system.');
-            window.prompt('Copy this gist id and use it on your other system:', res.id);
+          /* An empty box does NOT mean "make a new gist". Look for the one
+             this account already has first, and only ever create after an
+             explicit yes. */
+          state.textContent = 'Looking for your existing notes gist…';
+          findGist(t).then(function (found) {
+            if (found) {
+              setCfg({ token: t, gistId: found });
+              lastSeen = 0;
+              form.remove();
+              toast('Reconnected to your existing gist ' + found + '.');
+              return pull(false).then(function () { if (dirty) push(false); });
+            }
+            if (!window.confirm(
+                  'No existing notes gist was found on this account.\n\n' +
+                  'Create a NEW empty one?\n\n' +
+                  'If your notes are already in a gist, press Cancel and ' +
+                  'paste its id instead.')) {
+              state.textContent = 'Cancelled. Paste the gist id, then press Connect.';
+              return null;
+            }
+            state.textContent = 'Creating a secret gist…';
+            return create(t).then(function (res) {
+              setCfg({ token: t, gistId: res.id });
+              lastSeen = 0;
+              status('on', 'on');
+              form.remove();
+              toast('Gist created. Its id is ' + res.id +
+                    ' — enter that id with the same token on your other system.');
+              window.prompt('Copy this gist id and use it on your other system:', res.id);
+            });
           }).catch(function (e) {
             state.textContent = e.message;
             toast(e.message);
@@ -3306,10 +3385,12 @@ Java OOP &mdash; Complete Revision &nbsp;&middot;&nbsp; src/Complete_Revesion/OO
 
       off.addEventListener('click', function () {
         if (!window.confirm('Stop syncing on this machine? Your notes stay both here and in the gist.')) return;
+        var keep = (cfg() || {}).gistId || lastGistId();
         setCfg(null);
         status('off', '');
         form.remove();
-        toast('Disconnected. This machine no longer reads or writes the gist.');
+        toast('Disconnected. Gist ' + keep + ' is remembered, so pressing ' +
+              'Connect again reuses it instead of making a new one.');
       });
 
       close.addEventListener('click', function () { form.remove(); });
