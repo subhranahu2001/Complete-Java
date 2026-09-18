@@ -532,6 +532,8 @@ m.merge("a", 1, Integer::sum);</code></pre>
   <a href="#s25"><span class="n">25</span>Bit manipulation</a>
   <a href="#s26"><span class="n">26</span>Advanced string algorithms</a>
   <a href="#s27"><span class="n">27</span>Math &amp; number theory</a>
+  <div class="grp">Collections for DSA</div>
+  <a href="#s27b"><span class="n">27b</span>DSA with the Collection Framework</a>
   <div class="grp">Interview</div>
   <a href="#s28"><span class="n">28</span>Question bank</a>
   <a href="#s29"><span class="n">29</span>Must-solve programs</a>
@@ -557,6 +559,35 @@ m.merge("a", 1, Integer::sum);</code></pre>
   <div><span class="sw" style="color:var(--deep)">Violet &mdash; Under the hood</span>JDK source / JVM level detail</div>
 </div>
 
+
+<div class="box win">
+<span class="lbl">Read this first &mdash; the five rules that actually build the skill</span>
+<ol>
+<li><b>Struggle 25&ndash;30 minutes before looking at anything.</b> The timer is on; being stuck is the workout.</li>
+<li><b>When stuck, read the hint / approach only &mdash; never the code.</b> Then close it and write it yourself.</li>
+<li><b>Plan in plain English before coding.</b> If you can't say it, you don't understand it.</li>
+<li><b>Brute force first, optimize second.</b> A working ugly solution beats a blank screen.</li>
+<li><b>Keep a Redo List.</b> Every problem you needed help on gets re-solved from scratch 2&ndash;3 days later &mdash; mark it <span class="bad">Revise again</span> in the editor and the red dot is your Redo List.</li>
+</ol>
+<p><b>Approach framework:</b> (1) Understand &mdash; restate, tiny example, do it by hand. (2) Match the pattern. (3) Plan in plain English. (4) Brute force, then optimize. (5) Code &amp; test edges (empty, single, duplicates, negatives, overflow).</p>
+</div>
+
+<h3>Learning path &mdash; rough time budget</h3>
+<p>Work the chapters in order; each builds on the ones before (recursion before trees, trees before graphs, graphs and recursion before DP). Hours cover concepts + a first solid pass of the problems; re-solving is extra.</p>
+<div class="tw"><table>
+<tr><th>Part</th><th>Chapters</th><th>Hours</th></tr>
+<tr><td>I &mdash; Foundations</td><td>00 Big-O 2&ndash;3 &middot; 01 Recursion 4&ndash;5 &middot; 02 Recurrences 2 &middot; 03 Integers 1.5 &middot; 04 Hashing 1.5 &middot; 05 Strings 2 &middot; 06 Comparators 1</td><td class="mono">~14&ndash;16</td></tr>
+<tr><td>II &mdash; Linear</td><td>07 Arrays 8&ndash;10 &middot; 08 Prefix 3&ndash;4 &middot; 09 Two pointers 6&ndash;8 &middot; 10 Window 6&ndash;8 &middot; 11 Queue 3 &middot; 12 Stack 6&ndash;8 &middot; 13 Binary search 6&ndash;8 &middot; 14 Sorting 5&ndash;6</td><td class="mono">~43&ndash;55</td></tr>
+<tr><td>III &mdash; Linked &amp; hierarchical</td><td>15 Lists 6&ndash;8 &middot; 16 Trees 10&ndash;12 &middot; 17 Tries 3&ndash;4 &middot; 18 Heaps 5&ndash;6</td><td class="mono">~24&ndash;30</td></tr>
+<tr><td>IV &mdash; Search &amp; graphs</td><td>19 Grid 2&ndash;3 &middot; 20 Backtracking 8&ndash;10 &middot; 21 Graphs 12&ndash;15</td><td class="mono">~22&ndash;28</td></tr>
+<tr><td>V &mdash; Optimization</td><td>22 DP 15&ndash;20 &middot; 23 Greedy 5&ndash;6 &middot; 24 Intervals 4&ndash;5</td><td class="mono">~24&ndash;31</td></tr>
+<tr><td>VI &mdash; Advanced</td><td>25 Bits 4&ndash;5 &middot; 26 Strings 5&ndash;7 &middot; 27 Math 3&ndash;4</td><td class="mono">~12&ndash;16</td></tr>
+<tr><td colspan="2"><b>End to end</b> &mdash; about 6&ndash;8 months at ~6 h/week. Through Part III you are solid for most data-structure rounds; Parts IV&ndash;V are where interviews are won or lost; Part VI is ongoing polish.</td><td class="mono"><b>160&ndash;200 h</b></td></tr>
+</table></div>
+<div class="box ask">
+<span class="lbl">Tip</span>
+<p>Don't wait until you've "finished" foundations to touch problems. Read a foundation chapter, then start its small set the same week. Momentum beats perfect preparation.</p>
+</div>
 <!-- ============================================================ 00 -->
 <section id="s00">
 <h2><span class="num">00</span>Big-O &amp; complexity</h2><div class="h2rule"></div>
@@ -627,6 +658,7 @@ m.merge("a", 1, Integer::sum);</code></pre>
 </div>
 
 <h3>Practice problems</h3>
+<p class="probhint">The handbook has no problem set for this chapter &mdash; these are extra warm-ups. Every other chapter lists exactly the handbook problems.</p>
 <p class="probhint">Click a row to write / read your own solution.</p>
 <div class="tw"><table class="probs">
 <tr><th>Problem</th><th>Level</th><th>Why / pattern</th></tr>
@@ -708,8 +740,12 @@ m.merge("a", 1, Integer::sum);</code></pre>
 <tr><td>Sum of Digits / Add Digits</td><td><span class="lv e">Easy</span></td><td>Peel one digit per call</td></tr>
 <tr><td>Power of Two</td><td><span class="lv e">Easy</span></td><td>Divide by two until 1</td></tr>
 <tr><td>Merge Two Sorted Lists</td><td><span class="lv e">Easy</span></td><td>Recursive merge</td></tr>
-<tr><td>Reverse Linked List</td><td><span class="lv e">Easy</span></td><td>Work on the way back up the stack</td></tr>
-<tr><td>Tower of Hanoi</td><td><span class="lv m">Medium</span></td><td>Leap of faith in its purest form; T(n)=2T(n-1)+1</td></tr>
+<tr><td>Reverse Linked List</td><td><span class="lv e">Easy</span></td><td>Recurse to tail, rewire on return</td></tr>
+<tr><td>Binary Tree Inorder Traversal</td><td><span class="lv e">Easy</span></td><td>Left, node, right</td></tr>
+<tr><td>Climbing Stairs</td><td><span class="lv e">Easy</span></td><td>f(n)=f(n-1)+f(n-2)</td></tr>
+<tr><td>Generate Parentheses</td><td><span class="lv m">Medium</span></td><td>Recursive choice tree</td></tr>
+<tr><td>Different Ways to Add Parentheses</td><td><span class="lv m">Medium</span></td><td>Split, recurse on each side</td></tr>
+<tr><td>K-th Symbol in Grammar</td><td><span class="lv m">Medium</span></td><td>Recurse on row halves</td></tr>
 </table></div>
 </section>
 
@@ -774,6 +810,7 @@ m.merge("a", 1, Integer::sum);</code></pre>
 </div>
 
 <h3>Practice problems</h3>
+<p class="probhint">The handbook has no problem set for this chapter &mdash; these are extra warm-ups. Every other chapter lists exactly the handbook problems.</p>
 <div class="tw"><table class="probs">
 <tr><th>Problem</th><th>Level</th><th>Why / pattern</th></tr>
 <tr><td>Sort an Array (merge sort)</td><td><span class="lv m">Medium</span></td><td>Write it, then derive T(n)=2T(n/2)+n</td></tr>
@@ -838,13 +875,13 @@ rev = rev * <span class="nu">10</span> + x % <span class="nu">10</span>;
 <h3>Practice problems</h3>
 <div class="tw"><table class="probs">
 <tr><th>Problem</th><th>Level</th><th>Why / pattern</th></tr>
-<tr><td>Reverse Integer</td><td><span class="lv m">Medium</span></td><td>Overflow check before the multiply</td></tr>
-<tr><td>String to Integer (atoi)</td><td><span class="lv m">Medium</span></td><td>Sign, whitespace, clamp at the limits</td></tr>
-<tr><td>Palindrome Number</td><td><span class="lv e">Easy</span></td><td>Reverse only half to dodge overflow</td></tr>
-<tr><td>Divide Two Integers</td><td><span class="lv m">Medium</span></td><td>MIN_VALUE / -1 overflows; doubling subtraction</td></tr>
-<tr><td>Sqrt(x)</td><td><span class="lv e">Easy</span></td><td>mid*mid overflows &mdash; compare mid with x/mid</td></tr>
-<tr><td>Add Two Numbers</td><td><span class="lv m">Medium</span></td><td>Carry propagation, no big number needed</td></tr>
-<tr><td>Multiply Strings</td><td><span class="lv m">Medium</span></td><td>Grade-school multiplication in an int[]</td></tr>
+<tr><td>Reverse Integer</td><td><span class="lv m">Medium</span></td><td>Detect overflow before it happens</td></tr>
+<tr><td>String to Integer (atoi)</td><td><span class="lv m">Medium</span></td><td>Clamp on overflow</td></tr>
+<tr><td>Add Binary</td><td><span class="lv e">Easy</span></td><td>Bit-by-bit with carry</td></tr>
+<tr><td>Plus One</td><td><span class="lv e">Easy</span></td><td>Carry propagation</td></tr>
+<tr><td>Divide Two Integers</td><td><span class="lv m">Medium</span></td><td>No * / %; watch INT_MIN edge</td></tr>
+<tr><td>Add Two Numbers</td><td><span class="lv m">Medium</span></td><td>Carry across linked list</td></tr>
+<tr><td>Palindrome Number</td><td><span class="lv e">Easy</span></td><td>Reverse half, avoid overflow</td></tr>
 </table></div>
 </section>
 
@@ -912,14 +949,12 @@ Map&lt;Integer, Integer&gt; seen = <span class="kw">new</span> HashMap&lt;&gt;()
 <h3>Practice problems</h3>
 <div class="tw"><table class="probs">
 <tr><th>Problem</th><th>Level</th><th>Why / pattern</th></tr>
-<tr><td>Two Sum</td><td><span class="lv e">Easy</span></td><td>Complement lookup, value &rarr; index</td></tr>
-<tr><td>Valid Anagram</td><td><span class="lv e">Easy</span></td><td>int[26] counter, +1 / &minus;1</td></tr>
-<tr><td>Group Anagrams</td><td><span class="lv m">Medium</span></td><td>Canonical key = sorted word or count signature</td></tr>
-<tr><td>Longest Consecutive Sequence</td><td><span class="lv m">Medium</span></td><td>Set; only start counting where x&minus;1 is absent</td></tr>
-<tr><td>Isomorphic Strings</td><td><span class="lv e">Easy</span></td><td>Two maps &mdash; the mapping must be a bijection</td></tr>
-<tr><td>First Unique Character in a String</td><td><span class="lv e">Easy</span></td><td>Count pass, then scan pass</td></tr>
 <tr><td>Design HashMap</td><td><span class="lv e">Easy</span></td><td>Build buckets + chaining yourself</td></tr>
-<tr><td>Insert Delete GetRandom O(1)</td><td><span class="lv m">Medium</span></td><td>Map value&rarr;index + list, swap-with-last delete</td></tr>
+<tr><td>Design HashSet</td><td><span class="lv e">Easy</span></td><td>Same, membership only</td></tr>
+<tr><td>Two Sum</td><td><span class="lv e">Easy</span></td><td>Hashmap of complements</td></tr>
+<tr><td>Group Anagrams</td><td><span class="lv m">Medium</span></td><td>Custom signature as key</td></tr>
+<tr><td>Insert Delete GetRandom O(1)</td><td><span class="lv m">Medium</span></td><td>Hashmap + array swap-remove</td></tr>
+<tr><td>LRU Cache</td><td><span class="lv m">Medium</span></td><td>Hashmap + doubly linked list</td></tr>
 </table></div>
 </section>
 
@@ -989,14 +1024,16 @@ String.valueOf(chars); s.split(<span class="st">"\\s+"</span>); String.join(<spa
 <h3>Practice problems</h3>
 <div class="tw"><table class="probs">
 <tr><th>Problem</th><th>Level</th><th>Why / pattern</th></tr>
-<tr><td>Valid Palindrome</td><td><span class="lv e">Easy</span></td><td>Two pointers, skip non-alphanumerics</td></tr>
-<tr><td>Longest Common Prefix</td><td><span class="lv e">Easy</span></td><td>Vertical scan column by column</td></tr>
-<tr><td>Reverse Words in a String</td><td><span class="lv m">Medium</span></td><td>split + reverse, or reverse all then each word</td></tr>
-<tr><td>String Compression</td><td><span class="lv m">Medium</span></td><td>Read pointer + write pointer in place</td></tr>
-<tr><td>Longest Palindromic Substring</td><td><span class="lv m">Medium</span></td><td>Expand around 2n&minus;1 centres</td></tr>
-<tr><td>Zigzag Conversion</td><td><span class="lv m">Medium</span></td><td>One StringBuilder per row, bounce direction</td></tr>
-<tr><td>Decode String</td><td><span class="lv m">Medium</span></td><td>Stack of counts and builders</td></tr>
-<tr><td>Encode and Decode Strings</td><td><span class="lv m">Medium</span></td><td>Length-prefix framing: "4#word"</td></tr>
+<tr><td>Reverse String</td><td><span class="lv e">Easy</span></td><td>char[] two pointers</td></tr>
+<tr><td>Valid Palindrome</td><td><span class="lv e">Easy</span></td><td>Skip non-alphanumeric, two pointers</td></tr>
+<tr><td>Reverse Words in a String</td><td><span class="lv m">Medium</span></td><td>Split / StringBuilder</td></tr>
+<tr><td>Longest Common Prefix</td><td><span class="lv e">Easy</span></td><td>Vertical scan</td></tr>
+<tr><td>First Unique Character in a String</td><td><span class="lv e">Easy</span></td><td>Frequency array</td></tr>
+<tr><td>Implement strStr()</td><td><span class="lv e">Easy</span></td><td>Substring search</td></tr>
+<tr><td>Length of Last Word</td><td><span class="lv e">Easy</span></td><td>Scan from the end</td></tr>
+<tr><td>Add Strings</td><td><span class="lv e">Easy</span></td><td>Digit math without parsing</td></tr>
+<tr><td>Reverse String II</td><td><span class="lv e">Easy</span></td><td>Reverse in 2k blocks</td></tr>
+<tr><td>Detect Capital</td><td><span class="lv e">Easy</span></td><td>Case rules</td></tr>
 </table></div>
 </section>
 
@@ -1055,13 +1092,12 @@ Arrays.sort(boxed, Collections.reverseOrder());</code></pre>
 <h3>Practice problems</h3>
 <div class="tw"><table class="probs">
 <tr><th>Problem</th><th>Level</th><th>Why / pattern</th></tr>
-<tr><td>Sort Characters By Frequency</td><td><span class="lv m">Medium</span></td><td>Count, then sort entries by value desc</td></tr>
-<tr><td>Largest Number</td><td><span class="lv m">Medium</span></td><td>Comparator on (y+x) vs (x+y)</td></tr>
-<tr><td>Reorder Data in Log Files</td><td><span class="lv m">Medium</span></td><td>Multi-key comparator + stability</td></tr>
-<tr><td>K Closest Points to Origin</td><td><span class="lv m">Medium</span></td><td>Compare by squared distance</td></tr>
-<tr><td>Custom Sort String</td><td><span class="lv m">Medium</span></td><td>Rank table drives the order</td></tr>
-<tr><td>Sort the People / Relative Sort Array</td><td><span class="lv e">Easy</span></td><td>Sort indices by another array</td></tr>
-<tr><td>Top K Frequent Words</td><td><span class="lv m">Medium</span></td><td>Frequency desc, then lexicographic asc</td></tr>
+<tr><td>Largest Number</td><td><span class="lv m">Medium</span></td><td>Comparator on concatenation</td></tr>
+<tr><td>Sort the People</td><td><span class="lv e">Easy</span></td><td>Sort by paired key</td></tr>
+<tr><td>Relative Sort Array</td><td><span class="lv e">Easy</span></td><td>Custom rank order</td></tr>
+<tr><td>Custom Sort String</td><td><span class="lv m">Medium</span></td><td>Order by given priority</td></tr>
+<tr><td>Merge Intervals</td><td><span class="lv m">Medium</span></td><td>Sort by start</td></tr>
+<tr><td>Top K Frequent Words</td><td><span class="lv m">Medium</span></td><td>Sort by (freq desc, lexicographic)</td></tr>
 </table></div>
 </section>
 
@@ -1130,18 +1166,26 @@ freq.forEach((num, f) -&gt; {
 <h3>Practice problems</h3>
 <div class="tw"><table class="probs">
 <tr><th>Problem</th><th>Level</th><th>Why / pattern</th></tr>
+<tr><td>Two Sum</td><td><span class="lv e">Easy</span></td><td>Hashmap of complements</td></tr>
 <tr><td>Contains Duplicate</td><td><span class="lv e">Easy</span></td><td>HashSet membership</td></tr>
-<tr><td>Best Time to Buy and Sell Stock</td><td><span class="lv e">Easy</span></td><td>Track min so far, best = price &minus; min</td></tr>
+<tr><td>Valid Anagram</td><td><span class="lv e">Easy</span></td><td>Count array</td></tr>
+<tr><td>Concatenation of Array</td><td><span class="lv e">Easy</span></td><td>Warm-up</td></tr>
+<tr><td>Group Anagrams</td><td><span class="lv m">Medium</span></td><td>Hashmap keyed by signature</td></tr>
+<tr><td>Top K Frequent Elements</td><td><span class="lv m">Medium</span></td><td>Frequency + bucket/heap</td></tr>
+<tr><td>Product of Array Except Self</td><td><span class="lv m">Medium</span></td><td>Prefix &amp; suffix products</td></tr>
+<tr><td>Valid Sudoku</td><td><span class="lv m">Medium</span></td><td>HashSets per row/col/box</td></tr>
+<tr><td>Encode and Decode Strings</td><td><span class="lv m">Medium</span></td><td>Length-prefix serialization</td></tr>
+<tr><td>Longest Consecutive Sequence</td><td><span class="lv m">Medium</span></td><td>HashSet, only start sequences</td></tr>
+<tr><td>Subarray Sum Equals K</td><td><span class="lv m">Medium</span></td><td>Prefix sum + hashmap</td></tr>
+<tr><td>Majority Element</td><td><span class="lv e">Easy</span></td><td>Boyer-Moore voting</td></tr>
+<tr><td>Find All Numbers Disappeared</td><td><span class="lv e">Easy</span></td><td>In-place index marking</td></tr>
+<tr><td>Find All Duplicates in an Array</td><td><span class="lv m">Medium</span></td><td>Negate-at-index</td></tr>
+<tr><td>Set Matrix Zeroes</td><td><span class="lv m">Medium</span></td><td>First row/col as markers</td></tr>
+<tr><td>Spiral Matrix</td><td><span class="lv m">Medium</span></td><td>Boundary shrinking</td></tr>
+<tr><td>Rotate Image</td><td><span class="lv m">Medium</span></td><td>Transpose then reverse rows</td></tr>
 <tr><td>Maximum Subarray</td><td><span class="lv m">Medium</span></td><td>Kadane</td></tr>
-<tr><td>Product of Array Except Self</td><td><span class="lv m">Medium</span></td><td>Prefix pass + suffix pass</td></tr>
-<tr><td>Top K Frequent Elements</td><td><span class="lv m">Medium</span></td><td>Bucket sort by frequency</td></tr>
-<tr><td>Majority Element</td><td><span class="lv e">Easy</span></td><td>Boyer&ndash;Moore voting</td></tr>
-<tr><td>Move Zeroes</td><td><span class="lv e">Easy</span></td><td>Write pointer</td></tr>
-<tr><td>Rotate Array</td><td><span class="lv m">Medium</span></td><td>Triple reverse</td></tr>
-<tr><td>Find All Numbers Disappeared in an Array</td><td><span class="lv e">Easy</span></td><td>Index as hash via negation</td></tr>
-<tr><td>First Missing Positive</td><td><span class="lv h">Hard</span></td><td>Cyclic sort: put x at index x&minus;1</td></tr>
-<tr><td>Valid Sudoku</td><td><span class="lv m">Medium</span></td><td>One set per row, column and box (r/3*3 + c/3)</td></tr>
-<tr><td>Next Permutation</td><td><span class="lv m">Medium</span></td><td>Find dip from right, swap, reverse suffix</td></tr>
+<tr><td>Insert Delete GetRandom O(1)</td><td><span class="lv m">Medium</span></td><td>Hashmap + swap-remove</td></tr>
+<tr><td>First Missing Positive</td><td><span class="lv h">Hard</span></td><td>Index-as-hash placement</td></tr>
 </table></div>
 </section>
 
@@ -1207,14 +1251,16 @@ diff[l] += v; diff[r + <span class="nu">1</span>] -= v;                        <
 <h3>Practice problems</h3>
 <div class="tw"><table class="probs">
 <tr><th>Problem</th><th>Level</th><th>Why / pattern</th></tr>
-<tr><td>Range Sum Query - Immutable</td><td><span class="lv e">Easy</span></td><td>The definition</td></tr>
-<tr><td>Find Pivot Index</td><td><span class="lv e">Easy</span></td><td>left == total &minus; left &minus; nums[i]</td></tr>
-<tr><td>Subarray Sum Equals K</td><td><span class="lv m">Medium</span></td><td>Running sum + count map</td></tr>
-<tr><td>Contiguous Array</td><td><span class="lv m">Medium</span></td><td>0 &rarr; &minus;1, first-index map</td></tr>
-<tr><td>Subarray Sums Divisible by K</td><td><span class="lv m">Medium</span></td><td>Count equal remainders</td></tr>
-<tr><td>Continuous Subarray Sum</td><td><span class="lv m">Medium</span></td><td>Remainder &rarr; first index, length &ge; 2</td></tr>
-<tr><td>Range Sum Query 2D - Immutable</td><td><span class="lv m">Medium</span></td><td>Inclusion&ndash;exclusion</td></tr>
-<tr><td>Corporate Flight Bookings / Car Pooling</td><td><span class="lv m">Medium</span></td><td>Difference array</td></tr>
+<tr><td>Range Sum Query - Immutable</td><td><span class="lv e">Easy</span></td><td>1-D prefix sum</td></tr>
+<tr><td>Range Sum Query 2D - Immutable</td><td><span class="lv m">Medium</span></td><td>2-D prefix sum</td></tr>
+<tr><td>Find Pivot Index</td><td><span class="lv e">Easy</span></td><td>Left vs right prefix</td></tr>
+<tr><td>Subarray Sum Equals K</td><td><span class="lv m">Medium</span></td><td>Prefix + hashmap</td></tr>
+<tr><td>Contiguous Array</td><td><span class="lv m">Medium</span></td><td>Prefix of +1/-1, hashmap</td></tr>
+<tr><td>Product of Array Except Self</td><td><span class="lv m">Medium</span></td><td>Prefix &amp; suffix products</td></tr>
+<tr><td>Corporate Flight Bookings</td><td><span class="lv m">Medium</span></td><td>Difference array</td></tr>
+<tr><td>Car Pooling</td><td><span class="lv m">Medium</span></td><td>Difference array over stops</td></tr>
+<tr><td>Range Addition</td><td><span class="lv m">Medium</span></td><td>Difference array</td></tr>
+<tr><td>Subarray Sums Divisible by K</td><td><span class="lv m">Medium</span></td><td>Prefix mod + counts</td></tr>
 </table></div>
 </section>
 
@@ -1286,16 +1332,26 @@ Arrays.sort(a);
 <h3>Practice problems</h3>
 <div class="tw"><table class="probs">
 <tr><th>Problem</th><th>Level</th><th>Why / pattern</th></tr>
-<tr><td>Valid Palindrome</td><td><span class="lv e">Easy</span></td><td>Ends inward</td></tr>
-<tr><td>Two Sum II - Input Array Is Sorted</td><td><span class="lv m">Medium</span></td><td>Ends inward on sorted data</td></tr>
-<tr><td>3Sum</td><td><span class="lv m">Medium</span></td><td>Sort + fix one + two pointers + dedupe</td></tr>
-<tr><td>Container With Most Water</td><td><span class="lv m">Medium</span></td><td>Discard the shorter wall</td></tr>
-<tr><td>Trapping Rain Water</td><td><span class="lv h">Hard</span></td><td>leftMax / rightMax, move the smaller side</td></tr>
-<tr><td>Remove Duplicates from Sorted Array</td><td><span class="lv e">Easy</span></td><td>Slow / fast write pointer</td></tr>
-<tr><td>Sort Colors</td><td><span class="lv m">Medium</span></td><td>Dutch flag: low / mid / high</td></tr>
-<tr><td>Merge Sorted Array</td><td><span class="lv e">Easy</span></td><td>Fill from the back</td></tr>
-<tr><td>Is Subsequence</td><td><span class="lv e">Easy</span></td><td>One pointer per string</td></tr>
-<tr><td>Squares of a Sorted Array</td><td><span class="lv e">Easy</span></td><td>Largest square is at one of the ends</td></tr>
+<tr><td>Valid Palindrome</td><td><span class="lv e">Easy</span></td><td>Opposite ends, skip non-alnum</td></tr>
+<tr><td>Two Sum II - Sorted</td><td><span class="lv m">Medium</span></td><td>Opposite ends</td></tr>
+<tr><td>3Sum</td><td><span class="lv m">Medium</span></td><td>Sort, fix i, two-pointer rest</td></tr>
+<tr><td>3Sum Closest</td><td><span class="lv m">Medium</span></td><td>Track closest sum</td></tr>
+<tr><td>4Sum</td><td><span class="lv m">Medium</span></td><td>Two fixes + two pointers</td></tr>
+<tr><td>Container With Most Water</td><td><span class="lv m">Medium</span></td><td>Move shorter wall in</td></tr>
+<tr><td>Trapping Rain Water</td><td><span class="lv h">Hard</span></td><td>Two pointers tracking max walls</td></tr>
+<tr><td>Remove Duplicates from Sorted Array</td><td><span class="lv e">Easy</span></td><td>Slow/fast write index</td></tr>
+<tr><td>Remove Duplicates II</td><td><span class="lv m">Medium</span></td><td>Allow at most two</td></tr>
+<tr><td>Move Zeroes</td><td><span class="lv e">Easy</span></td><td>Write index for non-zeros</td></tr>
+<tr><td>Sort Colors</td><td><span class="lv m">Medium</span></td><td>Dutch national flag</td></tr>
+<tr><td>Squares of a Sorted Array</td><td><span class="lv e">Easy</span></td><td>Merge from both ends</td></tr>
+<tr><td>Is Subsequence</td><td><span class="lv e">Easy</span></td><td>Advance on match</td></tr>
+<tr><td>Boats to Save People</td><td><span class="lv m">Medium</span></td><td>Lightest with heaviest</td></tr>
+<tr><td>Reverse String</td><td><span class="lv e">Easy</span></td><td>Swap both ends</td></tr>
+<tr><td>Backspace String Compare</td><td><span class="lv m">Medium</span></td><td>Scan from the back</td></tr>
+<tr><td>Partition Labels</td><td><span class="lv m">Medium</span></td><td>Last-occurrence boundary</td></tr>
+<tr><td>Two Sum Less Than K</td><td><span class="lv e">Easy</span></td><td>Sort + opposite ends</td></tr>
+<tr><td>Sum of Square Numbers</td><td><span class="lv m">Medium</span></td><td>Pointers on value space</td></tr>
+<tr><td>Subsequences Satisfying Sum Condition</td><td><span class="lv m">Medium</span></td><td>Sort + window</td></tr>
 </table></div>
 </section>
 
@@ -1363,17 +1419,26 @@ Arrays.sort(a);
 <h3>Practice problems</h3>
 <div class="tw"><table class="probs">
 <tr><th>Problem</th><th>Level</th><th>Why / pattern</th></tr>
-<tr><td>Maximum Average Subarray I</td><td><span class="lv e">Easy</span></td><td>Fixed window warm-up</td></tr>
-<tr><td>Longest Substring Without Repeating Characters</td><td><span class="lv m">Medium</span></td><td>Variable window, shrink on repeat</td></tr>
-<tr><td>Longest Repeating Character Replacement</td><td><span class="lv m">Medium</span></td><td>Valid while len &minus; maxFreq &le; k</td></tr>
-<tr><td>Permutation in String</td><td><span class="lv m">Medium</span></td><td>Fixed window + count match</td></tr>
-<tr><td>Find All Anagrams in a String</td><td><span class="lv m">Medium</span></td><td>Same, collect every hit</td></tr>
-<tr><td>Minimum Size Subarray Sum</td><td><span class="lv m">Medium</span></td><td>Shortest-window template</td></tr>
-<tr><td>Max Consecutive Ones III</td><td><span class="lv m">Medium</span></td><td>At most k zeros in the window</td></tr>
+<tr><td>Best Time to Buy and Sell Stock</td><td><span class="lv e">Easy</span></td><td>Track min so far</td></tr>
+<tr><td>Longest Substring Without Repeating</td><td><span class="lv m">Medium</span></td><td>Window + last-seen map</td></tr>
+<tr><td>Longest Repeating Character Replacement</td><td><span class="lv m">Medium</span></td><td>window - maxFreq &lt;= k</td></tr>
+<tr><td>Permutation in String</td><td><span class="lv m">Medium</span></td><td>Fixed window count match</td></tr>
+<tr><td>Find All Anagrams in a String</td><td><span class="lv m">Medium</span></td><td>Fixed window frequency</td></tr>
+<tr><td>Minimum Window Substring</td><td><span class="lv h">Hard</span></td><td>Expand to satisfy, shrink to min</td></tr>
+<tr><td>Sliding Window Maximum</td><td><span class="lv h">Hard</span></td><td>Monotonic deque</td></tr>
 <tr><td>Fruit Into Baskets</td><td><span class="lv m">Medium</span></td><td>At most 2 distinct</td></tr>
-<tr><td>Subarrays with K Different Integers</td><td><span class="lv h">Hard</span></td><td>atMost(K) &minus; atMost(K&minus;1)</td></tr>
-<tr><td>Minimum Window Substring</td><td><span class="lv h">Hard</span></td><td>need[] + missing counter</td></tr>
-<tr><td>Sliding Window Maximum</td><td><span class="lv h">Hard</span></td><td>Monotonic deque (ch.&nbsp;11)</td></tr>
+<tr><td>Max Consecutive Ones III</td><td><span class="lv m">Medium</span></td><td>At most k zeros</td></tr>
+<tr><td>Minimum Size Subarray Sum</td><td><span class="lv m">Medium</span></td><td>Shrink while sum&gt;=target</td></tr>
+<tr><td>Subarray Product Less Than K</td><td><span class="lv m">Medium</span></td><td>Shrink while product&gt;=k</td></tr>
+<tr><td>Longest Substring with At Most K Distinct</td><td><span class="lv m">Medium</span></td><td>Map size &lt;= k</td></tr>
+<tr><td>Maximum Average Subarray I</td><td><span class="lv e">Easy</span></td><td>Fixed window sum</td></tr>
+<tr><td>Count Number of Nice Subarrays</td><td><span class="lv m">Medium</span></td><td>Window on odd-count</td></tr>
+<tr><td>Replace Substring for Balanced String</td><td><span class="lv m">Medium</span></td><td>Window over excess</td></tr>
+<tr><td>Substrings Containing All Three Characters</td><td><span class="lv m">Medium</span></td><td>Count by last position</td></tr>
+<tr><td>Longest Subarray of 1's After Deleting One</td><td><span class="lv m">Medium</span></td><td>At most one zero</td></tr>
+<tr><td>Get Equal Substrings Within Budget</td><td><span class="lv m">Medium</span></td><td>Cost-bounded window</td></tr>
+<tr><td>Frequency of the Most Frequent Element</td><td><span class="lv m">Medium</span></td><td>Sort + window budget</td></tr>
+<tr><td>Maximum Number of Vowels in a Substring</td><td><span class="lv m">Medium</span></td><td>Fixed window vowel count</td></tr>
 </table></div>
 </section>
 
@@ -1444,14 +1509,14 @@ Deque&lt;Integer&gt; dq = <span class="kw">new</span> ArrayDeque&lt;&gt;();
 <h3>Practice problems</h3>
 <div class="tw"><table class="probs">
 <tr><th>Problem</th><th>Level</th><th>Why / pattern</th></tr>
-<tr><td>Implement Queue using Stacks</td><td><span class="lv e">Easy</span></td><td>Two stacks, amortized O(1)</td></tr>
-<tr><td>Implement Stack using Queues</td><td><span class="lv e">Easy</span></td><td>Rotate after each push</td></tr>
-<tr><td>Number of Recent Calls</td><td><span class="lv e">Easy</span></td><td>Evict expired from the front</td></tr>
-<tr><td>Design Circular Queue</td><td><span class="lv m">Medium</span></td><td>head + size with modulo</td></tr>
-<tr><td>Design Circular Deque</td><td><span class="lv m">Medium</span></td><td>Same, both ends</td></tr>
-<tr><td>Moving Average from Data Stream</td><td><span class="lv e">Easy</span></td><td>Queue + running sum</td></tr>
-<tr><td>Sliding Window Maximum</td><td><span class="lv h">Hard</span></td><td>Monotonic deque of indices</td></tr>
-<tr><td>Shortest Subarray with Sum at Least K</td><td><span class="lv h">Hard</span></td><td>Prefix sums + increasing deque (negatives allowed)</td></tr>
+<tr><td>Implement Queue using Stacks</td><td><span class="lv e">Easy</span></td><td>Two-stack amortized</td></tr>
+<tr><td>Implement Stack using Queues</td><td><span class="lv e">Easy</span></td><td>Rotate on push/pop</td></tr>
+<tr><td>Design Circular Queue</td><td><span class="lv m">Medium</span></td><td>Fixed array + head/tail</td></tr>
+<tr><td>Design Circular Deque</td><td><span class="lv m">Medium</span></td><td>Both ends on a ring</td></tr>
+<tr><td>Number of Recent Calls</td><td><span class="lv e">Easy</span></td><td>Queue of timestamps</td></tr>
+<tr><td>Moving Average from Data Stream</td><td><span class="lv e">Easy</span></td><td>Fixed-size queue sum</td></tr>
+<tr><td>Sliding Window Maximum</td><td><span class="lv h">Hard</span></td><td>Monotonic deque</td></tr>
+<tr><td>Dota2 Senate</td><td><span class="lv m">Medium</span></td><td>Two queues of indices</td></tr>
 </table></div>
 </section>
 
@@ -1525,17 +1590,26 @@ Deque&lt;Integer&gt; dq = <span class="kw">new</span> ArrayDeque&lt;&gt;();
 <h3>Practice problems</h3>
 <div class="tw"><table class="probs">
 <tr><th>Problem</th><th>Level</th><th>Why / pattern</th></tr>
-<tr><td>Valid Parentheses</td><td><span class="lv e">Easy</span></td><td>Push expected closer</td></tr>
-<tr><td>Min Stack</td><td><span class="lv m">Medium</span></td><td>Value + min-so-far pairs</td></tr>
-<tr><td>Evaluate Reverse Polish Notation</td><td><span class="lv m">Medium</span></td><td>Operand stack; operand order for &minus; and /</td></tr>
-<tr><td>Daily Temperatures</td><td><span class="lv m">Medium</span></td><td>Next greater element</td></tr>
-<tr><td>Next Greater Element II</td><td><span class="lv m">Medium</span></td><td>Circular: loop 2n with i % n</td></tr>
-<tr><td>Car Fleet</td><td><span class="lv m">Medium</span></td><td>Sort by position, stack of arrival times</td></tr>
-<tr><td>Asteroid Collision</td><td><span class="lv m">Medium</span></td><td>Resolve against the top repeatedly</td></tr>
-<tr><td>Remove K Digits</td><td><span class="lv m">Medium</span></td><td>Increasing stack = smallest number</td></tr>
-<tr><td>Basic Calculator II</td><td><span class="lv m">Medium</span></td><td>Apply * and / immediately, sum the stack</td></tr>
-<tr><td>Largest Rectangle in Histogram</td><td><span class="lv h">Hard</span></td><td>Increasing stack + sentinel</td></tr>
+<tr><td>Valid Parentheses</td><td><span class="lv e">Easy</span></td><td>Match on close</td></tr>
+<tr><td>Min Stack</td><td><span class="lv m">Medium</span></td><td>Auxiliary running mins</td></tr>
+<tr><td>Evaluate Reverse Polish Notation</td><td><span class="lv m">Medium</span></td><td>Operand stack</td></tr>
+<tr><td>Generate Parentheses</td><td><span class="lv m">Medium</span></td><td>Backtracking counts</td></tr>
+<tr><td>Daily Temperatures</td><td><span class="lv m">Medium</span></td><td>Monotonic stack of indices</td></tr>
+<tr><td>Online Stock Span</td><td><span class="lv m">Medium</span></td><td>Stack of (price, span)</td></tr>
+<tr><td>Next Greater Element I</td><td><span class="lv e">Easy</span></td><td>Monotonic stack + map</td></tr>
+<tr><td>Next Greater Element II</td><td><span class="lv m">Medium</span></td><td>Circular, iterate 2n</td></tr>
+<tr><td>Car Fleet</td><td><span class="lv m">Medium</span></td><td>Sort, stack arrival times</td></tr>
+<tr><td>Largest Rectangle in Histogram</td><td><span class="lv h">Hard</span></td><td>Monotonic increasing stack</td></tr>
 <tr><td>Maximal Rectangle</td><td><span class="lv h">Hard</span></td><td>Histogram per row</td></tr>
+<tr><td>Trapping Rain Water</td><td><span class="lv h">Hard</span></td><td>Stack of decreasing heights</td></tr>
+<tr><td>Asteroid Collision</td><td><span class="lv m">Medium</span></td><td>Stack resolves collisions</td></tr>
+<tr><td>Decode String</td><td><span class="lv m">Medium</span></td><td>Stacks for counts/strings</td></tr>
+<tr><td>Simplify Path</td><td><span class="lv m">Medium</span></td><td>Stack of components</td></tr>
+<tr><td>Remove K Digits</td><td><span class="lv m">Medium</span></td><td>Pop larger digits</td></tr>
+<tr><td>Basic Calculator</td><td><span class="lv h">Hard</span></td><td>Stack for signs/parens</td></tr>
+<tr><td>Basic Calculator II</td><td><span class="lv m">Medium</span></td><td>Operator precedence</td></tr>
+<tr><td>Remove Adjacent Duplicates</td><td><span class="lv e">Easy</span></td><td>Pop on match</td></tr>
+<tr><td>132 Pattern</td><td><span class="lv m">Medium</span></td><td>Stack + tracked third value</td></tr>
 </table></div>
 </section>
 
@@ -1606,19 +1680,26 @@ Deque&lt;Integer&gt; dq = <span class="kw">new</span> ArrayDeque&lt;&gt;();
 <h3>Practice problems</h3>
 <div class="tw"><table class="probs">
 <tr><th>Problem</th><th>Level</th><th>Why / pattern</th></tr>
-<tr><td>Binary Search</td><td><span class="lv e">Easy</span></td><td>Template A</td></tr>
+<tr><td>Binary Search</td><td><span class="lv e">Easy</span></td><td>Template baseline</td></tr>
 <tr><td>Search Insert Position</td><td><span class="lv e">Easy</span></td><td>Lower bound</td></tr>
-<tr><td>First Bad Version</td><td><span class="lv e">Easy</span></td><td>FFFTTT boundary</td></tr>
-<tr><td>Find First and Last Position of Element</td><td><span class="lv m">Medium</span></td><td>Two lower bounds</td></tr>
-<tr><td>Search a 2D Matrix</td><td><span class="lv m">Medium</span></td><td>Treat as 1-D: r = mid / cols, c = mid % cols</td></tr>
-<tr><td>Find Minimum in Rotated Sorted Array</td><td><span class="lv m">Medium</span></td><td>Compare mid with hi</td></tr>
-<tr><td>Search in Rotated Sorted Array</td><td><span class="lv m">Medium</span></td><td>Find the sorted half</td></tr>
-<tr><td>Find Peak Element</td><td><span class="lv m">Medium</span></td><td>Walk uphill</td></tr>
-<tr><td>Koko Eating Bananas</td><td><span class="lv m">Medium</span></td><td>Search on the answer</td></tr>
-<tr><td>Capacity To Ship Packages Within D Days</td><td><span class="lv m">Medium</span></td><td>lo = max, hi = sum</td></tr>
-<tr><td>Split Array Largest Sum</td><td><span class="lv h">Hard</span></td><td>Minimise the maximum</td></tr>
-<tr><td>Time Based Key-Value Store</td><td><span class="lv m">Medium</span></td><td>Upper bound on timestamps</td></tr>
-<tr><td>Median of Two Sorted Arrays</td><td><span class="lv h">Hard</span></td><td>Binary search the partition of the smaller array</td></tr>
+<tr><td>First Bad Version</td><td><span class="lv e">Easy</span></td><td>Predicate flips once</td></tr>
+<tr><td>Find First and Last Position</td><td><span class="lv m">Medium</span></td><td>Two boundary searches</td></tr>
+<tr><td>Search a 2D Matrix</td><td><span class="lv m">Medium</span></td><td>Flatten index</td></tr>
+<tr><td>Search a 2D Matrix II</td><td><span class="lv m">Medium</span></td><td>Staircase from corner</td></tr>
+<tr><td>Find Minimum in Rotated Sorted Array</td><td><span class="lv m">Medium</span></td><td>Compare mid to right</td></tr>
+<tr><td>Search in Rotated Sorted Array</td><td><span class="lv m">Medium</span></td><td>Identify sorted half</td></tr>
+<tr><td>Find Peak Element</td><td><span class="lv m">Medium</span></td><td>Climb toward larger</td></tr>
+<tr><td>Koko Eating Bananas</td><td><span class="lv m">Medium</span></td><td>Search on speed</td></tr>
+<tr><td>Capacity to Ship Packages in D Days</td><td><span class="lv m">Medium</span></td><td>Search on capacity</td></tr>
+<tr><td>Split Array Largest Sum</td><td><span class="lv h">Hard</span></td><td>Search on max subarray sum</td></tr>
+<tr><td>Time Based Key-Value Store</td><td><span class="lv m">Medium</span></td><td>Search by timestamp</td></tr>
+<tr><td>Median of Two Sorted Arrays</td><td><span class="lv h">Hard</span></td><td>Partition search</td></tr>
+<tr><td>Find K Closest Elements</td><td><span class="lv m">Medium</span></td><td>Search window start</td></tr>
+<tr><td>Single Element in a Sorted Array</td><td><span class="lv m">Medium</span></td><td>Search on pair parity</td></tr>
+<tr><td>Sqrt(x)</td><td><span class="lv e">Easy</span></td><td>Search integer root</td></tr>
+<tr><td>Kth Smallest in a Sorted Matrix</td><td><span class="lv m">Medium</span></td><td>Search on value</td></tr>
+<tr><td>Find the Duplicate Number</td><td><span class="lv m">Medium</span></td><td>Search on value range</td></tr>
+<tr><td>Minimize Max Distance to Gas Station</td><td><span class="lv h">Hard</span></td><td>Real-valued search</td></tr>
 </table></div>
 </section>
 
@@ -1700,15 +1781,26 @@ Deque&lt;Integer&gt; dq = <span class="kw">new</span> ArrayDeque&lt;&gt;();
 <h3>Practice problems</h3>
 <div class="tw"><table class="probs">
 <tr><th>Problem</th><th>Level</th><th>Why / pattern</th></tr>
-<tr><td>Sort an Array</td><td><span class="lv m">Medium</span></td><td>Write merge sort AND quick sort by hand</td></tr>
-<tr><td>Sort Colors</td><td><span class="lv m">Medium</span></td><td>Dutch national flag</td></tr>
-<tr><td>Kth Largest Element in an Array</td><td><span class="lv m">Medium</span></td><td>Quickselect vs min-heap of k</td></tr>
-<tr><td>Sort List</td><td><span class="lv m">Medium</span></td><td>Merge sort on a linked list</td></tr>
-<tr><td>Merge Intervals</td><td><span class="lv m">Medium</span></td><td>Sort by start, then sweep</td></tr>
-<tr><td>H-Index</td><td><span class="lv m">Medium</span></td><td>Sort or counting sort</td></tr>
-<tr><td>Maximum Gap</td><td><span class="lv m">Medium</span></td><td>Bucket sort + pigeonhole</td></tr>
-<tr><td>Count of Smaller Numbers After Self</td><td><span class="lv h">Hard</span></td><td>Count during merge</td></tr>
-<tr><td>Reverse Pairs</td><td><span class="lv h">Hard</span></td><td>Count before merging each level</td></tr>
+<tr><td>Sort an Array</td><td><span class="lv m">Medium</span></td><td>Implement merge/quick/heap</td></tr>
+<tr><td>Sort Colors</td><td><span class="lv m">Medium</span></td><td>Counting / 3-way partition</td></tr>
+<tr><td>Merge Intervals</td><td><span class="lv m">Medium</span></td><td>Sort then sweep</td></tr>
+<tr><td>Largest Number</td><td><span class="lv m">Medium</span></td><td>Custom comparator</td></tr>
+<tr><td>Kth Largest Element in an Array</td><td><span class="lv m">Medium</span></td><td>Quickselect / heap</td></tr>
+<tr><td>Wiggle Sort II</td><td><span class="lv m">Medium</span></td><td>Sort + interleave</td></tr>
+<tr><td>Maximum Gap</td><td><span class="lv h">Hard</span></td><td>Bucket / radix</td></tr>
+<tr><td>Sort Characters By Frequency</td><td><span class="lv m">Medium</span></td><td>Counting + bucket</td></tr>
+<tr><td>Relative Sort Array</td><td><span class="lv e">Easy</span></td><td>Counting by custom order</td></tr>
+<tr><td>H-Index</td><td><span class="lv m">Medium</span></td><td>Counting on citations</td></tr>
+<tr><td>Pancake Sorting</td><td><span class="lv m">Medium</span></td><td>Selection-style flips</td></tr>
+<tr><td>Sort List</td><td><span class="lv m">Medium</span></td><td>Merge sort on list</td></tr>
+<tr><td>Top K Frequent Words</td><td><span class="lv m">Medium</span></td><td>Sort by (freq, lexicographic)</td></tr>
+<tr><td>Custom Sort String</td><td><span class="lv m">Medium</span></td><td>Counting by given order</td></tr>
+<tr><td>Meeting Rooms II</td><td><span class="lv m">Medium</span></td><td>Sort starts &amp; ends</td></tr>
+<tr><td>Minimum Number of Arrows</td><td><span class="lv m">Medium</span></td><td>Sort by end</td></tr>
+<tr><td>Car Fleet</td><td><span class="lv m">Medium</span></td><td>Sort by position</td></tr>
+<tr><td>Reorder Data in Log Files</td><td><span class="lv m">Medium</span></td><td>Stable custom comparator</td></tr>
+<tr><td>Sort Array By Parity</td><td><span class="lv e">Easy</span></td><td>Two-pointer partition</td></tr>
+<tr><td>Queue Reconstruction by Height</td><td><span class="lv m">Medium</span></td><td>Sort + insert</td></tr>
 </table></div>
 </section>
 
@@ -1791,21 +1883,26 @@ tail.next = (a != <span class="kw">null</span>) ? a : b;
 <h3>Practice problems</h3>
 <div class="tw"><table class="probs">
 <tr><th>Problem</th><th>Level</th><th>Why / pattern</th></tr>
-<tr><td>Reverse Linked List</td><td><span class="lv e">Easy</span></td><td>Three pointers; also do it recursively</td></tr>
-<tr><td>Merge Two Sorted Lists</td><td><span class="lv e">Easy</span></td><td>Dummy head + tail</td></tr>
-<tr><td>Linked List Cycle</td><td><span class="lv e">Easy</span></td><td>Floyd</td></tr>
-<tr><td>Linked List Cycle II</td><td><span class="lv m">Medium</span></td><td>Reset one pointer to head</td></tr>
-<tr><td>Middle of the Linked List</td><td><span class="lv e">Easy</span></td><td>Slow / fast</td></tr>
-<tr><td>Remove Nth Node From End of List</td><td><span class="lv m">Medium</span></td><td>Gap of n + dummy</td></tr>
-<tr><td>Palindrome Linked List</td><td><span class="lv e">Easy</span></td><td>Middle + reverse + compare</td></tr>
-<tr><td>Reorder List</td><td><span class="lv m">Medium</span></td><td>Middle + reverse + interleave</td></tr>
-<tr><td>Add Two Numbers</td><td><span class="lv m">Medium</span></td><td>Carry + dummy</td></tr>
-<tr><td>Intersection of Two Linked Lists</td><td><span class="lv e">Easy</span></td><td>Switch heads: a+b = b+a</td></tr>
-<tr><td>Copy List with Random Pointer</td><td><span class="lv m">Medium</span></td><td>Old&rarr;new map, or interleave copies</td></tr>
-<tr><td>Find the Duplicate Number</td><td><span class="lv m">Medium</span></td><td>Floyd on index &rarr; value</td></tr>
-<tr><td>LRU Cache</td><td><span class="lv m">Medium</span></td><td>HashMap + doubly linked list</td></tr>
-<tr><td>Reverse Nodes in k-Group</td><td><span class="lv h">Hard</span></td><td>Reverse segments, reconnect carefully</td></tr>
-<tr><td>Merge k Sorted Lists</td><td><span class="lv h">Hard</span></td><td>Min-heap of heads, or pairwise merge</td></tr>
+<tr><td>Reverse Linked List</td><td><span class="lv e">Easy</span></td><td>Iterative flip</td></tr>
+<tr><td>Middle of the Linked List</td><td><span class="lv e">Easy</span></td><td>Fast/slow</td></tr>
+<tr><td>Linked List Cycle</td><td><span class="lv e">Easy</span></td><td>Floyd's</td></tr>
+<tr><td>Linked List Cycle II</td><td><span class="lv m">Medium</span></td><td>Find cycle entry</td></tr>
+<tr><td>Merge Two Sorted Lists</td><td><span class="lv e">Easy</span></td><td>Dummy merge</td></tr>
+<tr><td>Remove Nth Node From End</td><td><span class="lv m">Medium</span></td><td>Two pointers n apart</td></tr>
+<tr><td>Reorder List</td><td><span class="lv m">Medium</span></td><td>Mid + reverse + merge</td></tr>
+<tr><td>Palindrome Linked List</td><td><span class="lv e">Easy</span></td><td>Mid + reverse half</td></tr>
+<tr><td>Intersection of Two Linked Lists</td><td><span class="lv e">Easy</span></td><td>Length align</td></tr>
+<tr><td>Add Two Numbers</td><td><span class="lv m">Medium</span></td><td>Digit carry</td></tr>
+<tr><td>Copy List with Random Pointer</td><td><span class="lv m">Medium</span></td><td>Interleave / hashmap</td></tr>
+<tr><td>Odd Even Linked List</td><td><span class="lv m">Medium</span></td><td>Two chains, join</td></tr>
+<tr><td>Rotate List</td><td><span class="lv m">Medium</span></td><td>Close ring, cut</td></tr>
+<tr><td>Swap Nodes in Pairs</td><td><span class="lv m">Medium</span></td><td>Rewire two at a time</td></tr>
+<tr><td>Reverse Nodes in k-Group</td><td><span class="lv h">Hard</span></td><td>Reverse blocks</td></tr>
+<tr><td>Sort List</td><td><span class="lv m">Medium</span></td><td>Merge sort on list</td></tr>
+<tr><td>Merge k Sorted Lists</td><td><span class="lv h">Hard</span></td><td>Min-heap of heads</td></tr>
+<tr><td>Remove Duplicates from Sorted List II</td><td><span class="lv m">Medium</span></td><td>Dummy + skip runs</td></tr>
+<tr><td>Flatten Multilevel Doubly Linked List</td><td><span class="lv m">Medium</span></td><td>DFS splice</td></tr>
+<tr><td>LRU Cache</td><td><span class="lv m">Medium</span></td><td>Hashmap + DLL</td></tr>
 </table></div>
 </section>
 
@@ -1888,23 +1985,26 @@ TreeNode lca(TreeNode n, TreeNode p, TreeNode q) {
 <h3>Practice problems</h3>
 <div class="tw"><table class="probs">
 <tr><th>Problem</th><th>Level</th><th>Why / pattern</th></tr>
-<tr><td>Invert Binary Tree</td><td><span class="lv e">Easy</span></td><td>Swap children, recurse</td></tr>
-<tr><td>Maximum Depth of Binary Tree</td><td><span class="lv e">Easy</span></td><td>1 + max(left, right)</td></tr>
-<tr><td>Same Tree</td><td><span class="lv e">Easy</span></td><td>Recurse on both in lock-step</td></tr>
-<tr><td>Subtree of Another Tree</td><td><span class="lv e">Easy</span></td><td>Same Tree at every node</td></tr>
-<tr><td>Diameter of Binary Tree</td><td><span class="lv e">Easy</span></td><td>Return height, update global</td></tr>
-<tr><td>Balanced Binary Tree</td><td><span class="lv e">Easy</span></td><td>&minus;1 sentinel for "unbalanced"</td></tr>
-<tr><td>Binary Tree Level Order Traversal</td><td><span class="lv m">Medium</span></td><td>BFS with level size</td></tr>
-<tr><td>Binary Tree Right Side View</td><td><span class="lv m">Medium</span></td><td>Last node of every level</td></tr>
-<tr><td>Count Good Nodes in Binary Tree</td><td><span class="lv m">Medium</span></td><td>Pass max-so-far down</td></tr>
-<tr><td>Path Sum II</td><td><span class="lv m">Medium</span></td><td>Backtracking on a tree</td></tr>
-<tr><td>Lowest Common Ancestor of a BST</td><td><span class="lv m">Medium</span></td><td>Go where both values go</td></tr>
-<tr><td>Lowest Common Ancestor of a Binary Tree</td><td><span class="lv m">Medium</span></td><td>Post-order split point</td></tr>
-<tr><td>Validate Binary Search Tree</td><td><span class="lv m">Medium</span></td><td>(lo, hi) bounds</td></tr>
-<tr><td>Kth Smallest Element in a BST</td><td><span class="lv m">Medium</span></td><td>Iterative in-order, stop at k</td></tr>
-<tr><td>Construct Binary Tree from Preorder and Inorder Traversal</td><td><span class="lv m">Medium</span></td><td>Root from preorder, split by inorder index</td></tr>
-<tr><td>Binary Tree Maximum Path Sum</td><td><span class="lv h">Hard</span></td><td>max(0, child) gains; global through-node sum</td></tr>
-<tr><td>Serialize and Deserialize Binary Tree</td><td><span class="lv h">Hard</span></td><td>Pre-order with null markers</td></tr>
+<tr><td>Invert Binary Tree</td><td><span class="lv e">Easy</span></td><td>Swap children</td></tr>
+<tr><td>Maximum Depth</td><td><span class="lv e">Easy</span></td><td>DFS height</td></tr>
+<tr><td>Diameter of Binary Tree</td><td><span class="lv e">Easy</span></td><td>Height + global max</td></tr>
+<tr><td>Balanced Binary Tree</td><td><span class="lv e">Easy</span></td><td>Height with -1 sentinel</td></tr>
+<tr><td>Same Tree</td><td><span class="lv e">Easy</span></td><td>Parallel recursion</td></tr>
+<tr><td>Subtree of Another Tree</td><td><span class="lv e">Easy</span></td><td>sameTree at each node</td></tr>
+<tr><td>Symmetric Tree</td><td><span class="lv e">Easy</span></td><td>Mirror recursion</td></tr>
+<tr><td>Binary Tree Level Order Traversal</td><td><span class="lv m">Medium</span></td><td>BFS</td></tr>
+<tr><td>Binary Tree Right Side View</td><td><span class="lv m">Medium</span></td><td>BFS last per level</td></tr>
+<tr><td>Count Good Nodes</td><td><span class="lv m">Medium</span></td><td>DFS carrying path max</td></tr>
+<tr><td>Lowest Common Ancestor of a BST</td><td><span class="lv m">Medium</span></td><td>Use ordering</td></tr>
+<tr><td>Lowest Common Ancestor of a Binary Tree</td><td><span class="lv m">Medium</span></td><td>Post-order flags</td></tr>
+<tr><td>Validate BST</td><td><span class="lv m">Medium</span></td><td>Carry (min,max) bounds</td></tr>
+<tr><td>Kth Smallest Element in a BST</td><td><span class="lv m">Medium</span></td><td>Inorder</td></tr>
+<tr><td>Construct Tree from Preorder &amp; Inorder</td><td><span class="lv m">Medium</span></td><td>Index maps</td></tr>
+<tr><td>Binary Tree Maximum Path Sum</td><td><span class="lv h">Hard</span></td><td>Best downward arm</td></tr>
+<tr><td>Serialize and Deserialize Binary Tree</td><td><span class="lv h">Hard</span></td><td>Preorder + null markers</td></tr>
+<tr><td>Path Sum II</td><td><span class="lv m">Medium</span></td><td>Backtracking paths</td></tr>
+<tr><td>Flatten Binary Tree to Linked List</td><td><span class="lv m">Medium</span></td><td>Reverse-preorder</td></tr>
+<tr><td>Binary Tree Zigzag Level Order</td><td><span class="lv m">Medium</span></td><td>BFS + alternating insert</td></tr>
 </table></div>
 </section>
 
@@ -1968,13 +2068,18 @@ TreeNode lca(TreeNode n, TreeNode p, TreeNode q) {
 <h3>Practice problems</h3>
 <div class="tw"><table class="probs">
 <tr><th>Problem</th><th>Level</th><th>Why / pattern</th></tr>
-<tr><td>Implement Trie (Prefix Tree)</td><td><span class="lv m">Medium</span></td><td>The data structure itself</td></tr>
-<tr><td>Design Add and Search Words Data Structure</td><td><span class="lv m">Medium</span></td><td>DFS on the '.' wildcard</td></tr>
-<tr><td>Replace Words</td><td><span class="lv m">Medium</span></td><td>Stop at the first isEnd on the path</td></tr>
-<tr><td>Search Suggestions System</td><td><span class="lv m">Medium</span></td><td>Top-3 per prefix (or sort + binary search)</td></tr>
-<tr><td>Longest Word in Dictionary</td><td><span class="lv m">Medium</span></td><td>Only walk through nodes that are word ends</td></tr>
-<tr><td>Maximum XOR of Two Numbers in an Array</td><td><span class="lv m">Medium</span></td><td>Bit trie, take the opposite bit</td></tr>
-<tr><td>Word Search II</td><td><span class="lv h">Hard</span></td><td>Trie + grid DFS + pruning</td></tr>
+<tr><td>Implement Trie (Prefix Tree)</td><td><span class="lv m">Medium</span></td><td>insert/search/startsWith</td></tr>
+<tr><td>Add and Search Words Data Structure</td><td><span class="lv m">Medium</span></td><td>Trie + '.' wildcard DFS</td></tr>
+<tr><td>Word Search II</td><td><span class="lv h">Hard</span></td><td>Trie over board DFS</td></tr>
+<tr><td>Replace Words</td><td><span class="lv m">Medium</span></td><td>Trie of roots</td></tr>
+<tr><td>Longest Word in Dictionary</td><td><span class="lv m">Medium</span></td><td>Words built step by step</td></tr>
+<tr><td>Map Sum Pairs</td><td><span class="lv m">Medium</span></td><td>Trie prefix sums</td></tr>
+<tr><td>Maximum XOR of Two Numbers</td><td><span class="lv m">Medium</span></td><td>Binary trie</td></tr>
+<tr><td>Search Suggestions System</td><td><span class="lv m">Medium</span></td><td>Trie / sorted prefix</td></tr>
+<tr><td>Implement Magic Dictionary</td><td><span class="lv m">Medium</span></td><td>One-edit search</td></tr>
+<tr><td>Concatenated Words</td><td><span class="lv h">Hard</span></td><td>Trie + DFS/DP</td></tr>
+<tr><td>Stream of Characters</td><td><span class="lv h">Hard</span></td><td>Reversed-suffix trie</td></tr>
+<tr><td>Index Pairs of a String</td><td><span class="lv m">Medium</span></td><td>Trie of words over text</td></tr>
 </table></div>
 </section>
 
@@ -2044,18 +2149,26 @@ PriorityQueue&lt;ListNode&gt; pq = <span class="kw">new</span> PriorityQueue&lt;
 <h3>Practice problems</h3>
 <div class="tw"><table class="probs">
 <tr><th>Problem</th><th>Level</th><th>Why / pattern</th></tr>
-<tr><td>Kth Largest Element in a Stream</td><td><span class="lv e">Easy</span></td><td>Min-heap of size k</td></tr>
+<tr><td>Kth Largest Element in a Stream</td><td><span class="lv e">Easy</span></td><td>Size-K min-heap</td></tr>
 <tr><td>Last Stone Weight</td><td><span class="lv e">Easy</span></td><td>Max-heap simulation</td></tr>
-<tr><td>K Closest Points to Origin</td><td><span class="lv m">Medium</span></td><td>Max-heap of size k on distance</td></tr>
-<tr><td>Kth Largest Element in an Array</td><td><span class="lv m">Medium</span></td><td>Heap vs quickselect</td></tr>
-<tr><td>Top K Frequent Elements</td><td><span class="lv m">Medium</span></td><td>Count + heap of size k</td></tr>
-<tr><td>Task Scheduler</td><td><span class="lv m">Medium</span></td><td>Max-heap + cooldown queue</td></tr>
-<tr><td>Reorganize String</td><td><span class="lv m">Medium</span></td><td>Always place the most frequent that is allowed</td></tr>
-<tr><td>Design Twitter</td><td><span class="lv m">Medium</span></td><td>Merge k feeds with a heap</td></tr>
-<tr><td>Meeting Rooms II</td><td><span class="lv m">Medium</span></td><td>Min-heap of end times</td></tr>
-<tr><td>Merge k Sorted Lists</td><td><span class="lv h">Hard</span></td><td>Heap of heads, O(N log k)</td></tr>
-<tr><td>Find Median from Data Stream</td><td><span class="lv h">Hard</span></td><td>Two heaps</td></tr>
-<tr><td>IPO</td><td><span class="lv h">Hard</span></td><td>Unlock by capital, pick max profit</td></tr>
+<tr><td>K Closest Points to Origin</td><td><span class="lv m">Medium</span></td><td>Heap by distance</td></tr>
+<tr><td>Kth Largest Element in an Array</td><td><span class="lv m">Medium</span></td><td>Heap / quickselect</td></tr>
+<tr><td>Top K Frequent Elements</td><td><span class="lv m">Medium</span></td><td>Heap on frequencies</td></tr>
+<tr><td>Sort Characters By Frequency</td><td><span class="lv m">Medium</span></td><td>Heap / bucket</td></tr>
+<tr><td>Task Scheduler</td><td><span class="lv m">Medium</span></td><td>Max-heap + cooldown</td></tr>
+<tr><td>Reorganize String</td><td><span class="lv m">Medium</span></td><td>Greedy max-heap</td></tr>
+<tr><td>Find Median from Data Stream</td><td><span class="lv h">Hard</span></td><td>Two balanced heaps</td></tr>
+<tr><td>Merge k Sorted Lists</td><td><span class="lv h">Hard</span></td><td>Min-heap of heads</td></tr>
+<tr><td>Smallest Range Covering K Lists</td><td><span class="lv h">Hard</span></td><td>Heap across lists</td></tr>
+<tr><td>Design Twitter</td><td><span class="lv m">Medium</span></td><td>Heap merge of feeds</td></tr>
+<tr><td>Maximum Performance of a Team</td><td><span class="lv h">Hard</span></td><td>Sort + min-heap of speeds</td></tr>
+<tr><td>Single-Threaded CPU</td><td><span class="lv m">Medium</span></td><td>Sort + heap by duration</td></tr>
+<tr><td>Minimum Cost to Connect Sticks</td><td><span class="lv m">Medium</span></td><td>Greedy min-heap</td></tr>
+<tr><td>Furthest Building You Can Reach</td><td><span class="lv m">Medium</span></td><td>Heap of largest jumps</td></tr>
+<tr><td>IPO</td><td><span class="lv h">Hard</span></td><td>Two heaps (capital/profit)</td></tr>
+<tr><td>Process Tasks Using Servers</td><td><span class="lv m">Medium</span></td><td>Two heaps (free/busy)</td></tr>
+<tr><td>Kth Largest Sum in a Binary Tree</td><td><span class="lv m">Medium</span></td><td>BFS + heap</td></tr>
+<tr><td>Seat Reservation Manager</td><td><span class="lv m">Medium</span></td><td>Min-heap of free seats</td></tr>
 </table></div>
 </section>
 
@@ -2129,20 +2242,16 @@ Deque&lt;<span class="kw">int</span>[]&gt; q = <span class="kw">new</span> Array
 <h3>Practice problems</h3>
 <div class="tw"><table class="probs">
 <tr><th>Problem</th><th>Level</th><th>Why / pattern</th></tr>
-<tr><td>Flood Fill</td><td><span class="lv e">Easy</span></td><td>The DFS template</td></tr>
-<tr><td>Number of Islands</td><td><span class="lv m">Medium</span></td><td>Flood fill + counter</td></tr>
-<tr><td>Max Area of Island</td><td><span class="lv m">Medium</span></td><td>DFS returns the size</td></tr>
-<tr><td>Rotting Oranges</td><td><span class="lv m">Medium</span></td><td>Multi-source BFS by levels</td></tr>
-<tr><td>01 Matrix</td><td><span class="lv m">Medium</span></td><td>Multi-source BFS from all zeros</td></tr>
-<tr><td>Walls and Gates</td><td><span class="lv m">Medium</span></td><td>Multi-source BFS from all gates</td></tr>
-<tr><td>Surrounded Regions</td><td><span class="lv m">Medium</span></td><td>Protect border-connected O's first</td></tr>
-<tr><td>Pacific Atlantic Water Flow</td><td><span class="lv m">Medium</span></td><td>Reverse flow from both coasts, intersect</td></tr>
-<tr><td>Shortest Path in Binary Matrix</td><td><span class="lv m">Medium</span></td><td>BFS with 8 directions</td></tr>
-<tr><td>Spiral Matrix</td><td><span class="lv m">Medium</span></td><td>Four shrinking boundaries</td></tr>
+<tr><td>Spiral Matrix</td><td><span class="lv m">Medium</span></td><td>Shrinking boundaries</td></tr>
+<tr><td>Spiral Matrix II</td><td><span class="lv m">Medium</span></td><td>Fill in spiral order</td></tr>
 <tr><td>Rotate Image</td><td><span class="lv m">Medium</span></td><td>Transpose + reverse rows</td></tr>
 <tr><td>Set Matrix Zeroes</td><td><span class="lv m">Medium</span></td><td>First row/col as markers</td></tr>
-<tr><td>Search a 2D Matrix II</td><td><span class="lv m">Medium</span></td><td>Staircase from top-right</td></tr>
-<tr><td>Word Search</td><td><span class="lv m">Medium</span></td><td>DFS + un-mark on return</td></tr>
+<tr><td>Transpose Matrix</td><td><span class="lv e">Easy</span></td><td>Swap across diagonal</td></tr>
+<tr><td>Diagonal Traverse</td><td><span class="lv m">Medium</span></td><td>Group by i+j parity</td></tr>
+<tr><td>Matrix Diagonal Sum</td><td><span class="lv e">Easy</span></td><td>Index relationships</td></tr>
+<tr><td>Game of Life</td><td><span class="lv m">Medium</span></td><td>In-place state encoding</td></tr>
+<tr><td>Search a 2D Matrix</td><td><span class="lv m">Medium</span></td><td>Flatten + binary search</td></tr>
+<tr><td>Valid Sudoku</td><td><span class="lv m">Medium</span></td><td>Row/col/box sets</td></tr>
 </table></div>
 </section>
 
@@ -2213,20 +2322,26 @@ Deque&lt;<span class="kw">int</span>[]&gt; q = <span class="kw">new</span> Array
 <h3>Practice problems</h3>
 <div class="tw"><table class="probs">
 <tr><th>Problem</th><th>Level</th><th>Why / pattern</th></tr>
-<tr><td>Subsets</td><td><span class="lv m">Medium</span></td><td>Record at every node</td></tr>
-<tr><td>Subsets II</td><td><span class="lv m">Medium</span></td><td>Sort + same-level skip</td></tr>
-<tr><td>Combinations</td><td><span class="lv m">Medium</span></td><td>Size-k goal</td></tr>
-<tr><td>Combination Sum</td><td><span class="lv m">Medium</span></td><td>Reuse: recurse with i</td></tr>
-<tr><td>Combination Sum II</td><td><span class="lv m">Medium</span></td><td>No reuse + dedupe</td></tr>
-<tr><td>Permutations</td><td><span class="lv m">Medium</span></td><td>used[]</td></tr>
-<tr><td>Permutations II</td><td><span class="lv m">Medium</span></td><td>Skip if equal to previous and previous unused</td></tr>
-<tr><td>Letter Combinations of a Phone Number</td><td><span class="lv m">Medium</span></td><td>One digit per level</td></tr>
-<tr><td>Generate Parentheses</td><td><span class="lv m">Medium</span></td><td>open &lt; n, close &lt; open</td></tr>
-<tr><td>Palindrome Partitioning</td><td><span class="lv m">Medium</span></td><td>Cut where the prefix is a palindrome</td></tr>
-<tr><td>Word Search</td><td><span class="lv m">Medium</span></td><td>Grid DFS with un-mark</td></tr>
-<tr><td>Restore IP Addresses</td><td><span class="lv m">Medium</span></td><td>4 parts, each 0&ndash;255, no leading zero</td></tr>
-<tr><td>N-Queens</td><td><span class="lv h">Hard</span></td><td>Column + two diagonal tables</td></tr>
-<tr><td>Sudoku Solver</td><td><span class="lv h">Hard</span></td><td>Try 1&ndash;9, return true on first success</td></tr>
+<tr><td>Subsets</td><td><span class="lv m">Medium</span></td><td>Include/exclude</td></tr>
+<tr><td>Subsets II</td><td><span class="lv m">Medium</span></td><td>Sort + skip dup branches</td></tr>
+<tr><td>Combinations</td><td><span class="lv m">Medium</span></td><td>Choose k from n</td></tr>
+<tr><td>Combination Sum</td><td><span class="lv m">Medium</span></td><td>Reuse allowed, prune</td></tr>
+<tr><td>Combination Sum II</td><td><span class="lv m">Medium</span></td><td>Each once, skip dups</td></tr>
+<tr><td>Permutations</td><td><span class="lv m">Medium</span></td><td>Used-array or swap</td></tr>
+<tr><td>Permutations II</td><td><span class="lv m">Medium</span></td><td>Sort + skip used dups</td></tr>
+<tr><td>Letter Combinations of a Phone Number</td><td><span class="lv m">Medium</span></td><td>Digit-to-letters</td></tr>
+<tr><td>Generate Parentheses</td><td><span class="lv m">Medium</span></td><td>Track open/close</td></tr>
+<tr><td>Palindrome Partitioning</td><td><span class="lv m">Medium</span></td><td>Cut at palindromes</td></tr>
+<tr><td>Word Search</td><td><span class="lv m">Medium</span></td><td>Grid DFS + visited</td></tr>
+<tr><td>Restore IP Addresses</td><td><span class="lv m">Medium</span></td><td>4 valid octets</td></tr>
+<tr><td>N-Queens</td><td><span class="lv h">Hard</span></td><td>Place per row, track attacks</td></tr>
+<tr><td>N-Queens II</td><td><span class="lv h">Hard</span></td><td>Count solutions</td></tr>
+<tr><td>Sudoku Solver</td><td><span class="lv h">Hard</span></td><td>Fill, validate, backtrack</td></tr>
+<tr><td>Combination Sum III</td><td><span class="lv m">Medium</span></td><td>k numbers sum to n</td></tr>
+<tr><td>Beautiful Arrangement</td><td><span class="lv m">Medium</span></td><td>Permutation w/ divisibility</td></tr>
+<tr><td>Matchsticks to Square</td><td><span class="lv m">Medium</span></td><td>Partition into 4 sides</td></tr>
+<tr><td>Splitting a String Into Descending Values</td><td><span class="lv m">Medium</span></td><td>Try split points</td></tr>
+<tr><td>Partition to K Equal Sum Subsets</td><td><span class="lv m">Medium</span></td><td>Bucket-fill</td></tr>
 </table></div>
 </section>
 
@@ -2320,22 +2435,26 @@ pq.offer(<span class="kw">new int</span>[]{src, <span class="nu">0</span>});
 <h3>Practice problems</h3>
 <div class="tw"><table class="probs">
 <tr><th>Problem</th><th>Level</th><th>Why / pattern</th></tr>
-<tr><td>Find if Path Exists in Graph</td><td><span class="lv e">Easy</span></td><td>Plain DFS/BFS/UF warm-up</td></tr>
-<tr><td>Clone Graph</td><td><span class="lv m">Medium</span></td><td>Old &rarr; new map doubles as visited</td></tr>
-<tr><td>Number of Provinces</td><td><span class="lv m">Medium</span></td><td>Count components</td></tr>
-<tr><td>Number of Connected Components in an Undirected Graph</td><td><span class="lv m">Medium</span></td><td>Union-Find: n minus successful unions</td></tr>
-<tr><td>Graph Valid Tree</td><td><span class="lv m">Medium</span></td><td>n&minus;1 edges and no cycle</td></tr>
-<tr><td>Redundant Connection</td><td><span class="lv m">Medium</span></td><td>First union that returns false</td></tr>
-<tr><td>Course Schedule</td><td><span class="lv m">Medium</span></td><td>Cycle in a directed graph</td></tr>
-<tr><td>Course Schedule II</td><td><span class="lv m">Medium</span></td><td>Kahn's topological order</td></tr>
-<tr><td>Is Graph Bipartite?</td><td><span class="lv m">Medium</span></td><td>2-colouring</td></tr>
-<tr><td>Network Delay Time</td><td><span class="lv m">Medium</span></td><td>Dijkstra, answer = max dist</td></tr>
-<tr><td>Cheapest Flights Within K Stops</td><td><span class="lv m">Medium</span></td><td>Bellman&ndash;Ford, K+1 rounds</td></tr>
-<tr><td>Min Cost to Connect All Points</td><td><span class="lv m">Medium</span></td><td>MST &mdash; Prim</td></tr>
+<tr><td>Number of Islands</td><td><span class="lv m">Medium</span></td><td>Flood fill</td></tr>
+<tr><td>Max Area of Island</td><td><span class="lv m">Medium</span></td><td>DFS area</td></tr>
+<tr><td>Clone Graph</td><td><span class="lv m">Medium</span></td><td>DFS/BFS + visited map</td></tr>
+<tr><td>Pacific Atlantic Water Flow</td><td><span class="lv m">Medium</span></td><td>Reverse BFS from oceans</td></tr>
+<tr><td>Surrounded Regions</td><td><span class="lv m">Medium</span></td><td>Mark border-connected</td></tr>
+<tr><td>Rotting Oranges</td><td><span class="lv m">Medium</span></td><td>Multi-source BFS</td></tr>
+<tr><td>Walls and Gates</td><td><span class="lv m">Medium</span></td><td>Multi-source BFS</td></tr>
+<tr><td>Course Schedule</td><td><span class="lv m">Medium</span></td><td>Cycle detection / topo</td></tr>
+<tr><td>Course Schedule II</td><td><span class="lv m">Medium</span></td><td>Topological order (Kahn)</td></tr>
+<tr><td>Number of Connected Components</td><td><span class="lv m">Medium</span></td><td>Union-Find</td></tr>
+<tr><td>Graph Valid Tree</td><td><span class="lv m">Medium</span></td><td>Union-Find + edge count</td></tr>
+<tr><td>Redundant Connection</td><td><span class="lv m">Medium</span></td><td>Union-Find first cycle</td></tr>
+<tr><td>Word Ladder</td><td><span class="lv h">Hard</span></td><td>BFS over word graph</td></tr>
+<tr><td>Network Delay Time</td><td><span class="lv m">Medium</span></td><td>Dijkstra</td></tr>
+<tr><td>Cheapest Flights Within K Stops</td><td><span class="lv m">Medium</span></td><td>Bellman-Ford / BFS levels</td></tr>
+<tr><td>Min Cost to Connect All Points</td><td><span class="lv m">Medium</span></td><td>MST (Prim/Kruskal)</td></tr>
+<tr><td>Alien Dictionary</td><td><span class="lv h">Hard</span></td><td>Topological sort</td></tr>
+<tr><td>Reconstruct Itinerary</td><td><span class="lv h">Hard</span></td><td>Hierholzer's (Eulerian)</td></tr>
+<tr><td>Swim in Rising Water</td><td><span class="lv h">Hard</span></td><td>Dijkstra / binary search + BFS</td></tr>
 <tr><td>Accounts Merge</td><td><span class="lv m">Medium</span></td><td>Union-Find on emails</td></tr>
-<tr><td>Word Ladder</td><td><span class="lv h">Hard</span></td><td>BFS on an implicit graph, wildcard buckets</td></tr>
-<tr><td>Alien Dictionary</td><td><span class="lv h">Hard</span></td><td>Edges from first differing letters + topo sort</td></tr>
-<tr><td>Swim in Rising Water</td><td><span class="lv h">Hard</span></td><td>Dijkstra on max-so-far / binary search + BFS</td></tr>
 </table></div>
 </section>
 
@@ -2435,26 +2554,26 @@ Arrays.fill(dp, amount + <span class="nu">1</span>); dp[<span class="nu">0</span
 <h3>Practice problems</h3>
 <div class="tw"><table class="probs">
 <tr><th>Problem</th><th>Level</th><th>Why / pattern</th></tr>
-<tr><td>Climbing Stairs</td><td><span class="lv e">Easy</span></td><td>dp[i] = dp[i-1] + dp[i-2]</td></tr>
-<tr><td>Min Cost Climbing Stairs</td><td><span class="lv e">Easy</span></td><td>Same shape with a cost</td></tr>
-<tr><td>House Robber</td><td><span class="lv m">Medium</span></td><td>Take / skip</td></tr>
-<tr><td>House Robber II</td><td><span class="lv m">Medium</span></td><td>Circle = two linear runs</td></tr>
-<tr><td>Decode Ways</td><td><span class="lv m">Medium</span></td><td>One digit or two; zeros are the trap</td></tr>
-<tr><td>Coin Change</td><td><span class="lv m">Medium</span></td><td>Unbounded knapsack, minimise</td></tr>
-<tr><td>Coin Change II</td><td><span class="lv m">Medium</span></td><td>Count combinations: coins outer</td></tr>
-<tr><td>Maximum Product Subarray</td><td><span class="lv m">Medium</span></td><td>Track max and min</td></tr>
-<tr><td>Word Break</td><td><span class="lv m">Medium</span></td><td>dp[i] = some dp[j] and s[j..i) in dict</td></tr>
-<tr><td>Longest Increasing Subsequence</td><td><span class="lv m">Medium</span></td><td>O(n&sup2;) then tails + binary search</td></tr>
-<tr><td>Partition Equal Subset Sum</td><td><span class="lv m">Medium</span></td><td>0/1 knapsack, backward loop</td></tr>
-<tr><td>Target Sum</td><td><span class="lv m">Medium</span></td><td>Reduce to subset-sum count</td></tr>
-<tr><td>Unique Paths</td><td><span class="lv m">Medium</span></td><td>Grid DP</td></tr>
-<tr><td>Longest Common Subsequence</td><td><span class="lv m">Medium</span></td><td>Two-string table</td></tr>
-<tr><td>Longest Palindromic Substring</td><td><span class="lv m">Medium</span></td><td>Interval DP or expand</td></tr>
-<tr><td>Best Time to Buy and Sell Stock with Cooldown</td><td><span class="lv m">Medium</span></td><td>State machine: hold / sold / rest</td></tr>
-<tr><td>Edit Distance</td><td><span class="lv m">Medium</span></td><td>Insert / delete / replace = three neighbours</td></tr>
-<tr><td>Interleaving String</td><td><span class="lv m">Medium</span></td><td>dp[i][j] over two prefixes</td></tr>
-<tr><td>Burst Balloons</td><td><span class="lv h">Hard</span></td><td>Interval DP: choose the LAST balloon</td></tr>
-<tr><td>Regular Expression Matching</td><td><span class="lv h">Hard</span></td><td>'*' = zero of previous, or consume one</td></tr>
+<tr><td>Climbing Stairs</td><td><span class="lv e">Easy</span></td><td>dp[i]=dp[i-1]+dp[i-2]</td></tr>
+<tr><td>Min Cost Climbing Stairs</td><td><span class="lv e">Easy</span></td><td>1-D choice</td></tr>
+<tr><td>House Robber</td><td><span class="lv m">Medium</span></td><td>Skip-or-take</td></tr>
+<tr><td>House Robber II</td><td><span class="lv m">Medium</span></td><td>Circular: two passes</td></tr>
+<tr><td>Maximum Subarray</td><td><span class="lv m">Medium</span></td><td>Kadane as DP</td></tr>
+<tr><td>Maximum Product Subarray</td><td><span class="lv m">Medium</span></td><td>Track min &amp; max</td></tr>
+<tr><td>Coin Change</td><td><span class="lv m">Medium</span></td><td>Unbounded knapsack (min)</td></tr>
+<tr><td>Coin Change II</td><td><span class="lv m">Medium</span></td><td>Count combinations</td></tr>
+<tr><td>Longest Increasing Subsequence</td><td><span class="lv m">Medium</span></td><td>O(n log n) patience</td></tr>
+<tr><td>Partition Equal Subset Sum</td><td><span class="lv m">Medium</span></td><td>0/1 knapsack on sum</td></tr>
+<tr><td>Target Sum</td><td><span class="lv m">Medium</span></td><td>Subset-sum counting</td></tr>
+<tr><td>Word Break</td><td><span class="lv m">Medium</span></td><td>dp[i] reachable + dict</td></tr>
+<tr><td>Decode Ways</td><td><span class="lv m">Medium</span></td><td>1/2-digit transitions</td></tr>
+<tr><td>Unique Paths</td><td><span class="lv m">Medium</span></td><td>2-D grid counts</td></tr>
+<tr><td>Unique Paths II</td><td><span class="lv m">Medium</span></td><td>Grid with obstacles</td></tr>
+<tr><td>Longest Common Subsequence</td><td><span class="lv m">Medium</span></td><td>Two-string 2-D</td></tr>
+<tr><td>Edit Distance</td><td><span class="lv h">Hard</span></td><td>Insert/delete/replace</td></tr>
+<tr><td>Longest Palindromic Substring</td><td><span class="lv m">Medium</span></td><td>Expand or interval DP</td></tr>
+<tr><td>Buy/Sell Stock with Cooldown</td><td><span class="lv m">Medium</span></td><td>State-machine DP</td></tr>
+<tr><td>Maximal Square</td><td><span class="lv m">Medium</span></td><td>min-of-neighbors + 1</td></tr>
 </table></div>
 </section>
 
@@ -2522,18 +2641,26 @@ Arrays.fill(dp, amount + <span class="nu">1</span>); dp[<span class="nu">0</span
 <h3>Practice problems</h3>
 <div class="tw"><table class="probs">
 <tr><th>Problem</th><th>Level</th><th>Why / pattern</th></tr>
-<tr><td>Assign Cookies</td><td><span class="lv e">Easy</span></td><td>Sort both, smallest that fits</td></tr>
-<tr><td>Lemonade Change</td><td><span class="lv e">Easy</span></td><td>Prefer giving the $10 note</td></tr>
-<tr><td>Maximum Subarray</td><td><span class="lv m">Medium</span></td><td>Drop a negative running sum</td></tr>
-<tr><td>Jump Game</td><td><span class="lv m">Medium</span></td><td>Max reach</td></tr>
-<tr><td>Jump Game II</td><td><span class="lv m">Medium</span></td><td>Level boundaries</td></tr>
-<tr><td>Gas Station</td><td><span class="lv m">Medium</span></td><td>Reset start on a negative tank</td></tr>
-<tr><td>Hand of Straights</td><td><span class="lv m">Medium</span></td><td>Always start from the smallest card (TreeMap)</td></tr>
-<tr><td>Merge Triplets to Form Target Triplet</td><td><span class="lv m">Medium</span></td><td>Discard any triplet exceeding the target</td></tr>
-<tr><td>Partition Labels</td><td><span class="lv m">Medium</span></td><td>Extend to the last occurrence</td></tr>
-<tr><td>Valid Parenthesis String</td><td><span class="lv m">Medium</span></td><td>Track [minOpen, maxOpen]</td></tr>
-<tr><td>Boats to Save People</td><td><span class="lv m">Medium</span></td><td>Heaviest + lightest</td></tr>
-<tr><td>Candy</td><td><span class="lv h">Hard</span></td><td>Two passes</td></tr>
+<tr><td>Maximum Subarray</td><td><span class="lv m">Medium</span></td><td>Kadane</td></tr>
+<tr><td>Jump Game</td><td><span class="lv m">Medium</span></td><td>Furthest reachable</td></tr>
+<tr><td>Jump Game II</td><td><span class="lv m">Medium</span></td><td>Greedy BFS layers</td></tr>
+<tr><td>Gas Station</td><td><span class="lv m">Medium</span></td><td>Single pass, reset start</td></tr>
+<tr><td>Hand of Straights</td><td><span class="lv m">Medium</span></td><td>Sorted counts / TreeMap</td></tr>
+<tr><td>Merge Triplets to Form Target</td><td><span class="lv m">Medium</span></td><td>Keep safe triplets</td></tr>
+<tr><td>Partition Labels</td><td><span class="lv m">Medium</span></td><td>Extend to last occurrence</td></tr>
+<tr><td>Valid Parenthesis String</td><td><span class="lv m">Medium</span></td><td>Track open range</td></tr>
+<tr><td>Candy</td><td><span class="lv h">Hard</span></td><td>Two-pass left/right</td></tr>
+<tr><td>Task Scheduler</td><td><span class="lv m">Medium</span></td><td>Most frequent first</td></tr>
+<tr><td>Non-overlapping Intervals</td><td><span class="lv m">Medium</span></td><td>Sort by end, drop overlaps</td></tr>
+<tr><td>Minimum Arrows to Burst Balloons</td><td><span class="lv m">Medium</span></td><td>Sort by end</td></tr>
+<tr><td>Assign Cookies</td><td><span class="lv e">Easy</span></td><td>Sort both, two pointers</td></tr>
+<tr><td>Boats to Save People</td><td><span class="lv m">Medium</span></td><td>Heaviest with lightest</td></tr>
+<tr><td>Lemonade Change</td><td><span class="lv e">Easy</span></td><td>Greedy change</td></tr>
+<tr><td>Queue Reconstruction by Height</td><td><span class="lv m">Medium</span></td><td>Sort then insert</td></tr>
+<tr><td>Minimum Cost to Connect Sticks</td><td><span class="lv m">Medium</span></td><td>Merge two smallest</td></tr>
+<tr><td>Maximum Units on a Truck</td><td><span class="lv e">Easy</span></td><td>Sort by units desc</td></tr>
+<tr><td>Remove K Digits</td><td><span class="lv m">Medium</span></td><td>Monotonic greedy stack</td></tr>
+<tr><td>Best Time to Buy/Sell Stock II</td><td><span class="lv m">Medium</span></td><td>Sum upward steps</td></tr>
 </table></div>
 </section>
 
@@ -2599,16 +2726,26 @@ Arrays.sort(starts); Arrays.sort(ends);
 <h3>Practice problems</h3>
 <div class="tw"><table class="probs">
 <tr><th>Problem</th><th>Level</th><th>Why / pattern</th></tr>
-<tr><td>Meeting Rooms</td><td><span class="lv e">Easy</span></td><td>Sort by start, check neighbours</td></tr>
-<tr><td>Merge Intervals</td><td><span class="lv m">Medium</span></td><td>Sort by start + max end</td></tr>
-<tr><td>Insert Interval</td><td><span class="lv m">Medium</span></td><td>Three phases</td></tr>
-<tr><td>Non-overlapping Intervals</td><td><span class="lv m">Medium</span></td><td>Sort by end, count kept</td></tr>
-<tr><td>Minimum Number of Arrows to Burst Balloons</td><td><span class="lv m">Medium</span></td><td>Same as above, touching counts</td></tr>
-<tr><td>Meeting Rooms II</td><td><span class="lv m">Medium</span></td><td>Sweep line / heap of end times</td></tr>
-<tr><td>Interval List Intersections</td><td><span class="lv m">Medium</span></td><td>Two pointers, advance the earlier end</td></tr>
-<tr><td>My Calendar I</td><td><span class="lv m">Medium</span></td><td>TreeMap floor / ceiling</td></tr>
-<tr><td>Minimum Interval to Include Each Query</td><td><span class="lv h">Hard</span></td><td>Sort both + min-heap by length</td></tr>
-<tr><td>Employee Free Time</td><td><span class="lv h">Hard</span></td><td>Merge everything, report the gaps</td></tr>
+<tr><td>Merge Intervals</td><td><span class="lv m">Medium</span></td><td>Sort by start</td></tr>
+<tr><td>Insert Interval</td><td><span class="lv m">Medium</span></td><td>Before/overlap/after</td></tr>
+<tr><td>Non-overlapping Intervals</td><td><span class="lv m">Medium</span></td><td>Greedy by end</td></tr>
+<tr><td>Meeting Rooms</td><td><span class="lv e">Easy</span></td><td>Check adjacent overlap</td></tr>
+<tr><td>Meeting Rooms II</td><td><span class="lv m">Medium</span></td><td>Min-heap of ends</td></tr>
+<tr><td>Interval List Intersections</td><td><span class="lv m">Medium</span></td><td>Two pointers</td></tr>
+<tr><td>Minimum Arrows to Burst Balloons</td><td><span class="lv m">Medium</span></td><td>Group by end</td></tr>
+<tr><td>Employee Free Time</td><td><span class="lv h">Hard</span></td><td>Merge all, find gaps</td></tr>
+<tr><td>Car Pooling</td><td><span class="lv m">Medium</span></td><td>Difference array / sweep</td></tr>
+<tr><td>My Calendar I</td><td><span class="lv m">Medium</span></td><td>TreeMap of bookings</td></tr>
+<tr><td>My Calendar II</td><td><span class="lv m">Medium</span></td><td>Sweep for double-book</td></tr>
+<tr><td>Minimum Interval to Include Each Query</td><td><span class="lv h">Hard</span></td><td>Sort + heap</td></tr>
+<tr><td>Remove Covered Intervals</td><td><span class="lv m">Medium</span></td><td>Sort, track max end</td></tr>
+<tr><td>Data Stream as Disjoint Intervals</td><td><span class="lv h">Hard</span></td><td>TreeMap merge</td></tr>
+<tr><td>Maximum Events That Can Be Attended</td><td><span class="lv m">Medium</span></td><td>Sort + heap</td></tr>
+<tr><td>Divide Intervals Into Min Groups</td><td><span class="lv m">Medium</span></td><td>Heap of ends</td></tr>
+<tr><td>Range Module</td><td><span class="lv h">Hard</span></td><td>TreeMap of ranges</td></tr>
+<tr><td>Teemo Attacking</td><td><span class="lv e">Easy</span></td><td>Overlap of windows</td></tr>
+<tr><td>Add Bold Tag in String</td><td><span class="lv m">Medium</span></td><td>Merge ranges</td></tr>
+<tr><td>Find Right Interval</td><td><span class="lv m">Medium</span></td><td>Sort + binary search</td></tr>
 </table></div>
 </section>
 
@@ -2687,17 +2824,26 @@ Integer.bitCount(n); Integer.toBinaryString(n); Integer.numberOfTrailingZeros(n)
 <h3>Practice problems</h3>
 <div class="tw"><table class="probs">
 <tr><th>Problem</th><th>Level</th><th>Why / pattern</th></tr>
-<tr><td>Single Number</td><td><span class="lv e">Easy</span></td><td>XOR cancels pairs</td></tr>
-<tr><td>Number of 1 Bits</td><td><span class="lv e">Easy</span></td><td>n &amp;= n &minus; 1 until zero</td></tr>
-<tr><td>Counting Bits</td><td><span class="lv e">Easy</span></td><td>dp[i] = dp[i&gt;&gt;1] + (i&amp;1)</td></tr>
-<tr><td>Reverse Bits</td><td><span class="lv e">Easy</span></td><td>Shift in, shift out, 32 times</td></tr>
-<tr><td>Missing Number</td><td><span class="lv e">Easy</span></td><td>XOR indices with values</td></tr>
-<tr><td>Power of Two</td><td><span class="lv e">Easy</span></td><td>n &amp; (n&minus;1) == 0</td></tr>
-<tr><td>Sum of Two Integers</td><td><span class="lv m">Medium</span></td><td>XOR + carry loop</td></tr>
-<tr><td>Single Number II</td><td><span class="lv m">Medium</span></td><td>Bit counts mod 3</td></tr>
-<tr><td>Single Number III</td><td><span class="lv m">Medium</span></td><td>Split by lowest set bit of the XOR</td></tr>
-<tr><td>Bitwise AND of Numbers Range</td><td><span class="lv m">Medium</span></td><td>Common binary prefix</td></tr>
-<tr><td>Maximum Product of Word Lengths</td><td><span class="lv m">Medium</span></td><td>26-bit letter masks</td></tr>
+<tr><td>Single Number</td><td><span class="lv e">Easy</span></td><td>XOR everything</td></tr>
+<tr><td>Single Number II</td><td><span class="lv m">Medium</span></td><td>Bit-count mod 3</td></tr>
+<tr><td>Single Number III</td><td><span class="lv m">Medium</span></td><td>XOR + split by set bit</td></tr>
+<tr><td>Number of 1 Bits</td><td><span class="lv e">Easy</span></td><td>Kernighan</td></tr>
+<tr><td>Counting Bits</td><td><span class="lv e">Easy</span></td><td>dp[i]=dp[i&amp;(i-1)]+1</td></tr>
+<tr><td>Reverse Bits</td><td><span class="lv e">Easy</span></td><td>Shift and build</td></tr>
+<tr><td>Missing Number</td><td><span class="lv e">Easy</span></td><td>XOR indices &amp; values</td></tr>
+<tr><td>Sum of Two Integers</td><td><span class="lv m">Medium</span></td><td>Carry via AND/XOR</td></tr>
+<tr><td>Power of Two</td><td><span class="lv e">Easy</span></td><td>x&amp;(x-1)==0</td></tr>
+<tr><td>Power of Four</td><td><span class="lv e">Easy</span></td><td>Bit position check</td></tr>
+<tr><td>Bitwise AND of Numbers Range</td><td><span class="lv m">Medium</span></td><td>Common prefix</td></tr>
+<tr><td>Hamming Distance</td><td><span class="lv e">Easy</span></td><td>bitCount(x^y)</td></tr>
+<tr><td>Total Hamming Distance</td><td><span class="lv m">Medium</span></td><td>Per-bit counting</td></tr>
+<tr><td>Maximum XOR of Two Numbers</td><td><span class="lv m">Medium</span></td><td>Binary trie</td></tr>
+<tr><td>Subsets</td><td><span class="lv m">Medium</span></td><td>Bitmask enumeration</td></tr>
+<tr><td>Find the Difference</td><td><span class="lv e">Easy</span></td><td>XOR both strings</td></tr>
+<tr><td>Gray Code</td><td><span class="lv m">Medium</span></td><td>i ^ (i&gt;&gt;1)</td></tr>
+<tr><td>Binary Watch</td><td><span class="lv e">Easy</span></td><td>Enumerate by bit counts</td></tr>
+<tr><td>UTF-8 Validation</td><td><span class="lv m">Medium</span></td><td>Leading-bit patterns</td></tr>
+<tr><td>Min Flips to Make a OR b Equal to c</td><td><span class="lv m">Medium</span></td><td>Per-bit cases</td></tr>
 </table></div>
 </section>
 
@@ -2777,13 +2923,26 @@ hash = ((hash - t.charAt(i - m) * power % M + M) % M * B + t.charAt(i)) % M;
 <h3>Practice problems</h3>
 <div class="tw"><table class="probs">
 <tr><th>Problem</th><th>Level</th><th>Why / pattern</th></tr>
-<tr><td>Find the Index of the First Occurrence in a String</td><td><span class="lv e">Easy</span></td><td>Write KMP by hand</td></tr>
-<tr><td>Repeated Substring Pattern</td><td><span class="lv e">Easy</span></td><td>lps period test</td></tr>
-<tr><td>Rotate String</td><td><span class="lv e">Easy</span></td><td>goal inside s + s</td></tr>
-<tr><td>Repeated DNA Sequences</td><td><span class="lv m">Medium</span></td><td>Fixed-length rolling hash / 2-bit encoding</td></tr>
-<tr><td>Longest Happy Prefix</td><td><span class="lv h">Hard</span></td><td>It is literally lps[n&minus;1]</td></tr>
-<tr><td>Shortest Palindrome</td><td><span class="lv h">Hard</span></td><td>lps of s + # + reverse(s)</td></tr>
-<tr><td>Longest Duplicate Substring</td><td><span class="lv h">Hard</span></td><td>Binary search length + Rabin&ndash;Karp</td></tr>
+<tr><td>Implement strStr()</td><td><span class="lv e">Easy</span></td><td>Naive or KMP</td></tr>
+<tr><td>Find First Occurrence in a String</td><td><span class="lv e">Easy</span></td><td>KMP / Z</td></tr>
+<tr><td>Repeated Substring Pattern</td><td><span class="lv e">Easy</span></td><td>KMP prefix insight</td></tr>
+<tr><td>Longest Happy Prefix</td><td><span class="lv h">Hard</span></td><td>LPS of whole string</td></tr>
+<tr><td>Shortest Palindrome</td><td><span class="lv h">Hard</span></td><td>KMP on s + '#' + reverse</td></tr>
+<tr><td>Longest Palindromic Substring</td><td><span class="lv m">Medium</span></td><td>Expand / Manacher</td></tr>
+<tr><td>Palindromic Substrings</td><td><span class="lv m">Medium</span></td><td>Expand around center, count</td></tr>
+<tr><td>Longest Palindromic Subsequence</td><td><span class="lv m">Medium</span></td><td>Interval DP</td></tr>
+<tr><td>Distinct Echo Substrings</td><td><span class="lv h">Hard</span></td><td>Rolling hash</td></tr>
+<tr><td>Longest Duplicate Substring</td><td><span class="lv h">Hard</span></td><td>Binary search + Rabin-Karp</td></tr>
+<tr><td>Find All Anagrams in a String</td><td><span class="lv m">Medium</span></td><td>Rolling count / window</td></tr>
+<tr><td>Repeated DNA Sequences</td><td><span class="lv m">Medium</span></td><td>Rolling hash of 10-windows</td></tr>
+<tr><td>Sum of Scores of Built Strings</td><td><span class="lv h">Hard</span></td><td>Z-algorithm</td></tr>
+<tr><td>Minimum Window Substring</td><td><span class="lv h">Hard</span></td><td>Window over needed counts</td></tr>
+<tr><td>Group Anagrams</td><td><span class="lv m">Medium</span></td><td>Canonical signature</td></tr>
+<tr><td>Valid Palindrome II</td><td><span class="lv e">Easy</span></td><td>Two pointers + one deletion</td></tr>
+<tr><td>Count and Say</td><td><span class="lv m">Medium</span></td><td>Run-length generation</td></tr>
+<tr><td>Encode and Decode Strings</td><td><span class="lv m">Medium</span></td><td>Length-prefixed</td></tr>
+<tr><td>String Matching in an Array</td><td><span class="lv e">Easy</span></td><td>Substring containment</td></tr>
+<tr><td>Rotate String</td><td><span class="lv e">Easy</span></td><td>Concatenation + substring</td></tr>
 </table></div>
 </section>
 
@@ -2861,20 +3020,522 @@ hash = ((hash - t.charAt(i - m) * power % M + M) % M * B + t.charAt(i)) % M;
 <h3>Practice problems</h3>
 <div class="tw"><table class="probs">
 <tr><th>Problem</th><th>Level</th><th>Why / pattern</th></tr>
-<tr><td>Palindrome Number</td><td><span class="lv e">Easy</span></td><td>Reverse half the digits</td></tr>
-<tr><td>Plus One</td><td><span class="lv e">Easy</span></td><td>Carry from the end; all 9s grows the array</td></tr>
-<tr><td>Happy Number</td><td><span class="lv e">Easy</span></td><td>Cycle detection on digit-square sums</td></tr>
-<tr><td>Excel Sheet Column Number</td><td><span class="lv e">Easy</span></td><td>Base 26 with no zero digit</td></tr>
+<tr><td>Greatest Common Divisor of Strings</td><td><span class="lv e">Easy</span></td><td>GCD on lengths</td></tr>
+<tr><td>Count Primes</td><td><span class="lv m">Medium</span></td><td>Sieve of Eratosthenes</td></tr>
+<tr><td>Pow(x, n)</td><td><span class="lv m">Medium</span></td><td>Fast exponentiation</td></tr>
+<tr><td>Happy Number</td><td><span class="lv e">Easy</span></td><td>Cycle detection</td></tr>
+<tr><td>Excel Sheet Column Number</td><td><span class="lv e">Easy</span></td><td>Base-26</td></tr>
 <tr><td>Factorial Trailing Zeroes</td><td><span class="lv m">Medium</span></td><td>Count factors of 5</td></tr>
-<tr><td>Pow(x, n)</td><td><span class="lv m">Medium</span></td><td>Fast power; n = MIN_VALUE</td></tr>
-<tr><td>Sqrt(x)</td><td><span class="lv e">Easy</span></td><td>Integer binary search</td></tr>
-<tr><td>Count Primes</td><td><span class="lv m">Medium</span></td><td>Sieve</td></tr>
-<tr><td>Greatest Common Divisor of Strings</td><td><span class="lv e">Easy</span></td><td>a+b == b+a, then gcd of lengths</td></tr>
-<tr><td>Multiply Strings</td><td><span class="lv m">Medium</span></td><td>Digit i &times; digit j lands at i+j, i+j+1</td></tr>
-<tr><td>Fraction to Recurring Decimal</td><td><span class="lv m">Medium</span></td><td>Long division + remainder &rarr; index map</td></tr>
-<tr><td>Max Points on a Line</td><td><span class="lv h">Hard</span></td><td>gcd-reduced slope as the map key</td></tr>
-<tr><td>Detect Squares</td><td><span class="lv m">Medium</span></td><td>Count points, fix the diagonal</td></tr>
+<tr><td>Ugly Number II</td><td><span class="lv m">Medium</span></td><td>Three-pointer DP</td></tr>
+<tr><td>Roman to Integer</td><td><span class="lv e">Easy</span></td><td>Subtractive rule</td></tr>
+<tr><td>Integer to Roman</td><td><span class="lv m">Medium</span></td><td>Greedy symbol table</td></tr>
+<tr><td>Add Digits</td><td><span class="lv e">Easy</span></td><td>Digital root</td></tr>
+<tr><td>Multiply Strings</td><td><span class="lv m">Medium</span></td><td>Schoolbook multiply</td></tr>
+<tr><td>Perfect Squares</td><td><span class="lv m">Medium</span></td><td>Lagrange / DP</td></tr>
+<tr><td>Super Pow</td><td><span class="lv m">Medium</span></td><td>Modular exponentiation</td></tr>
+<tr><td>Fraction to Recurring Decimal</td><td><span class="lv m">Medium</span></td><td>Long division + cycle map</td></tr>
+<tr><td>Nth Digit</td><td><span class="lv m">Medium</span></td><td>Digit-block counting</td></tr>
+<tr><td>Largest Divisible Subset</td><td><span class="lv m">Medium</span></td><td>Sort + DP</td></tr>
+<tr><td>Bulb Switcher</td><td><span class="lv m">Medium</span></td><td>Perfect-square insight</td></tr>
+<tr><td>Permutation Sequence</td><td><span class="lv h">Hard</span></td><td>Factorial number system</td></tr>
+<tr><td>Random Pick with Weight</td><td><span class="lv m">Medium</span></td><td>Prefix sums + binary search</td></tr>
+<tr><td>Rectangle Area</td><td><span class="lv m">Medium</span></td><td>Inclusion-exclusion</td></tr>
 </table></div>
+</section>
+
+<!-- ============================================================ 27b -->
+<section id="s27b">
+<h2><span class="num">27b</span>DSA with the Collection Framework</h2><div class="h2rule"></div>
+
+<p class="lead">Most interview problems are not "invent an algorithm" &mdash; they are "recognise the smell, pick the right JDK collection, and use its API idiomatically". This section is that recognition table: <b>what the problem says &rarr; which structure &rarr; which Java class &rarr; why that one and not its neighbour</b>.</p>
+
+<div class="box def">
+<span class="lbl">Core concept</span>
+<p>Five structures cover ~90% of problems: <span class="k">HashMap / HashSet</span> (O(1) lookup, no order), <span class="k">TreeMap / TreeSet</span> (O(log n) lookup, sorted, nearest-key queries), <span class="k">PriorityQueue</span> (O(log n) insert, O(1) peek at the min/max), <span class="k">ArrayDeque</span> (O(1) push/pop at both ends &mdash; your stack, queue and deque) and <span class="k">LinkedHashMap</span> (HashMap + insertion/access order). Everything else &mdash; union-find, segment trees, tries &mdash; you write by hand.</p>
+</div>
+
+<h3>The decision table &mdash; problem smell &rarr; collection</h3>
+<div class="tw"><table>
+<tr><th>The problem says&hellip;</th><th>Reach for</th><th>Java class</th><th>Why this one</th><th>Cost</th></tr>
+<tr><td>"count", "frequency", "how many times", "most common"</td><td>Hash map</td><td><code>HashMap&lt;K,Integer&gt;</code></td><td>O(1) upsert per element; order is irrelevant</td><td>O(n)</td></tr>
+<tr><td>"seen before", "duplicate", "unique", "contains"</td><td>Hash set</td><td><code>HashSet&lt;T&gt;</code></td><td>Membership only, no value needed</td><td>O(n)</td></tr>
+<tr><td>"pair that sums to", "complement", "x and target &minus; x"</td><td>Hash map of value&rarr;index</td><td><code>HashMap&lt;Integer,Integer&gt;</code></td><td>Turns the inner loop into a lookup</td><td>O(n)</td></tr>
+<tr><td>"group by", "anagrams", "same &hellip; together"</td><td>Map of key&rarr;list</td><td><code>HashMap&lt;K,List&lt;V&gt;&gt;</code> + <code>computeIfAbsent</code></td><td>Canonical key (sorted chars, count signature) buckets equals together</td><td>O(n&middot;k)</td></tr>
+<tr><td>"subarray with sum K", "count subarrays", "longest subarray with&hellip;"</td><td>Prefix sum + map</td><td><code>HashMap&lt;Long,Integer&gt;</code> sum&rarr;count / first index</td><td>sum[j]&minus;sum[i]=K &rArr; look up sum[j]&minus;K</td><td>O(n)</td></tr>
+<tr><td>"first unique", "least recently used", "in insertion order"</td><td>Ordered hash map</td><td><code>LinkedHashMap</code> / <code>LinkedHashSet</code></td><td>Hash speed + predictable iteration; <code>accessOrder=true</code> gives LRU for free</td><td>O(1) each</td></tr>
+<tr><td>"smallest element &ge; x", "closest", "range [lo, hi]", "keep sorted while inserting"</td><td>Balanced BST</td><td><code>TreeMap</code> / <code>TreeSet</code></td><td><code>floor/ceiling/higher/lower</code>, <code>headMap/tailMap/subMap</code> in O(log n); hash cannot answer "nearest"</td><td>O(log n)</td></tr>
+<tr><td>"k-th largest", "top K", "K closest", "K most frequent"</td><td>Heap of size k</td><td><code>PriorityQueue</code> (min-heap for K largest)</td><td>O(n log k) beats sorting's O(n log n); memory O(k)</td><td>O(n log k)</td></tr>
+<tr><td>"merge k sorted", "smallest range covering k lists"</td><td>Heap of k heads</td><td><code>PriorityQueue&lt;int[]&gt;</code> / <code>&lt;ListNode&gt;</code></td><td>Always know the global smallest of k candidates</td><td>O(N log k)</td></tr>
+<tr><td>"running median", "balance two halves"</td><td>Two heaps</td><td>max-heap <code>lo</code> + min-heap <code>hi</code></td><td>Median sits on the two tops</td><td>O(log n) add</td></tr>
+<tr><td>"schedule the most urgent / cheapest next", "cooldown", "meeting rooms"</td><td>Heap</td><td><code>PriorityQueue</code> with comparator</td><td>Greedy choice = poll the extreme</td><td>O(n log n)</td></tr>
+<tr><td>"shortest path" on <b>weighted</b> graph, "minimum cost to connect"</td><td>Heap of (dist, node)</td><td><code>PriorityQueue&lt;int[]&gt;</code></td><td>Dijkstra / Prim need "cheapest frontier edge" repeatedly</td><td>O(E log V)</td></tr>
+<tr><td>"level by level", "shortest steps" on <b>unweighted</b> graph / grid, "spread / rot / infect"</td><td>Queue</td><td><code>ArrayDeque</code> as FIFO</td><td>BFS visits by distance</td><td>O(V+E)</td></tr>
+<tr><td>"matching brackets", "undo", "evaluate expression", "nested"</td><td>Stack</td><td><code>ArrayDeque</code> as LIFO</td><td>Last opened must close first</td><td>O(n)</td></tr>
+<tr><td>"next greater / smaller", "previous warmer day", "largest rectangle", "remove k digits"</td><td>Monotonic stack</td><td><code>ArrayDeque&lt;Integer&gt;</code> of indices</td><td>Each index pushed and popped once &rArr; O(n)</td><td>O(n)</td></tr>
+<tr><td>"maximum / minimum in every window of size k"</td><td>Monotonic deque</td><td><code>ArrayDeque&lt;Integer&gt;</code></td><td>Front = current extreme; drop from back what can never win</td><td>O(n)</td></tr>
+<tr><td>"is connected", "number of components", "merge groups", "redundant connection"</td><td>Union-Find</td><td><i>not in JDK</i> &mdash; write <code>int[] parent</code></td><td>Near-O(1) union/find with path compression</td><td>O(&alpha;(n))</td></tr>
+<tr><td>"prefix", "starts with", "autocomplete", "word search II"</td><td>Trie</td><td><i>not in JDK</i> &mdash; nested nodes or <code>HashMap&lt;Character,Node&gt;</code></td><td>Shared prefixes, O(L) per query</td><td>O(L)</td></tr>
+<tr><td>"top K by frequency" with ties, "bucket by count"</td><td>Bucket array</td><td><code>List&lt;Integer&gt;[] buckets</code> indexed by count</td><td>Counts are bounded by n &rArr; O(n), beats the heap</td><td>O(n)</td></tr>
+</table></div>
+
+<div class="box win">
+<span class="lbl">The two questions that pick the structure</span>
+<ul>
+<li><b>Do I need order?</b> No &rarr; hash (<code>HashMap</code>/<code>HashSet</code>). Insertion order &rarr; <code>Linked*</code>. Sorted order / nearest key &rarr; <code>Tree*</code>. Only the extreme (min or max) &rarr; <code>PriorityQueue</code>.</li>
+<li><b>Which end do I touch?</b> One end &rarr; stack. Front out, back in &rarr; queue. Both ends &rarr; deque. All three are <code>ArrayDeque</code>.</li>
+</ul>
+</div>
+
+<h3>HashMap &amp; HashSet &mdash; "have I seen this, and how many times?"</h3>
+<p>The most-used structure in interviews. Its whole value is turning a nested loop (<i>for each x, search for y</i>) into a single pass with O(1) lookups. If you catch yourself writing <code>for i … for j … if (a[i] + a[j] == target)</code>, a map of what you have already seen deletes the inner loop.</p>
+
+<pre><code><span class="cm">// COUNTING - the three idioms, pick one and stick with it</span>
+map.merge(key, <span class="nu">1</span>, Integer::sum);                       <span class="cm">// cleanest</span>
+map.put(key, map.getOrDefault(key, <span class="nu">0</span>) + <span class="nu">1</span>);              <span class="cm">// most common in interviews</span>
+<span class="kw">int</span>[] cnt = <span class="kw">new</span> <span class="kw">int</span>[<span class="nu">26</span>]; cnt[c - <span class="st">'a'</span>]++;                    <span class="cm">// when keys are lowercase letters - faster, no boxing</span>
+
+<span class="cm">// GROUPING - never write "if (!map.containsKey(k)) map.put(k, new ArrayList&lt;&gt;())" again</span>
+map.computeIfAbsent(key, k -&gt; <span class="kw">new</span> ArrayList&lt;&gt;()).add(value);
+
+<span class="cm">// COMPLEMENT LOOKUP - Two Sum</span>
+Map&lt;Integer,Integer&gt; seen = <span class="kw">new</span> HashMap&lt;&gt;();
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="nu">0</span>; i &lt; a.length; i++) {
+    Integer j = seen.get(target - a[i]);            <span class="cm">// look BEFORE you put: no self-pairing</span>
+    <span class="kw">if</span> (j != <span class="kw">null</span>) <span class="kw">return new int</span>[]{j, i};
+    seen.put(a[i], i);
+}
+
+<span class="cm">// PREFIX SUM + MAP - count subarrays with sum == k</span>
+Map&lt;Integer,Integer&gt; freq = <span class="kw">new</span> HashMap&lt;&gt;(); freq.put(<span class="nu">0</span>, <span class="nu">1</span>);   <span class="cm">// empty prefix - forgetting this is THE bug</span>
+<span class="kw">int</span> sum = <span class="nu">0</span>, count = <span class="nu">0</span>;
+<span class="kw">for</span> (<span class="kw">int</span> x : a) { sum += x; count += freq.getOrDefault(sum - k, <span class="nu">0</span>); freq.merge(sum, <span class="nu">1</span>, Integer::sum); }
+
+<span class="cm">// DECREMENT AND DROP - keeps map.size() meaningful ("distinct in window")</span>
+<span class="kw">if</span> (map.merge(x, -<span class="nu">1</span>, Integer::sum) == <span class="nu">0</span>) map.remove(x);
+
+<span class="cm">// GROUP ANAGRAMS - canonical key</span>
+<span class="kw">char</span>[] cs = s.toCharArray(); Arrays.sort(cs); String key = <span class="kw">new</span> String(cs);      <span class="cm">// O(k log k) per word</span>
+<span class="cm">// or a count signature: "1#0#0#2#..." - O(k) per word, works for any alphabet size 26</span></code></pre>
+
+<div class="box trap">
+<span class="lbl">HashMap traps interviewers watch for</span>
+<ul>
+<li><code>map.get(x) == map.get(y)</code> on <code>Integer</code> values &mdash; reference comparison; works below 128, fails above. Use <code>.equals</code> or <code>intValue()</code>.</li>
+<li><code>int[]</code> / any array as a key: arrays use identity <code>hashCode</code>, so <code>{1,2}</code> and <code>{1,2}</code> are different keys. Use <code>List.of(1,2)</code>, a record, or encode as a string/long (<code>r * cols + c</code> for grid cells).</li>
+<li>Mutating a key after insertion &mdash; it is now in the wrong bucket and unreachable.</li>
+<li>Removing from a map while iterating its <code>keySet()</code> / <code>entrySet()</code> &mdash; <code>ConcurrentModificationException</code>. Use <code>iterator.remove()</code>, <code>removeIf</code>, or collect keys first.</li>
+<li>Reading <code>map.get(k)</code> and unboxing to <code>int</code> when the key is missing &mdash; <code>NullPointerException</code>. <code>getOrDefault</code>.</li>
+<li>Prefix-sum overflow: the running sum of an <code>int[]</code> can exceed <code>int</code>; keep it in a <code>long</code> and key the map by <code>Long</code>.</li>
+</ul>
+</div>
+
+<h3>LinkedHashMap &mdash; hash speed with an order</h3>
+<p>Same O(1) as HashMap plus a doubly linked list threading the entries. With <code>accessOrder = true</code> every <code>get</code>/<code>put</code> moves the entry to the tail, so the head is always the least recently used &mdash; the whole LRU cache is one override.</p>
+
+<pre><code><span class="kw">class</span> LRUCache <span class="kw">extends</span> LinkedHashMap&lt;Integer,Integer&gt; {
+    <span class="kw">private final int</span> cap;
+    LRUCache(<span class="kw">int</span> cap) { <span class="kw">super</span>(cap, <span class="nu">0.75f</span>, <span class="kw">true</span>); <span class="kw">this</span>.cap = cap; }    <span class="cm">// true = access order</span>
+    <span class="kw">public int</span> get(<span class="kw">int</span> k)         { <span class="kw">return</span> getOrDefault(k, -<span class="nu">1</span>); }
+    <span class="kw">public void</span> put(<span class="kw">int</span> k, <span class="kw">int</span> v) { <span class="kw">super</span>.put(k, v); }
+    <span class="kw">@Override protected boolean</span> removeEldestEntry(Map.Entry&lt;Integer,Integer&gt; e) { <span class="kw">return</span> size() &gt; cap; }
+}
+<span class="cm">// First unique character: LinkedHashMap&lt;Character,Integer&gt; counts -&gt; first entry with value 1 is the answer.</span></code></pre>
+
+<div class="box ask">
+<span class="lbl">Asked &mdash; "Now do LRU without LinkedHashMap"</span>
+<p>That is what they usually want next. <code>HashMap&lt;K, Node&gt;</code> + a hand-written doubly linked list with dummy head/tail. <code>get</code>: look up, unlink, add to tail. <code>put</code>: if present update and move; else create, add to tail, and if <code>size &gt; cap</code> unlink <code>head.next</code> and remove it from the map. Every operation O(1). Write <code>unlink(node)</code> and <code>addLast(node)</code> as helpers first &mdash; the rest is three lines each.</p>
+</div>
+
+<h3>TreeMap &amp; TreeSet &mdash; sorted, with "nearest" queries</h3>
+<p>A red-black tree. Slower than a hash map (O(log n) and pointer-chasing) but it can answer questions a hash map cannot: <i>what is the smallest key &ge; x? the largest &le; x? everything in [lo, hi]?</i> Reach for it when the problem keeps a sorted collection <b>while inserting</b> &mdash; sorting once then binary-searching does not work if elements keep arriving.</p>
+
+<pre><code>TreeMap&lt;Integer,Integer&gt; tm = <span class="kw">new</span> TreeMap&lt;&gt;();
+tm.floorKey(x)     <span class="cm">// greatest key &lt;= x  (null if none)</span>
+tm.ceilingKey(x)   <span class="cm">// least key    &gt;= x</span>
+tm.lowerKey(x)     <span class="cm">// greatest key &lt;  x     higherKey(x): least key &gt; x</span>
+tm.firstKey()  tm.lastKey()  tm.pollFirstEntry()  tm.pollLastEntry()
+tm.headMap(x)  tm.tailMap(x, <span class="kw">true</span>)  tm.subMap(lo, <span class="kw">true</span>, hi, <span class="kw">false</span>)     <span class="cm">// live views, not copies</span>
+
+<span class="cm">// MY CALENDAR I - can [s, e) be booked with no overlap?</span>
+Map.Entry&lt;Integer,Integer&gt; prev = cal.floorEntry(s), next = cal.ceilingEntry(s);
+<span class="kw">if</span> ((prev == <span class="kw">null</span> || prev.getValue() &lt;= s) &amp;&amp; (next == <span class="kw">null</span> || e &lt;= next.getKey())) { cal.put(s, e); <span class="kw">return true</span>; }
+
+<span class="cm">// CONTAINS DUPLICATE III - any two within k indices whose values differ &lt;= t ? (TreeSet as sliding window)</span>
+Integer c = set.ceiling(x);  <span class="kw">if</span> (c != <span class="kw">null</span> &amp;&amp; (<span class="kw">long</span>) c - x &lt;= t) <span class="kw">return true</span>;
+Integer f = set.floor(x);    <span class="kw">if</span> (f != <span class="kw">null</span> &amp;&amp; (<span class="kw">long</span>) x - f &lt;= t) <span class="kw">return true</span>;
+set.add(x); <span class="kw">if</span> (set.size() &gt; k) set.remove(nums[i - k]);
+
+<span class="cm">// SLIDING WINDOW with deletions the heap can't do: TreeMap&lt;value, count&gt; gives min AND max of the window</span>
+win.merge(x, <span class="nu">1</span>, Integer::sum);   <span class="kw">if</span> (win.merge(old, -<span class="nu">1</span>, Integer::sum) == <span class="nu">0</span>) win.remove(old);
+<span class="kw">int</span> spread = win.lastKey() - win.firstKey();</code></pre>
+
+<div class="box trap">
+<span class="lbl">TreeMap traps</span>
+<ul>
+<li><code>TreeSet</code> dedups by <b>comparator</b>, not <code>equals</code>. <code>Comparator.comparingInt(a -&gt; a[0])</code> silently drops a second element with the same <code>a[0]</code>. Add a tiebreak (index) to the comparator.</li>
+<li><code>floorKey</code> returns <code>null</code>; unboxing it into <code>int</code> throws. Always null-check.</li>
+<li>Choosing <code>TreeMap</code> when only counting is needed &mdash; you pay log n for order you never use. Ask "do I ever call floor/ceiling/first/last?" If not, HashMap.</li>
+<li>Choosing <code>TreeMap</code> when only the min (or only the max) is needed &mdash; that is a <code>PriorityQueue</code>. TreeMap earns its keep when you need <b>both ends</b> or <b>arbitrary removal</b>.</li>
+</ul>
+</div>
+
+<h3>PriorityQueue &mdash; "the smallest right now, while things keep arriving"</h3>
+<p>A binary heap in an array. You get <code>peek</code> O(1), <code>offer</code>/<code>poll</code> O(log n), and <b>nothing else cheap</b>: no index access, no sorted iteration, <code>remove(obj)</code> and <code>contains</code> are O(n). Use it when the problem repeatedly asks for the current extreme &mdash; k-th, top-K, merge-k, scheduling, Dijkstra.</p>
+
+<pre><code><span class="cm">// COMPARATORS you will type from memory</span>
+<span class="kw">new</span> PriorityQueue&lt;Integer&gt;();                                   <span class="cm">// min-heap (default)</span>
+<span class="kw">new</span> PriorityQueue&lt;Integer&gt;(Collections.reverseOrder());        <span class="cm">// max-heap</span>
+<span class="kw">new</span> PriorityQueue&lt;<span class="kw">int</span>[]&gt;((a, b) -&gt; Integer.compare(a[<span class="nu">1</span>], b[<span class="nu">1</span>]));   <span class="cm">// by second field - NOT a[1]-b[1] (overflow)</span>
+<span class="kw">new</span> PriorityQueue&lt;Map.Entry&lt;Integer,Integer&gt;&gt;(Map.Entry.comparingByValue());
+<span class="kw">new</span> PriorityQueue&lt;<span class="kw">int</span>[]&gt;(Comparator.&lt;<span class="kw">int</span>[]&gt;comparingInt(a -&gt; a[<span class="nu">0</span>]).thenComparingInt(a -&gt; a[<span class="nu">1</span>]));
+
+<span class="cm">// TOP K FREQUENT - map + min-heap of size k on frequency</span>
+Map&lt;Integer,Integer&gt; f = <span class="kw">new</span> HashMap&lt;&gt;(); <span class="kw">for</span> (<span class="kw">int</span> x : nums) f.merge(x, <span class="nu">1</span>, Integer::sum);
+PriorityQueue&lt;Integer&gt; pq = <span class="kw">new</span> PriorityQueue&lt;&gt;((a, b) -&gt; f.get(a) - f.get(b));   <span class="cm">// counts are small: subtraction is safe here</span>
+<span class="kw">for</span> (<span class="kw">int</span> key : f.keySet()) { pq.offer(key); <span class="kw">if</span> (pq.size() &gt; k) pq.poll(); }   <span class="cm">// O(n log k)</span>
+
+<span class="cm">// MEETING ROOMS II - min-heap of end times; size of heap = rooms in use</span>
+Arrays.sort(iv, (a, b) -&gt; a[<span class="nu">0</span>] - b[<span class="nu">0</span>]);
+PriorityQueue&lt;Integer&gt; ends = <span class="kw">new</span> PriorityQueue&lt;&gt;();
+<span class="kw">for</span> (<span class="kw">int</span>[] m : iv) { <span class="kw">if</span> (!ends.isEmpty() &amp;&amp; ends.peek() &lt;= m[<span class="nu">0</span>]) ends.poll(); ends.offer(m[<span class="nu">1</span>]); }
+<span class="kw">return</span> ends.size();
+
+<span class="cm">// DIJKSTRA - heap of {dist, node}; skip stale entries instead of decrease-key</span>
+<span class="kw">int</span>[] dist = <span class="kw">new int</span>[n]; Arrays.fill(dist, Integer.MAX_VALUE); dist[src] = <span class="nu">0</span>;
+PriorityQueue&lt;<span class="kw">int</span>[]&gt; pq = <span class="kw">new</span> PriorityQueue&lt;&gt;((a, b) -&gt; a[<span class="nu">0</span>] - b[<span class="nu">0</span>]);   <span class="cm">// {dist, node}</span>
+pq.offer(<span class="kw">new int</span>[]{<span class="nu">0</span>, src});
+<span class="kw">while</span> (!pq.isEmpty()) {
+    <span class="kw">int</span>[] cur = pq.poll(); <span class="kw">int</span> d = cur[<span class="nu">0</span>], u = cur[<span class="nu">1</span>];
+    <span class="kw">if</span> (d &gt; dist[u]) <span class="kw">continue</span>;                                       <span class="cm">// stale - the lazy-deletion trick</span>
+    <span class="kw">for</span> (<span class="kw">int</span>[] e : adj.get(u)) <span class="kw">if</span> (d + e[<span class="nu">1</span>] &lt; dist[e[<span class="nu">0</span>]]) { dist[e[<span class="nu">0</span>]] = d + e[<span class="nu">1</span>]; pq.offer(<span class="kw">new int</span>[]{dist[e[<span class="nu">0</span>]], e[<span class="nu">0</span>]}); }
+}</code></pre>
+
+<div class="box win">
+<span class="lbl">Heap vs the alternatives &mdash; say this out loud</span>
+<ul>
+<li><b>Heap vs sort</b>: sort is O(n log n) and needs everything up front; a size-k heap is O(n log k) and works on a stream. If k &asymp; n, just sort.</li>
+<li><b>Heap vs quickselect</b>: quickselect finds the k-th in O(n) average but is in-place, offline and worst-case O(n&sup2;). Mention it, then write the heap.</li>
+<li><b>Heap vs TreeMap</b>: need arbitrary removal or both min and max? TreeMap. Otherwise heap &mdash; smaller constant, less memory.</li>
+<li><b>Heap vs bucket sort</b>: when the sort key is a bounded count (frequencies &le; n) buckets give O(n).</li>
+</ul>
+</div>
+
+<h3>ArrayDeque &mdash; your stack, your queue, your deque</h3>
+<p>A resizable circular array. O(1) amortised at both ends, no boxing overhead of a linked list's nodes, no <code>synchronized</code> tax of the legacy <code>Stack</code>. One class, three roles &mdash; the role is defined by which methods you call.</p>
+
+<pre><code>Deque&lt;Integer&gt; st = <span class="kw">new</span> ArrayDeque&lt;&gt;();   st.push(x); st.pop(); st.peek();            <span class="cm">// STACK  (push/pop = addFirst/removeFirst)</span>
+Queue&lt;<span class="kw">int</span>[]&gt; q = <span class="kw">new</span> ArrayDeque&lt;&gt;();       q.offer(x); q.poll(); q.peek();            <span class="cm">// QUEUE  (offer/poll = addLast/removeFirst)</span>
+Deque&lt;Integer&gt; dq = <span class="kw">new</span> ArrayDeque&lt;&gt;();   dq.peekFirst(); dq.pollFirst(); dq.peekLast(); dq.pollLast();   <span class="cm">// DEQUE</span>
+
+<span class="cm">// BFS ON A GRID - level by level; mark visited WHEN ENQUEUED, not when dequeued</span>
+Deque&lt;<span class="kw">int</span>[]&gt; q = <span class="kw">new</span> ArrayDeque&lt;&gt;(); q.offer(<span class="kw">new int</span>[]{r0, c0}); seen[r0][c0] = <span class="kw">true</span>;
+<span class="kw">int</span> steps = <span class="nu">0</span>; <span class="kw">int</span>[] D = {<span class="nu">1</span>,<span class="nu">0</span>,-<span class="nu">1</span>,<span class="nu">0</span>,<span class="nu">1</span>};
+<span class="kw">while</span> (!q.isEmpty()) {
+    <span class="kw">for</span> (<span class="kw">int</span> sz = q.size(); sz &gt; <span class="nu">0</span>; sz--) {                       <span class="cm">// one level per outer iteration</span>
+        <span class="kw">int</span>[] p = q.poll();
+        <span class="kw">for</span> (<span class="kw">int</span> k = <span class="nu">0</span>; k &lt; <span class="nu">4</span>; k++) { <span class="kw">int</span> r = p[<span class="nu">0</span>] + D[k], c = p[<span class="nu">1</span>] + D[k+<span class="nu">1</span>];
+            <span class="kw">if</span> (r &gt;= <span class="nu">0</span> &amp;&amp; r &lt; R &amp;&amp; c &gt;= <span class="nu">0</span> &amp;&amp; c &lt; C &amp;&amp; !seen[r][c] &amp;&amp; g[r][c] == <span class="nu">0</span>) { seen[r][c] = <span class="kw">true</span>; q.offer(<span class="kw">new int</span>[]{r, c}); } }
+    }
+    steps++;
+}
+
+<span class="cm">// MONOTONIC STACK - next greater element to the right (indices, decreasing values)</span>
+<span class="kw">int</span>[] ans = <span class="kw">new int</span>[n]; Arrays.fill(ans, -<span class="nu">1</span>);
+Deque&lt;Integer&gt; st = <span class="kw">new</span> ArrayDeque&lt;&gt;();
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="nu">0</span>; i &lt; n; i++) {
+    <span class="kw">while</span> (!st.isEmpty() &amp;&amp; a[st.peek()] &lt; a[i]) ans[st.pop()] = a[i];   <span class="cm">// i is the answer for everything smaller</span>
+    st.push(i);
+}
+
+<span class="cm">// MONOTONIC DEQUE - sliding window maximum</span>
+Deque&lt;Integer&gt; dq = <span class="kw">new</span> ArrayDeque&lt;&gt;(); <span class="kw">int</span>[] out = <span class="kw">new int</span>[n - k + <span class="nu">1</span>];
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="nu">0</span>; i &lt; n; i++) {
+    <span class="kw">if</span> (!dq.isEmpty() &amp;&amp; dq.peekFirst() &lt;= i - k) dq.pollFirst();       <span class="cm">// left index fell out of the window</span>
+    <span class="kw">while</span> (!dq.isEmpty() &amp;&amp; a[dq.peekLast()] &lt;= a[i]) dq.pollLast();     <span class="cm">// smaller ones can never be the max again</span>
+    dq.offerLast(i);
+    <span class="kw">if</span> (i &gt;= k - <span class="nu">1</span>) out[i - k + <span class="nu">1</span>] = a[dq.peekFirst()];
+}
+
+<span class="cm">// TOPOLOGICAL SORT (Kahn) - queue of zero in-degree nodes; detects cycles too</span>
+Deque&lt;Integer&gt; q = <span class="kw">new</span> ArrayDeque&lt;&gt;(); <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nu">0</span>; i &lt; n; i++) <span class="kw">if</span> (indeg[i] == <span class="nu">0</span>) q.offer(i);
+<span class="kw">int</span> done = <span class="nu">0</span>;
+<span class="kw">while</span> (!q.isEmpty()) { <span class="kw">int</span> u = q.poll(); done++; <span class="kw">for</span> (<span class="kw">int</span> v : adj.get(u)) <span class="kw">if</span> (--indeg[v] == <span class="nu">0</span>) q.offer(v); }
+<span class="kw">return</span> done == n;                                                      <span class="cm">// false = cycle</span></code></pre>
+
+<div class="box trap">
+<span class="lbl">Deque traps</span>
+<ul>
+<li><code>ArrayDeque</code> rejects <code>null</code> &mdash; <code>offer(null)</code> throws. <code>LinkedList</code> allows it, which is the only reason to ever pick <code>LinkedList</code> as a queue.</li>
+<li><code>peek()</code> / <code>poll()</code> return <code>null</code> on empty; <code>pop()</code> / <code>remove()</code> / <code>element()</code> throw. Mixing them up is how "it works on the sample" fails.</li>
+<li>Iterating an <code>ArrayDeque</code> used as a stack goes top &rarr; bottom (head first) &mdash; the reverse of <code>java.util.Stack</code>.</li>
+<li>BFS: marking visited at <b>dequeue</b> time lets the same cell be enqueued many times &mdash; correct but blows up to O(V&sup2;) on grids.</li>
+<li>Monotonic stack with <code>&lt;</code> vs <code>&lt;=</code> decides how duplicates are handled &mdash; work it out on <code>[2,2,3]</code> before coding.</li>
+</ul>
+</div>
+
+<h3>Pattern &rarr; canonical problems</h3>
+<div class="tw"><table>
+<tr><th>Pattern</th><th>Collection</th><th>Solve these in this order</th></tr>
+<tr><td>Frequency count</td><td>HashMap / int[26]</td><td>Valid Anagram &rarr; First Unique Character &rarr; Majority Element &rarr; Top K Frequent Elements &rarr; Sort Characters by Frequency</td></tr>
+<tr><td>Complement lookup</td><td>HashMap</td><td>Two Sum &rarr; Two Sum on sorted / Pair with difference k &rarr; 4Sum II &rarr; Max Points on a Line (map of slopes)</td></tr>
+<tr><td>Seen set</td><td>HashSet</td><td>Contains Duplicate &rarr; Happy Number &rarr; Longest Consecutive Sequence &rarr; Linked List Cycle (set of nodes) &rarr; Intersection of Two Arrays</td></tr>
+<tr><td>Grouping by canonical key</td><td>HashMap&lt;K, List&gt;</td><td>Group Anagrams &rarr; Group Shifted Strings &rarr; Find Duplicate Subtrees (serialise &rarr; list)</td></tr>
+<tr><td>Prefix sum + map</td><td>HashMap&lt;sum, count/index&gt;</td><td>Subarray Sum Equals K &rarr; Contiguous Array (0&rarr;-1 trick) &rarr; Subarray Sums Divisible by K &rarr; Continuous Subarray Sum</td></tr>
+<tr><td>Window with a map</td><td>HashMap + two pointers</td><td>Longest Substring Without Repeating &rarr; Fruit Into Baskets &rarr; Permutation in String &rarr; Minimum Window Substring</td></tr>
+<tr><td>Ordered hash</td><td>LinkedHashMap / LinkedHashSet</td><td>LRU Cache &rarr; First Unique Number (stream) &rarr; Insert Delete GetRandom O(1) (map + list swap-remove)</td></tr>
+<tr><td>Nearest key / range</td><td>TreeMap / TreeSet</td><td>My Calendar I &rarr; Contains Duplicate III &rarr; Time Based Key-Value Store (floorEntry) &rarr; Exam Room &rarr; Count of Range Sum</td></tr>
+<tr><td>Size-k heap</td><td>PriorityQueue</td><td>Kth Largest in Stream &rarr; Kth Largest in Array &rarr; K Closest Points &rarr; Top K Frequent Words (tie-break comparator)</td></tr>
+<tr><td>k-way merge</td><td>PriorityQueue of heads</td><td>Merge k Sorted Lists &rarr; Kth Smallest in Sorted Matrix &rarr; Smallest Range Covering K Lists &rarr; Design Twitter</td></tr>
+<tr><td>Two heaps</td><td>2 &times; PriorityQueue</td><td>Find Median from Data Stream &rarr; Sliding Window Median (with lazy deletion) &rarr; IPO</td></tr>
+<tr><td>Greedy scheduling</td><td>PriorityQueue</td><td>Meeting Rooms II &rarr; Task Scheduler &rarr; Reorganize String &rarr; Minimum Cost to Connect Sticks &rarr; Single-Threaded CPU</td></tr>
+<tr><td>Weighted shortest path</td><td>PriorityQueue&lt;int[]&gt;</td><td>Network Delay Time &rarr; Path with Minimum Effort &rarr; Cheapest Flights Within K Stops &rarr; Min Cost to Connect All Points (Prim)</td></tr>
+<tr><td>BFS</td><td>ArrayDeque (queue)</td><td>Binary Tree Level Order &rarr; Rotting Oranges &rarr; 01 Matrix (multi-source) &rarr; Word Ladder &rarr; Open the Lock</td></tr>
+<tr><td>Stack</td><td>ArrayDeque (stack)</td><td>Valid Parentheses &rarr; Min Stack &rarr; Evaluate RPN &rarr; Decode String &rarr; Basic Calculator &rarr; Asteroid Collision</td></tr>
+<tr><td>Monotonic stack</td><td>ArrayDeque of indices</td><td>Next Greater Element I/II &rarr; Daily Temperatures &rarr; Remove K Digits &rarr; Largest Rectangle in Histogram &rarr; Trapping Rain Water (stack way)</td></tr>
+<tr><td>Monotonic deque</td><td>ArrayDeque (both ends)</td><td>Sliding Window Maximum &rarr; Shortest Subarray with Sum &ge; K &rarr; Constrained Subsequence Sum</td></tr>
+<tr><td>Topological order</td><td>ArrayDeque + int[] indegree</td><td>Course Schedule I &rarr; Course Schedule II &rarr; Alien Dictionary</td></tr>
+</table></div>
+
+<h3>Practice problems &mdash; the "which collection?" set</h3>
+<p class="probhint">Click a row to write your solution. Before coding, say the collection and the one-line reason &mdash; that sentence is what the interviewer is grading. Reference solutions for the starred ones are below the table.</p>
+<div class="tw"><table class="probs">
+<tr><th>Problem</th><th>Level</th><th>Collection &mdash; why</th></tr>
+<tr><td>Two Sum</td><td><span class="lv e">Easy</span></td><td>HashMap value&rarr;index &mdash; complement lookup kills the inner loop</td></tr>
+<tr><td>Valid Anagram</td><td><span class="lv e">Easy</span></td><td>int[26] (or HashMap) &mdash; frequency signature</td></tr>
+<tr><td>Contains Duplicate</td><td><span class="lv e">Easy</span></td><td>HashSet &mdash; add() returns false on a repeat</td></tr>
+<tr><td>First Unique Character in a String</td><td><span class="lv e">Easy</span></td><td>Count map + second pass (or LinkedHashMap first entry with 1)</td></tr>
+<tr><td>Majority Element</td><td><span class="lv e">Easy</span></td><td>HashMap count (then mention Boyer&ndash;Moore O(1) space)</td></tr>
+<tr><td>Intersection of Two Arrays II</td><td><span class="lv e">Easy</span></td><td>HashMap count of the smaller array, decrement while scanning the other</td></tr>
+<tr><td>Valid Parentheses</td><td><span class="lv e">Easy</span></td><td>ArrayDeque stack &mdash; last opened closes first</td></tr>
+<tr><td>Implement Queue using Stacks</td><td><span class="lv e">Easy</span></td><td>Two ArrayDeques &mdash; amortised O(1) via lazy transfer</td></tr>
+<tr><td>Kth Largest Element in a Stream</td><td><span class="lv e">Easy</span></td><td>Min-heap of size k &mdash; root is the k-th largest</td></tr>
+<tr><td>Binary Tree Level Order Traversal</td><td><span class="lv m">Medium</span></td><td>ArrayDeque BFS &mdash; snapshot q.size() per level</td></tr>
+<tr><td>Group Anagrams &#9733;</td><td><span class="lv m">Medium</span></td><td>HashMap&lt;String, List&gt; &mdash; sorted-chars key + computeIfAbsent</td></tr>
+<tr><td>Top K Frequent Elements &#9733;</td><td><span class="lv m">Medium</span></td><td>HashMap count + min-heap of size k (or bucket sort O(n))</td></tr>
+<tr><td>Subarray Sum Equals K &#9733;</td><td><span class="lv m">Medium</span></td><td>HashMap prefix-sum&rarr;count seeded with {0:1}</td></tr>
+<tr><td>Longest Consecutive Sequence &#9733;</td><td><span class="lv m">Medium</span></td><td>HashSet &mdash; only start counting from x when x&minus;1 is absent</td></tr>
+<tr><td>Longest Substring Without Repeating Characters</td><td><span class="lv m">Medium</span></td><td>HashMap char&rarr;last index &mdash; jump the left pointer</td></tr>
+<tr><td>Minimum Window Substring</td><td><span class="lv h">Hard</span></td><td>HashMap need/have counts + "formed" counter</td></tr>
+<tr><td>LRU Cache &#9733;</td><td><span class="lv m">Medium</span></td><td>LinkedHashMap(accessOrder) &mdash; then HashMap + DLL by hand</td></tr>
+<tr><td>Insert Delete GetRandom O(1)</td><td><span class="lv m">Medium</span></td><td>HashMap value&rarr;index + ArrayList with swap-with-last delete</td></tr>
+<tr><td>Design HashMap</td><td><span class="lv e">Easy</span></td><td>Array of buckets (lists) &mdash; explain hash, collision, resize</td></tr>
+<tr><td>Min Stack</td><td><span class="lv m">Medium</span></td><td>Two stacks, or stack of (val, minSoFar) pairs</td></tr>
+<tr><td>Daily Temperatures &#9733;</td><td><span class="lv m">Medium</span></td><td>Monotonic decreasing stack of indices</td></tr>
+<tr><td>Next Greater Element II</td><td><span class="lv m">Medium</span></td><td>Monotonic stack, loop 2n for the circular wrap</td></tr>
+<tr><td>Evaluate Reverse Polish Notation</td><td><span class="lv m">Medium</span></td><td>ArrayDeque stack of operands</td></tr>
+<tr><td>Decode String</td><td><span class="lv m">Medium</span></td><td>Two stacks (counts, partial strings) or recursion</td></tr>
+<tr><td>Sliding Window Maximum &#9733;</td><td><span class="lv h">Hard</span></td><td>Monotonic decreasing deque of indices</td></tr>
+<tr><td>Largest Rectangle in Histogram</td><td><span class="lv h">Hard</span></td><td>Monotonic increasing stack with a sentinel bar of height 0</td></tr>
+<tr><td>Rotting Oranges</td><td><span class="lv m">Medium</span></td><td>Multi-source BFS &mdash; seed the queue with every rotten cell</td></tr>
+<tr><td>Word Ladder</td><td><span class="lv h">Hard</span></td><td>BFS on words + HashSet dictionary (remove as visited)</td></tr>
+<tr><td>Course Schedule II &#9733;</td><td><span class="lv m">Medium</span></td><td>Kahn's topological sort &mdash; queue of in-degree 0</td></tr>
+<tr><td>Kth Largest Element in an Array</td><td><span class="lv m">Medium</span></td><td>Min-heap size k; mention quickselect O(n) average</td></tr>
+<tr><td>K Closest Points to Origin</td><td><span class="lv m">Medium</span></td><td>Max-heap of size k on squared distance (no sqrt)</td></tr>
+<tr><td>Top K Frequent Words</td><td><span class="lv m">Medium</span></td><td>Heap with comparator freq asc, then word desc &mdash; the tie-break is the question</td></tr>
+<tr><td>Merge k Sorted Lists &#9733;</td><td><span class="lv h">Hard</span></td><td>Min-heap of list heads, O(N log k)</td></tr>
+<tr><td>Find Median from Data Stream &#9733;</td><td><span class="lv h">Hard</span></td><td>Max-heap lower half + min-heap upper half</td></tr>
+<tr><td>Meeting Rooms II &#9733;</td><td><span class="lv m">Medium</span></td><td>Sort by start + min-heap of end times</td></tr>
+<tr><td>Task Scheduler</td><td><span class="lv m">Medium</span></td><td>Max-heap on counts + cooldown queue (or the maths formula)</td></tr>
+<tr><td>Reorganize String</td><td><span class="lv m">Medium</span></td><td>Max-heap on counts, hold back the previous char one round</td></tr>
+<tr><td>Kth Smallest Element in a Sorted Matrix</td><td><span class="lv m">Medium</span></td><td>Heap of row heads (or binary search on value)</td></tr>
+<tr><td>Network Delay Time &#9733;</td><td><span class="lv m">Medium</span></td><td>Dijkstra &mdash; PriorityQueue&lt;int[]&gt; {dist, node}, skip stale</td></tr>
+<tr><td>My Calendar I &#9733;</td><td><span class="lv m">Medium</span></td><td>TreeMap start&rarr;end, check floorEntry and ceilingEntry</td></tr>
+<tr><td>Time Based Key-Value Store</td><td><span class="lv m">Medium</span></td><td>HashMap&lt;key, TreeMap&lt;time, value&gt;&gt; &mdash; floorEntry(timestamp)</td></tr>
+<tr><td>Contains Duplicate III</td><td><span class="lv h">Hard</span></td><td>TreeSet window of size k &mdash; ceiling/floor within t</td></tr>
+<tr><td>Sliding Window Median</td><td><span class="lv h">Hard</span></td><td>Two heaps + lazy deletion map, or TreeMap&lt;value,count&gt;</td></tr>
+<tr><td>Design Twitter</td><td><span class="lv m">Medium</span></td><td>HashMap user&rarr;followees + heap-merge of 10 most recent tweets</td></tr>
+<tr><td>Number of Islands (BFS)</td><td><span class="lv m">Medium</span></td><td>ArrayDeque BFS per unvisited land cell</td></tr>
+<tr><td>Alien Dictionary</td><td><span class="lv h">Hard</span></td><td>Build graph from adjacent words + Kahn's with queue</td></tr>
+</table></div>
+
+<h3>Reference solutions (&#9733; rows)</h3>
+<div class="qa">
+<details><summary data-q="1">Group Anagrams</summary><div class="ans"><pre><code><span class="kw">public</span> List&lt;List&lt;String&gt;&gt; groupAnagrams(String[] strs) {
+    Map&lt;String, List&lt;String&gt;&gt; g = <span class="kw">new</span> HashMap&lt;&gt;();
+    <span class="kw">for</span> (String s : strs) {
+        <span class="kw">char</span>[] c = s.toCharArray(); Arrays.sort(c);
+        g.computeIfAbsent(<span class="kw">new</span> String(c), k -&gt; <span class="kw">new</span> ArrayList&lt;&gt;()).add(s);
+    }
+    <span class="kw">return new</span> ArrayList&lt;&gt;(g.values());          <span class="cm">// O(n * k log k); count-signature key makes it O(n * k)</span>
+}</code></pre></div></details>
+
+<details><summary data-q="2">Top K Frequent Elements</summary><div class="ans"><pre><code><span class="kw">public int</span>[] topKFrequent(<span class="kw">int</span>[] nums, <span class="kw">int</span> k) {
+    Map&lt;Integer,Integer&gt; f = <span class="kw">new</span> HashMap&lt;&gt;();
+    <span class="kw">for</span> (<span class="kw">int</span> x : nums) f.merge(x, <span class="nu">1</span>, Integer::sum);
+    PriorityQueue&lt;Integer&gt; pq = <span class="kw">new</span> PriorityQueue&lt;&gt;((a, b) -&gt; f.get(a) - f.get(b));   <span class="cm">// min-heap by frequency</span>
+    <span class="kw">for</span> (<span class="kw">int</span> key : f.keySet()) { pq.offer(key); <span class="kw">if</span> (pq.size() &gt; k) pq.poll(); }
+    <span class="kw">int</span>[] out = <span class="kw">new int</span>[k];
+    <span class="kw">for</span> (<span class="kw">int</span> i = k - <span class="nu">1</span>; i &gt;= <span class="nu">0</span>; i--) out[i] = pq.poll();
+    <span class="kw">return</span> out;                                   <span class="cm">// O(n log k)</span>
+}
+<span class="cm">// O(n) alternative: List&lt;Integer&gt;[] bucket = new List[n+1]; bucket[freq].add(key); read buckets from n down.</span></code></pre></div></details>
+
+<details><summary data-q="3">Subarray Sum Equals K</summary><div class="ans"><pre><code><span class="kw">public int</span> subarraySum(<span class="kw">int</span>[] a, <span class="kw">int</span> k) {
+    Map&lt;Integer,Integer&gt; seen = <span class="kw">new</span> HashMap&lt;&gt;();
+    seen.put(<span class="nu">0</span>, <span class="nu">1</span>);                                <span class="cm">// the empty prefix</span>
+    <span class="kw">int</span> sum = <span class="nu">0</span>, cnt = <span class="nu">0</span>;
+    <span class="kw">for</span> (<span class="kw">int</span> x : a) {
+        sum += x;
+        cnt += seen.getOrDefault(sum - k, <span class="nu">0</span>);       <span class="cm">// every earlier prefix equal to sum-k closes a subarray here</span>
+        seen.merge(sum, <span class="nu">1</span>, Integer::sum);
+    }
+    <span class="kw">return</span> cnt;
+}</code></pre></div></details>
+
+<details><summary data-q="4">Longest Consecutive Sequence</summary><div class="ans"><pre><code><span class="kw">public int</span> longestConsecutive(<span class="kw">int</span>[] nums) {
+    Set&lt;Integer&gt; s = <span class="kw">new</span> HashSet&lt;&gt;();
+    <span class="kw">for</span> (<span class="kw">int</span> x : nums) s.add(x);
+    <span class="kw">int</span> best = <span class="nu">0</span>;
+    <span class="kw">for</span> (<span class="kw">int</span> x : s) {
+        <span class="kw">if</span> (s.contains(x - <span class="nu">1</span>)) <span class="kw">continue</span>;           <span class="cm">// not the start of a run - skip, someone else counts it</span>
+        <span class="kw">int</span> len = <span class="nu">1</span>;
+        <span class="kw">while</span> (s.contains(x + len)) len++;
+        best = Math.max(best, len);
+    }
+    <span class="kw">return</span> best;                                  <span class="cm">// each number visited O(1) times amortised -&gt; O(n)</span>
+}</code></pre></div></details>
+
+<details><summary data-q="5">LRU Cache (hand-written)</summary><div class="ans"><pre><code><span class="kw">class</span> LRUCache {
+    <span class="kw">class</span> Node { <span class="kw">int</span> k, v; Node prev, next; Node(<span class="kw">int</span> k, <span class="kw">int</span> v) { <span class="kw">this</span>.k = k; <span class="kw">this</span>.v = v; } }
+    <span class="kw">private final int</span> cap; <span class="kw">private final</span> Map&lt;Integer,Node&gt; map = <span class="kw">new</span> HashMap&lt;&gt;();
+    <span class="kw">private final</span> Node head = <span class="kw">new</span> Node(<span class="nu">0</span>,<span class="nu">0</span>), tail = <span class="kw">new</span> Node(<span class="nu">0</span>,<span class="nu">0</span>);   <span class="cm">// dummies: head.next = LRU, tail.prev = MRU</span>
+    LRUCache(<span class="kw">int</span> cap) { <span class="kw">this</span>.cap = cap; head.next = tail; tail.prev = head; }
+    <span class="kw">private void</span> unlink(Node n) { n.prev.next = n.next; n.next.prev = n.prev; }
+    <span class="kw">private void</span> addLast(Node n) { n.prev = tail.prev; n.next = tail; tail.prev.next = n; tail.prev = n; }
+    <span class="kw">public int</span> get(<span class="kw">int</span> k) {
+        Node n = map.get(k); <span class="kw">if</span> (n == <span class="kw">null</span>) <span class="kw">return</span> -<span class="nu">1</span>;
+        unlink(n); addLast(n); <span class="kw">return</span> n.v;
+    }
+    <span class="kw">public void</span> put(<span class="kw">int</span> k, <span class="kw">int</span> v) {
+        Node n = map.get(k);
+        <span class="kw">if</span> (n != <span class="kw">null</span>) { n.v = v; unlink(n); addLast(n); <span class="kw">return</span>; }
+        <span class="kw">if</span> (map.size() == cap) { Node lru = head.next; unlink(lru); map.remove(lru.k); }
+        n = <span class="kw">new</span> Node(k, v); map.put(k, n); addLast(n);
+    }
+}</code></pre></div></details>
+
+<details><summary data-q="6">Daily Temperatures</summary><div class="ans"><pre><code><span class="kw">public int</span>[] dailyTemperatures(<span class="kw">int</span>[] t) {
+    <span class="kw">int</span> n = t.length; <span class="kw">int</span>[] ans = <span class="kw">new int</span>[n];
+    Deque&lt;Integer&gt; st = <span class="kw">new</span> ArrayDeque&lt;&gt;();          <span class="cm">// indices with strictly decreasing temperatures</span>
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nu">0</span>; i &lt; n; i++) {
+        <span class="kw">while</span> (!st.isEmpty() &amp;&amp; t[st.peek()] &lt; t[i]) { <span class="kw">int</span> j = st.pop(); ans[j] = i - j; }
+        st.push(i);
+    }
+    <span class="kw">return</span> ans;                                     <span class="cm">// each index pushed/popped once -&gt; O(n)</span>
+}</code></pre></div></details>
+
+<details><summary data-q="7">Sliding Window Maximum</summary><div class="ans"><pre><code><span class="kw">public int</span>[] maxSlidingWindow(<span class="kw">int</span>[] a, <span class="kw">int</span> k) {
+    <span class="kw">int</span> n = a.length; <span class="kw">int</span>[] out = <span class="kw">new int</span>[n - k + <span class="nu">1</span>];
+    Deque&lt;Integer&gt; dq = <span class="kw">new</span> ArrayDeque&lt;&gt;();          <span class="cm">// indices, values decreasing front -&gt; back</span>
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nu">0</span>; i &lt; n; i++) {
+        <span class="kw">if</span> (!dq.isEmpty() &amp;&amp; dq.peekFirst() &lt;= i - k) dq.pollFirst();
+        <span class="kw">while</span> (!dq.isEmpty() &amp;&amp; a[dq.peekLast()] &lt;= a[i]) dq.pollLast();
+        dq.offerLast(i);
+        <span class="kw">if</span> (i &gt;= k - <span class="nu">1</span>) out[i - k + <span class="nu">1</span>] = a[dq.peekFirst()];
+    }
+    <span class="kw">return</span> out;
+}</code></pre></div></details>
+
+<details><summary data-q="8">Course Schedule II (Kahn's algorithm)</summary><div class="ans"><pre><code><span class="kw">public int</span>[] findOrder(<span class="kw">int</span> n, <span class="kw">int</span>[][] pre) {
+    List&lt;List&lt;Integer&gt;&gt; adj = <span class="kw">new</span> ArrayList&lt;&gt;(); <span class="kw">int</span>[] indeg = <span class="kw">new int</span>[n];
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nu">0</span>; i &lt; n; i++) adj.add(<span class="kw">new</span> ArrayList&lt;&gt;());
+    <span class="kw">for</span> (<span class="kw">int</span>[] p : pre) { adj.get(p[<span class="nu">1</span>]).add(p[<span class="nu">0</span>]); indeg[p[<span class="nu">0</span>]]++; }     <span class="cm">// p[1] -&gt; p[0]</span>
+    Deque&lt;Integer&gt; q = <span class="kw">new</span> ArrayDeque&lt;&gt;();
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nu">0</span>; i &lt; n; i++) <span class="kw">if</span> (indeg[i] == <span class="nu">0</span>) q.offer(i);
+    <span class="kw">int</span>[] order = <span class="kw">new int</span>[n]; <span class="kw">int</span> idx = <span class="nu">0</span>;
+    <span class="kw">while</span> (!q.isEmpty()) {
+        <span class="kw">int</span> u = q.poll(); order[idx++] = u;
+        <span class="kw">for</span> (<span class="kw">int</span> v : adj.get(u)) <span class="kw">if</span> (--indeg[v] == <span class="nu">0</span>) q.offer(v);
+    }
+    <span class="kw">return</span> idx == n ? order : <span class="kw">new int</span>[<span class="nu">0</span>];        <span class="cm">// idx &lt; n means a cycle</span>
+}</code></pre></div></details>
+
+<details><summary data-q="9">Merge k Sorted Lists</summary><div class="ans"><pre><code><span class="kw">public</span> ListNode mergeKLists(ListNode[] lists) {
+    PriorityQueue&lt;ListNode&gt; pq = <span class="kw">new</span> PriorityQueue&lt;&gt;((a, b) -&gt; Integer.compare(a.val, b.val));
+    <span class="kw">for</span> (ListNode l : lists) <span class="kw">if</span> (l != <span class="kw">null</span>) pq.offer(l);     <span class="cm">// one head per list</span>
+    ListNode dummy = <span class="kw">new</span> ListNode(<span class="nu">0</span>), tail = dummy;
+    <span class="kw">while</span> (!pq.isEmpty()) {
+        ListNode n = pq.poll(); tail.next = n; tail = n;
+        <span class="kw">if</span> (n.next != <span class="kw">null</span>) pq.offer(n.next);              <span class="cm">// refill from the same list</span>
+    }
+    <span class="kw">return</span> dummy.next;                                    <span class="cm">// O(N log k), N = total nodes</span>
+}</code></pre></div></details>
+
+<details><summary data-q="10">Find Median from Data Stream</summary><div class="ans"><pre><code><span class="kw">class</span> MedianFinder {
+    <span class="kw">private final</span> PriorityQueue&lt;Integer&gt; lo = <span class="kw">new</span> PriorityQueue&lt;&gt;(Collections.reverseOrder()); <span class="cm">// smaller half, max on top</span>
+    <span class="kw">private final</span> PriorityQueue&lt;Integer&gt; hi = <span class="kw">new</span> PriorityQueue&lt;&gt;();                          <span class="cm">// larger half, min on top</span>
+    <span class="kw">public void</span> addNum(<span class="kw">int</span> x) {
+        lo.offer(x);
+        hi.offer(lo.poll());                              <span class="cm">// guarantee max(lo) &lt;= min(hi)</span>
+        <span class="kw">if</span> (hi.size() &gt; lo.size()) lo.offer(hi.poll());  <span class="cm">// lo keeps the extra element</span>
+    }
+    <span class="kw">public double</span> findMedian() {
+        <span class="kw">return</span> lo.size() &gt; hi.size() ? lo.peek() : (lo.peek() + hi.peek()) / <span class="nu">2.0</span>;
+    }
+}</code></pre></div></details>
+
+<details><summary data-q="11">Meeting Rooms II</summary><div class="ans"><pre><code><span class="kw">public int</span> minMeetingRooms(<span class="kw">int</span>[][] iv) {
+    Arrays.sort(iv, (a, b) -&gt; Integer.compare(a[<span class="nu">0</span>], b[<span class="nu">0</span>]));   <span class="cm">// by start</span>
+    PriorityQueue&lt;Integer&gt; ends = <span class="kw">new</span> PriorityQueue&lt;&gt;();     <span class="cm">// end time of each room in use</span>
+    <span class="kw">for</span> (<span class="kw">int</span>[] m : iv) {
+        <span class="kw">if</span> (!ends.isEmpty() &amp;&amp; ends.peek() &lt;= m[<span class="nu">0</span>]) ends.poll();   <span class="cm">// earliest-finishing room is free: reuse it</span>
+        ends.offer(m[<span class="nu">1</span>]);
+    }
+    <span class="kw">return</span> ends.size();                                      <span class="cm">// O(n log n)</span>
+}</code></pre></div></details>
+
+<details><summary data-q="12">Network Delay Time (Dijkstra)</summary><div class="ans"><pre><code><span class="kw">public int</span> networkDelayTime(<span class="kw">int</span>[][] times, <span class="kw">int</span> n, <span class="kw">int</span> k) {
+    List&lt;List&lt;<span class="kw">int</span>[]&gt;&gt; adj = <span class="kw">new</span> ArrayList&lt;&gt;();
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nu">0</span>; i &lt;= n; i++) adj.add(<span class="kw">new</span> ArrayList&lt;&gt;());
+    <span class="kw">for</span> (<span class="kw">int</span>[] t : times) adj.get(t[<span class="nu">0</span>]).add(<span class="kw">new int</span>[]{t[<span class="nu">1</span>], t[<span class="nu">2</span>]});   <span class="cm">// {to, weight}</span>
+    <span class="kw">int</span>[] dist = <span class="kw">new int</span>[n + <span class="nu">1</span>]; Arrays.fill(dist, Integer.MAX_VALUE); dist[k] = <span class="nu">0</span>;
+    PriorityQueue&lt;<span class="kw">int</span>[]&gt; pq = <span class="kw">new</span> PriorityQueue&lt;&gt;((a, b) -&gt; Integer.compare(a[<span class="nu">0</span>], b[<span class="nu">0</span>]));  <span class="cm">// {dist, node}</span>
+    pq.offer(<span class="kw">new int</span>[]{<span class="nu">0</span>, k});
+    <span class="kw">while</span> (!pq.isEmpty()) {
+        <span class="kw">int</span>[] cur = pq.poll(); <span class="kw">int</span> d = cur[<span class="nu">0</span>], u = cur[<span class="nu">1</span>];
+        <span class="kw">if</span> (d &gt; dist[u]) <span class="kw">continue</span>;                                  <span class="cm">// stale entry</span>
+        <span class="kw">for</span> (<span class="kw">int</span>[] e : adj.get(u)) {
+            <span class="kw">int</span> nd = d + e[<span class="nu">1</span>];
+            <span class="kw">if</span> (nd &lt; dist[e[<span class="nu">0</span>]]) { dist[e[<span class="nu">0</span>]] = nd; pq.offer(<span class="kw">new int</span>[]{nd, e[<span class="nu">0</span>]}); }
+        }
+    }
+    <span class="kw">int</span> best = <span class="nu">0</span>;
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nu">1</span>; i &lt;= n; i++) { <span class="kw">if</span> (dist[i] == Integer.MAX_VALUE) <span class="kw">return</span> -<span class="nu">1</span>; best = Math.max(best, dist[i]); }
+    <span class="kw">return</span> best;
+}</code></pre></div></details>
+
+<details><summary data-q="13">My Calendar I</summary><div class="ans"><pre><code><span class="kw">class</span> MyCalendar {
+    <span class="kw">private final</span> TreeMap&lt;Integer,Integer&gt; cal = <span class="kw">new</span> TreeMap&lt;&gt;();   <span class="cm">// start -&gt; end</span>
+    <span class="kw">public boolean</span> book(<span class="kw">int</span> s, <span class="kw">int</span> e) {
+        Map.Entry&lt;Integer,Integer&gt; prev = cal.floorEntry(s);          <span class="cm">// the booking starting just before s</span>
+        <span class="kw">if</span> (prev != <span class="kw">null</span> &amp;&amp; prev.getValue() &gt; s) <span class="kw">return false</span>;         <span class="cm">// it is still running at s</span>
+        Map.Entry&lt;Integer,Integer&gt; next = cal.ceilingEntry(s);        <span class="cm">// the booking starting at/after s</span>
+        <span class="kw">if</span> (next != <span class="kw">null</span> &amp;&amp; next.getKey() &lt; e) <span class="kw">return false</span>;          <span class="cm">// it starts before we end</span>
+        cal.put(s, e); <span class="kw">return true</span>;                                    <span class="cm">// O(log n) per booking</span>
+    }
+}</code></pre></div></details>
+</div>
+
+<h3>Interview questions on this topic</h3>
+<div class="qa">
+<details><summary data-q="1">Why HashMap here and not TreeMap? <span class="pill p1">every round</span></summary><div class="ans"><p>Because the problem never asks for order or a nearest key &mdash; only "have I seen it / how many". HashMap gives O(1) average; TreeMap would pay O(log n) per operation for sorting nobody reads. The moment the problem says "smallest &ge;", "range", "in sorted order while inserting", flip to TreeMap.</p></div></details>
+<details><summary data-q="2">Why ArrayDeque instead of Stack or LinkedList? <span class="pill p1">every round</span></summary><div class="ans"><p><code>Stack</code> extends <code>Vector</code>: every method is <code>synchronized</code>, and it exposes index-based access that breaks the LIFO abstraction. <code>LinkedList</code> allocates a node per element and chases pointers. <code>ArrayDeque</code> is a circular array &mdash; contiguous, cache-friendly, O(1) amortised at both ends, and it is what the Javadoc itself recommends. The one thing it cannot do is hold <code>null</code>.</p></div></details>
+<details><summary data-q="3">K-th largest with a heap: why a MIN-heap? <span class="pill p1">every round</span></summary><div class="ans"><p>Keep the k largest seen so far; the smallest of those &mdash; the root of a min-heap &mdash; is exactly the k-th largest. When a new element beats the root, it replaces it. A max-heap of everything would find the answer too, but with O(n) memory and O(n log n) time instead of O(k) and O(n log k).</p></div></details>
+<details><summary data-q="4">Why can't you index into or iterate a PriorityQueue in order? <span class="pill p2">common</span></summary><div class="ans"><p>It is a heap, not a sorted list: the array satisfies only parent &le; child, so siblings are in no particular order. Sorted output exists only through repeated <code>poll()</code>. Need random access to sorted data? That is a <code>TreeMap</code>/<code>TreeSet</code> (log n) or a sorted <code>ArrayList</code> (binary search but O(n) insert).</p></div></details>
+<details><summary data-q="5">How do two heaps maintain a running median? <span class="pill p2">common</span></summary><div class="ans"><p>A max-heap holds the smaller half, a min-heap the larger half, sizes differing by at most one. Every insert goes into the max-heap, its top moves to the min-heap (keeping every lo &le; every hi), then rebalance if the min-heap grew bigger. The median is the top of the larger heap, or the average of the two tops. O(log n) insert, O(1) query.</p></div></details>
+<details><summary data-q="6">Why does an int[] not work as a HashMap key, and what do you use instead? <span class="pill p2">common</span></summary><div class="ans"><p>Arrays inherit <code>Object.hashCode/equals</code> &mdash; identity, not content &mdash; so two equal arrays land in different buckets. Options: encode to a primitive (<code>r * cols + c</code> for grid cells, or a <code>long</code> packing two ints), use <code>List.of(a, b)</code> (value-based), a <code>record Point(int r, int c)</code>, or a <code>String</code> key (slowest).</p></div></details>
+<details><summary data-q="7">How would you implement an LRU cache in Java, and what is the O(1) trick? <span class="pill p1">every round</span></summary><div class="ans"><p>Shortest: <code>LinkedHashMap</code> with <code>accessOrder = true</code> and <code>removeEldestEntry</code> returning <code>size() &gt; capacity</code>. By hand: a <code>HashMap&lt;K, Node&gt;</code> for O(1) lookup plus a doubly linked list for O(1) move-to-front and evict-from-back. A singly linked list would make unlinking O(n); an <code>ArrayList</code> would make moving O(n). The map finds the node, the list reorders it &mdash; each does the thing the other cannot.</p></div></details>
+<details><summary data-q="8">HashMap says O(1) &mdash; when is it not, and what did Java 8 do about it? <span class="pill p2">common</span></summary><div class="ans"><p>A bad <code>hashCode</code> (or a hash-flooding attack) sends every key to one bucket, making lookups O(n). Since Java 8 a bucket that grows past 8 entries (and the table is &ge; 64) becomes a red-black tree, so the worst case is O(log n). For interview code the practical rule: keys must have a sane <code>hashCode</code> and be immutable.</p></div></details>
+<details><summary data-q="9">TreeSet dropped one of my elements &mdash; why? <span class="pill p2">common</span></summary><div class="ans"><p><code>TreeSet</code>/<code>TreeMap</code> decide equality by the comparator returning 0, not by <code>equals</code>. A comparator on a single field (<code>comparingInt(a -&gt; a[0])</code>) treats two arrays with the same first element as the same key, so the second is silently rejected (or overwrites the value). Add a tiebreak, usually the index, so no two distinct items compare equal.</p></div></details>
+<details><summary data-q="10">When is a monotonic stack the right tool, and how do you know it is O(n)? <span class="pill p2">common</span></summary><div class="ans"><p>Whenever the question is "for each element, the nearest element to the left/right that is greater/smaller" &mdash; next greater, previous smaller, span, histogram, remove-k-digits. Each index is pushed exactly once and popped at most once, so the total work across the whole loop is O(n) even though the inner <code>while</code> looks nested.</p></div></details>
+<details><summary data-q="11">BFS gives shortest path on an unweighted graph &mdash; why does it fail on weighted, and what replaces it? <span class="pill p2">common</span></summary><div class="ans"><p>BFS assumes every edge costs 1, so the first time it reaches a node is via the fewest edges &mdash; not the least weight. Dijkstra replaces the FIFO queue with a <code>PriorityQueue</code> ordered by distance so the cheapest frontier node is expanded first; Java has no decrease-key, so push duplicates and skip stale entries whose distance is worse than the recorded one. Negative weights break Dijkstra too &mdash; that is Bellman-Ford.</p></div></details>
+<details><summary data-q="12">What does computeIfAbsent buy you over containsKey + put? <span class="pill p3">senior</span></summary><div class="ans"><p>One hash lookup instead of two, no null check, and the grouping idiom becomes one line: <code>map.computeIfAbsent(k, x -&gt; new ArrayList&lt;&gt;()).add(v)</code>. Traps: the mapping function must not modify the same map (throws <code>ConcurrentModificationException</code> since Java 9), and returning <code>null</code> from it stores nothing.</p></div></details>
+<details><summary data-q="13">PriorityQueue.remove(obj) is O(n) &mdash; how do you delete from a heap in a sliding window? <span class="pill p3">senior</span></summary><div class="ans"><p>Lazy deletion: keep a <code>HashMap&lt;value, pendingRemovals&gt;</code>; when an element leaves the window, increment its count instead of touching the heap; whenever you <code>peek</code>, first <code>poll</code> away any top whose pending count is positive. Or switch to <code>TreeMap&lt;value, count&gt;</code>, which has real O(log n) removal and gives both min and max.</p></div></details>
+<details><summary data-q="14">Top K frequent: heap is O(n log k). Can you do O(n)? <span class="pill p3">senior</span></summary><div class="ans"><p>Bucket sort on frequency: frequencies are at most n, so create <code>List&lt;Integer&gt;[] bucket = new List[n + 1]</code>, put each key at <code>bucket[freq]</code>, then walk from index n down collecting until you have k. O(n) time and space. Mention quickselect on the (key, freq) pairs as the third option.</p></div></details>
+<details><summary data-q="15">Why seed the prefix-sum map with {0 : 1}? <span class="pill p2">common</span></summary><div class="ans"><p>It represents the empty prefix before index 0. Without it, a subarray that starts at index 0 and sums to k is never counted, because there is no earlier prefix equal to <code>sum &minus; k = 0</code>. Same idea in "contiguous array" (put 0&rarr;&minus;1 for the index variant) and "subarrays divisible by K" (count[0] = 1).</p></div></details>
+<details><summary data-q="16">You have 10 million integers and need the 100 largest. Sort, heap or quickselect? <span class="pill p3">senior</span></summary><div class="ans"><p>Min-heap of size 100: one pass, O(n log 100) &asymp; 7n comparisons, 100 ints of memory, and it works on a stream you cannot hold in memory. Quickselect is O(n) average but needs the whole array in memory and is not stable under adversarial input. Sorting is O(n log n) and pointless for 100 out of 10 million.</p></div></details>
+</div>
+
 </section>
 
 <!-- ============================================================ 28 -->
@@ -3198,6 +3859,12 @@ Pattern in text                               -&gt; KMP / rolling hash</code></p
 <tr><td>LPS</td><td>Longest proper prefix that is also a suffix (KMP)</td></tr>
 <tr><td>MST</td><td>Minimum spanning tree</td></tr>
 </table></div>
+
+<div class="box def">
+<span class="lbl">Final word</span>
+<p>You don't need every problem in this book. You need the <b>patterns</b> to become reflexes. Follow the chapter order, obey the five rules, keep a Redo List, and respect the time estimates as guide rails rather than a race. The day a random unseen medium feels merely <i>familiar</i> instead of frightening &mdash; that's when you've actually learned DSA, and no company's interview will rattle you.</p>
+<p><b>Now go solve Two Sum. Timer on. Good luck.</b></p>
+</div>
 </section>
 
 
