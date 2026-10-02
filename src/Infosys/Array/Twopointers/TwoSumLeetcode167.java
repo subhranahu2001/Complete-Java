@@ -16,7 +16,7 @@ public class TwoSumLeetcode167 {
     // brut force approach with O(n^2)
     public static int[] twoSum1 (int[] nums, int target) {
         if (nums == null || nums.length <= 1) {
-            return new int[0];
+            return new int[]{-1,-1};
         }
 int n = nums.length;
         for (int i = 0; i < n - 1; i++) {
@@ -26,14 +26,14 @@ int n = nums.length;
                 }
             }
         }
-        return new int[0];
+        return new int[]{-1,-1};
     }
 
     // Using 2 pointer approach  and in this array should be sorted
     public static int[] twoSum(int[] nums, int target) {
 
         if (nums == null || nums.length <= 1) {
-            return new int[0];
+            return new int[]{-1,-1};
         }
         int i = 0;
         int j = nums.length - 1;
@@ -54,7 +54,7 @@ int n = nums.length;
     //using hashmap if array is not sorted
     public static int[] twoSum2(int[] nums, int target) {
         if (nums == null || nums.length <= 1) {
-            return new int[0];
+            return new int[]{-1,-1};
         }
         HashMap<Integer, Integer> map = new HashMap<>();
         for (int i = 0; i < nums.length; i++) {
@@ -63,7 +63,7 @@ int n = nums.length;
             }
             map.put(nums[i], i);
         }
-        return new int[0];
+        return new int[]{-1,-1};
     }
 
     public static void main(String[] args) throws IOException {
